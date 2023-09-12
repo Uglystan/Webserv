@@ -48,6 +48,5 @@ int		main(int argc, char **argv)
 	{
 		ft_putchar('\n');
 	}
-	//return (0);
-	return (1);
+	return (0);
 }
