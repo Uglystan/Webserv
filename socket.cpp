@@ -96,3 +96,7 @@ int main()
 	close(sock);
 	return (0);
 }
+
+//POur un serveur l'idee generale c'est qu'on a une boucle infini aui tourne avec la fonction listen qui attend que
+//quelque chose se passe une fois qu'on recoit une socket on la lis et le decrypte et on repond la bonne
+//chose avec une socket egalement
