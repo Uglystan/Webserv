@@ -97,6 +97,18 @@ int main()
 	return (0);
 }
 
-//POur un serveur l'idee generale c'est qu'on a une boucle infini aui tourne avec la fonction listen qui attend que
+//POur un serveur l'idee generale c'est qu'on a une boucle infini qui tourne avec la fonction listen
+//la fonction va ecouter sur le port 80 logiquement qui attend que
 //quelque chose se passe une fois qu'on recoit une socket on la lis et le decrypte et on repond la bonne
-//chose avec une socket egalement
+//chose donc soit on envoie de l'hmtl ou autre avec une socket on ne peut pas utiliser fork ou des thread
+//Donc le serveur doit gerer de maniere sequentielle les requetes
+
+/*En fait ce qui se passe c'est que tu demandes un socket à ton OS avec  `socket`,
+mais pour l'instant c'est une coquille vide, ça ne sert à rien. Imagine une boite avec 4 slots,
+deux slots pour une adresse et deux slots pour des ports.
+Mainteant quand tu appelles `bind`, tu "remplis"  la moitié de la boîte avec une adresse et
+un port qui correspondent à une addresse et un port de ta machine. Maintenant la socket est
+lié à cette interface. Ensuite il faut activer cette sokcet avec `listen` pour qu'elle soit
+capable d'"écouter", c'est à dire de recevoir des requetes sur cette interface*/
+
+/**/
