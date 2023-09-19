@@ -9,7 +9,9 @@
 #include <signal.h>
 #include <errno.h>
 
-void	createSocketListening(struct sockaddr_in &servAddr, struct pollfd *fds)
+#define MAX_CLIENT 100
+
+void	createSocketListening(struct sockaddr_in *clientAddr, struct pollfd *fds)
 {
 	fds[0].fd = socket(AF_INET, SOCK_STREAM, 0);
 	fds[0].events = POLLIN;
@@ -18,10 +20,10 @@ void	createSocketListening(struct sockaddr_in &servAddr, struct pollfd *fds)
 		std::cout << "Throw exception" << std::endl;
 		/*throw exception*/
 	}
-	servAddr.sin_family = AF_INET;
-	servAddr.sin_port = htons(8080);
-	servAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
-	if (bind(fds[0].fd, (struct sockaddr *) &servAddr, (socklen_t)sizeof(servAddr)) < 0)
+	clientAddr[0].sin_family = AF_INET;
+	clientAddr[0].sin_port = htons(8080);
+	clientAddr[0].sin_addr.s_addr = inet_addr("127.0.0.1");
+	if (bind(fds[0].fd, (struct sockaddr *) &clientAddr[0], (socklen_t)sizeof(clientAddr[0])) < 0)
 	{
 		std::cout << "Error bind" << std::endl;
 		/*throw exception*/
@@ -33,7 +35,7 @@ void	createSocketListening(struct sockaddr_in &servAddr, struct pollfd *fds)
 	}
 }
 
-std::string	readSocket(struct pollfd *fds, int i)
+std::string	readSocket(struct pollfd *fds, int i, struct sockaddr_in *clientAddr)
 {
 	std::string	msgRecu;
 	int	bytes_read = 0;
@@ -49,8 +51,9 @@ std::string	readSocket(struct pollfd *fds, int i)
 		std::cout << "Donnees recue" << std::endl;
 		close(fds[i].fd);
 		fds[i].fd = -1;
+		memset(&clientAddr[i], 0, sizeof(struct sockaddr_in));
 	}
-	else if (bytes_read < 0)
+	if (bytes_read < 0)
 	{
 		std::cout << "Error recv" << std::endl;
 		/*throw exception*/
@@ -58,68 +61,86 @@ std::string	readSocket(struct pollfd *fds, int i)
 	return (msgRecu);
 }
 
-void	acceptSocket(struct pollfd *fds, int &nbrClient, struct sockaddr_in &clientAddr)
+void	acceptSocket(struct pollfd *fds, struct sockaddr_in *clientAddr)
 {
-		int clientSock =  0;
-		int test = sizeof(clientAddr);
-		clientSock = accept(fds[0].fd, (struct sockaddr *) &clientAddr, (socklen_t *)&test);
-		int flags = fcntl(clientSock, F_GETFL, 0);
-		fcntl(clientSock, F_SETFL, flags | O_NONBLOCK);
-		fds[nbrClient].fd = clientSock;
-		if (fds[nbrClient].fd < 0)
+	int clientSock;
+	for (int i = 0; i < MAX_CLIENT; i++)
+	{
+		if (fds[i].fd == -1)
 		{
-			std::cout << "Error accept" << std::endl;
-			/*throw exception*/
+			int test = sizeof(clientAddr[i]);
+			clientSock = accept(fds[0].fd, (struct sockaddr *) &clientAddr[i], (socklen_t *)&test);
 		}
-		fds[nbrClient].events = POLLIN;
-		nbrClient++;
+	}
+	if (clientSock < 0)
+	{
+		std::cout << "Error accept" << std::endl;
+		/*throw exception*/
+	}
+	int flags = fcntl(clientSock, F_GETFL, 0);
+	fcntl(clientSock, F_SETFL, flags | O_NONBLOCK);
+	for (int i = 1; i < MAX_CLIENT; i++)
+	{
+		if (fds[i].fd == -1)
+		{
+			fds[i].fd = clientSock;
+			fds[i].events = POLLIN;
+			break;
+		}
+	}
 }
 
 int main (/*File conf*/)
 {
-	struct sockaddr_in	servAddr, clientAddr;
-	std::string	message = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length: 74\n\n<!DOCTYPE html>\n<html>\n<body>\n\t<h1>Bienvenue sur ma page web!</h1>\n</body>\n</html>\n";
+	struct sockaddr_in	clientAddr[MAX_CLIENT];
 	std::string	msgRecu;
-	struct pollfd	fds[100];
-	int nbrClient = 1;//1 car 0 pris par socket d'ecoute
+	struct pollfd	fds[MAX_CLIENT];
 
-	signal(SIGPIPE, SIG_IGN);
+	signal(SIGPIPE, SIG_IGN);//Ignore les signaux brokepipe (quand un client quitte la connexion sinon programme s'arrete avec erreur 141)
+	memset(fds, -1, sizeof(struct pollfd));
+	memset(clientAddr, 0, sizeof(struct sockaddr_in));
 
-	createSocketListening(servAddr, fds);
+	createSocketListening(clientAddr, fds);
 	while (1)
 	{
-		int result = poll(fds, nbrClient + 1, -1);
-		if (result <= 0)
+		int result = poll(fds, MAX_CLIENT + 1, -1);
+		if (result > 0)
 		{
-			std::cout << "Throw exception" << std::endl;
-			/*throw exception*/
-		}
-		for (int i = 1; i < nbrClient; i++)
-		{
-			if (fds[i].revents & POLLIN)
+			for (int i = 1; i < MAX_CLIENT + 1; i++)
 			{
-
-				msgRecu = readSocket(fds, i);
-				//Parsing de requete client
-				//Analyser requete
-				//Preparer reponse
-				//Envoie reponse
-				if (send(fds[i].fd, message.c_str(), message.size(), 0) < 0)
+				if (fds[i].revents & POLLIN)
 				{
-					if (errno == EPIPE || errno == ECONNRESET)//gestion d'erreur si le client ferme la co ou reinitilise avant de tout recevoir
-					{
-						close(fds[i].fd);
-						fds[i].fd = -1;
-						std::cerr << "Error send broke pipe" << std::endl;
-					}
-					std::cerr << "Error send" << std::endl;
-					/*throw exception*/
+					msgRecu = readSocket(fds, i, clientAddr);
+					//Parsing de requete client
+					//Analyser requete
+					//Preparer reponse
+					//Envoie reponse
+					// if (send(fds[i].fd, message.c_str(), message.size(), 0) < 0)
+					// {
+					// 	std::cerr << "Error send" << std::endl;
+					// 	/*throw exception*/
+					// }
+					//close socket une fois rep envoyee
+				}
+				if (fds[i].revents & POLLHUP)
+				{
+					close(fds[i].fd);
+					fds[i].fd = -1;
+					memset(&clientAddr[i], 0, sizeof(struct sockaddr_in));
+					std::cerr << "Connexion fermee par le client" << std::endl;
+				}
+				if (fds[i].revents & POLLERR)
+				{
+					close(fds[i].fd);
+					fds[i].fd = -1;
+					memset(&clientAddr[i], 0, sizeof(struct sockaddr_in));
+					std::cerr << "Connexion stop sans raison" << std::endl;
 				}
 			}
+			if (fds[0].revents & POLLIN)
+				acceptSocket(fds, clientAddr);
+				//close (clientSock);
 		}
-		if (fds[0].revents & POLLIN)
-			acceptSocket(fds, nbrClient, clientAddr);
-			//close (clientSock);
-	}
 	//close (servSock);
+	}
 }
