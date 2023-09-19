@@ -8,6 +8,7 @@
 #include <fcntl.h>
 #include <signal.h>
 #include <errno.h>
+#include <fstream>
 
 #define MAX_CLIENT 100
 
@@ -90,9 +91,68 @@ void	acceptSocket(struct pollfd *fds, struct sockaddr_in *clientAddr)
 	}
 }
 
+std::string	get_method(std::string	request)
+{
+	std::string answer;
+	size_t	position = request.find("GET /");
+	position += 4;
+	int i = 0;
+	while (request[position + i] != ' ')
+		i++;
+	std::string path = request.substr(position, i);
+	std::string htmlpath = "../html" + path + ".html";
+	std::ifstream html_file;
+	if (htmlpath == "../html/.html")
+	{
+		html_file.open("../html/monsite.html");
+	}
+	else
+		html_file.open(htmlpath.c_str());
+	if (html_file.is_open())
+	{
+		std::string buffer;
+		while (std::getline(html_file, buffer))
+		{
+			if (!html_file.eof())
+				answer.append(buffer + '\n');
+			else //pas de \n si derniere ligne
+				answer.append(buffer);
+		}
+		html_file.close();
+	}
+	else
+	{
+		 std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl;
+	}
+	//std::cout << answer << std::endl;
+	return (answer);
+}
+
+std::string	parsing_request(std::string	request)
+{
+	size_t posGET = request.find("GET");
+	size_t posPOST = request.find("POST");
+	size_t posDELETE = request.find("DELETE");
+	if (posGET != std::string::npos || posPOST != std::string::npos || posDELETE != std::string::npos)
+	{
+		if(posGET != std::string::npos)
+			return (get_method(request));
+		if(posPOST != std::string::npos)
+			std::cout << "POST find" << std::endl;
+		if(posDELETE != std::string::npos)
+			std::cout << "DELETE find" << std::endl;
+	}
+	else if (request != "\n")
+	{
+		std::cout << "METHOD not found" << std::endl;
+	}
+	return (request);
+}
+
 int main (/*File conf*/)
 {
 	struct sockaddr_in	clientAddr[MAX_CLIENT];
+	std::string	message = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n\n<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html\n";
 	std::string	msgRecu;
 	struct pollfd	fds[MAX_CLIENT];
 
@@ -115,11 +175,12 @@ int main (/*File conf*/)
 					//Analyser requete
 					//Preparer reponse
 					//Envoie reponse
-					// if (send(fds[i].fd, message.c_str(), message.size(), 0) < 0)
-					// {
-					// 	std::cerr << "Error send" << std::endl;
-					// 	/*throw exception*/
-					// }
+					std::string answer = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n\n" + parsing_request(msgRecu);
+					if (send(fds[i].fd, answer.c_str(), answer.size(), 0) < 0)
+					{
+						std::cerr << "Error send" << std::endl;
+						/*throw exception*/
+					}
 					//close socket une fois rep envoyee
 				}
 				if (fds[i].revents & POLLHUP)
