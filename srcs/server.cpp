@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <poll.h>
 #include <cstring>
+#include <fcntl.h>
+#include <signal.h>
+#include <errno.h>
 
 void	createSocketListening(struct sockaddr_in &servAddr, struct pollfd *fds)
 {
@@ -35,18 +38,9 @@ std::string	readSocket(struct pollfd *fds, int i)
 	std::string	msgRecu;
 	int	bytes_read = 0;
 	char	buffer[100];
-	// struct timeval timeout;
-	// timeout.tv_sec = 0;
-	// timeout.tv_usec = 100;
 
-	// if (setsockopt(fds[i].fd, SOL_SOCKET, SO_RCVTIMEO, (const char*)&timeout, sizeof(timeout)) < 0)
-	// {
-	// 	std::cout << "Erreur lors du réglage du délai d'attente" << std::endl;
-	// 	// Gérer l'erreur
-	// }
 	while ((bytes_read = recv(fds[i].fd, buffer, sizeof(buffer), 0)) > 0)
 	{
-		//memset(buffer, 0, 100);
 		msgRecu.append(buffer, bytes_read);
 	}
 	std::cout << msgRecu << std::endl;
@@ -60,10 +54,13 @@ std::string	readSocket(struct pollfd *fds, int i)
 
 void	acceptSocket(struct pollfd *fds, struct sockaddr_in &servAddr, int &nbrClient)
 {
-		//int clientSock =  0;
+		int clientSock =  0;
 		int test = sizeof(servAddr);
-		//clientSock = accept(fds[0].fd, (struct sockaddr *) &servAddr, (socklen_t *)(sizeof(&servAddr)));
-		fds[nbrClient].fd = accept(fds[0].fd, (struct sockaddr *) &servAddr, (socklen_t *)&test);
+		clientSock = accept(fds[0].fd, (struct sockaddr *) &servAddr, (socklen_t *)&test);
+		int flags = fcntl(clientSock, F_GETFL, 0);
+		fcntl(clientSock, F_SETFL, flags | O_NONBLOCK);
+		fds[nbrClient].fd = clientSock;
+		//fds[nbrClient].fd = accept(fds[0].fd, (struct sockaddr *) &servAddr, (socklen_t *)&test);
 		if (fds[nbrClient].fd < 0)
 		{
 			std::cout << "Error accept" << std::endl;
@@ -76,17 +73,18 @@ void	acceptSocket(struct pollfd *fds, struct sockaddr_in &servAddr, int &nbrClie
 int main (/*File conf*/)
 {
 	struct sockaddr_in	servAddr;
-	std::string	message = "saalut";
+	std::string	message = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<!DOCTYPE html>\n<html>\n<head>\n\t<title>Page d'exemple</title>\n</head>\n<body>\n\t<h1>Bienvenue sur la page d'exemple</h1>\n</body>\n</html>\n\n";
 	std::string	msgRecu;
 	struct pollfd	fds[100];
 	int nbrClient = 1;//1 car 0 pris par socket d'ecoute
 
+	signal(SIGPIPE, SIG_IGN);
 
 	createSocketListening(servAddr, fds);
 	while (1)
 	{
 		int result = poll(fds, nbrClient + 1, -1);
-		if (result == -1)
+		if (result <= 0)
 		{
 			std::cout << "Throw exception" << std::endl;
 			/*throw exception*/
@@ -95,21 +93,27 @@ int main (/*File conf*/)
 		{
 			if (fds[i].revents & POLLIN)
 			{
+				std::cout << i << std::endl;
 				msgRecu = readSocket(fds, i);
 				//Parsing de requete client
 				//Analyser requete
 				//Preparer reponse
 				//Envoie reponse
-				// if (send(fds[i].fd, message.c_str(), message.size(), 0) < 0)
-				// {
-				// 	std::cerr << "Error send" << std::endl;
-				// 	return (1);
-				// }
+				if (send(fds[i].fd, message.c_str(), message.size(), 0) < 0)
+				{
+					if (errno == EPIPE || errno == ECONNRESET)//gestion d'erreur si le client ferme la co ou reinitilise avant de tout recevoir
+					{
+						close(fds[i].fd);
+						fds[i].fd = -1;
+					}
+					std::cerr << "Error send" << std::endl;
+					/*throw exception*/
+				}
 			}
 		}
 		if (fds[0].revents & POLLIN)
 			acceptSocket(fds, servAddr, nbrClient);
 			//close (clientSock);
-		}
+	}
 	//close (servSock);
 }
