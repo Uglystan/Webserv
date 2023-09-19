@@ -44,7 +44,13 @@ std::string	readSocket(struct pollfd *fds, int i)
 		msgRecu.append(buffer, bytes_read);
 	}
 	std::cout << msgRecu << std::endl;
-	if (bytes_read < 0)
+	if (bytes_read == 0)
+	{
+		std::cout << "Donnees recue" << std::endl;
+		close(fds[i].fd);
+		fds[i].fd = -1;
+	}
+	else if (bytes_read < 0)
 	{
 		std::cout << "Error recv" << std::endl;
 		/*throw exception*/
@@ -52,15 +58,14 @@ std::string	readSocket(struct pollfd *fds, int i)
 	return (msgRecu);
 }
 
-void	acceptSocket(struct pollfd *fds, struct sockaddr_in &servAddr, int &nbrClient)
+void	acceptSocket(struct pollfd *fds, int &nbrClient, struct sockaddr_in &clientAddr)
 {
 		int clientSock =  0;
-		int test = sizeof(servAddr);
-		clientSock = accept(fds[0].fd, (struct sockaddr *) &servAddr, (socklen_t *)&test);
+		int test = sizeof(clientAddr);
+		clientSock = accept(fds[0].fd, (struct sockaddr *) &clientAddr, (socklen_t *)&test);
 		int flags = fcntl(clientSock, F_GETFL, 0);
 		fcntl(clientSock, F_SETFL, flags | O_NONBLOCK);
 		fds[nbrClient].fd = clientSock;
-		//fds[nbrClient].fd = accept(fds[0].fd, (struct sockaddr *) &servAddr, (socklen_t *)&test);
 		if (fds[nbrClient].fd < 0)
 		{
 			std::cout << "Error accept" << std::endl;
@@ -72,8 +77,8 @@ void	acceptSocket(struct pollfd *fds, struct sockaddr_in &servAddr, int &nbrClie
 
 int main (/*File conf*/)
 {
-	struct sockaddr_in	servAddr;
-	std::string	message = "HTTP/1.1 200 OK\nContent-Type: text/html\n\n<!DOCTYPE html>\n<html>\n<head>\n\t<title>Page d'exemple</title>\n</head>\n<body>\n\t<h1>Bienvenue sur la page d'exemple</h1>\n</body>\n</html>\n\n";
+	struct sockaddr_in	servAddr, clientAddr;
+	std::string	message = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\nContent-Length: 74\n\n<!DOCTYPE html>\n<html>\n<body>\n\t<h1>Bienvenue sur ma page web!</h1>\n</body>\n</html>\n";
 	std::string	msgRecu;
 	struct pollfd	fds[100];
 	int nbrClient = 1;//1 car 0 pris par socket d'ecoute
@@ -93,7 +98,7 @@ int main (/*File conf*/)
 		{
 			if (fds[i].revents & POLLIN)
 			{
-				std::cout << i << std::endl;
+
 				msgRecu = readSocket(fds, i);
 				//Parsing de requete client
 				//Analyser requete
@@ -105,6 +110,7 @@ int main (/*File conf*/)
 					{
 						close(fds[i].fd);
 						fds[i].fd = -1;
+						std::cerr << "Error send broke pipe" << std::endl;
 					}
 					std::cerr << "Error send" << std::endl;
 					/*throw exception*/
@@ -112,7 +118,7 @@ int main (/*File conf*/)
 			}
 		}
 		if (fds[0].revents & POLLIN)
-			acceptSocket(fds, servAddr, nbrClient);
+			acceptSocket(fds, nbrClient, clientAddr);
 			//close (clientSock);
 	}
 	//close (servSock);
