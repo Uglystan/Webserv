@@ -12,6 +12,7 @@
 #include <cstdio>
 #include <sys/types.h>
 #include <map>
+#include "../response/response.hpp"
 
 #define NB_EVENT 10
 #define MAX_CLIENT 100
@@ -156,20 +157,31 @@ void	manageClient(int &epollFd, int &clientSocket)
 	char	buffer[1024 + 1];
 	int	bytes_read = 0;
 	int	socketStatement = 0;
+	std::string	msg;
 
+	memset(buffer, 0, sizeof(buffer));
 	bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
 	if (bytes_read == -1)
 	{
 		std::cout << "Error recv" << std::endl;
 		socketStatement = 1;
 	}
-	else if (bytes_read == 0)
-	{
-		std::cout << "Client deco" << std::endl;
-		socketStatement = 1;
-	}
+	// else if (bytes_read == 0)
+	// {
+	// 	std::cout << "Client deco" << std::endl;
+	// 	socketStatement = 1;
+	// }
 	else if (bytes_read > 0)
 	{
+		if (bytes_read == 1024)
+		{
+			while (bytes_read == 1024)
+			{
+				msg.append(buffer);
+				memset(buffer, 0, sizeof(buffer));
+				bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
+			}
+		}
 		std::cout << buffer << std::endl;
 		std::string reponse = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n\n<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html\n";
 		send(clientSocket, reponse.c_str(), reponse.size(), 0);
@@ -205,11 +217,17 @@ int main (/*File conf*/)
 					addEpollEvent(epollFd, clientSocket);
 				}
 			}
+			else if (events[i].events & EPOLLRDHUP)
+			{
+				std::cout << "POLLHUP" << std::endl;
+				delEpollEvent(epollFd, events[i].data.fd);
+				close(clientSocket);
+			}
 			else if (events[i].events & EPOLLIN)//C'est une socket client donc on doit gerer la demande
 			{
 				manageClient(epollFd, events[i].data.fd);
 			}
 		}
 	}
-	close(serverSocket);
+	//close(serverSocket);
 }
