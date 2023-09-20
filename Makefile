@@ -11,7 +11,7 @@ RESET=\033[0m
 
 	
 SRC =	srcs/response/response.cpp\
-	srcs/server/serveurepoll.cpp\
+	srcs/server/serv.cpp\
 	
 OBJ = $(SRC:.cpp=.o)
 

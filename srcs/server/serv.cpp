@@ -123,7 +123,7 @@ void	addEpollEvent(int &epollFd, int &socket)
 	memset(&event, 0, sizeof(struct epoll_event));
 	event.data.fd = socket;
 	//On gere Le in et si la socket se ferme
-	event.events = EPOLLIN | EPOLLRDHUP;
+	event.events = EPOLLIN | EPOLLRDHUP | EPOLLERR;
 	epoll_ctl(epollFd, EPOLL_CTL_ADD, socket, &event);
 }
 
@@ -156,7 +156,6 @@ void	manageClient(int &epollFd, int &clientSocket)
 {
 	char	buffer[1024 + 1];
 	int	bytes_read = 0;
-	int	socketStatement = 0;
 	std::string	msg;
 
 	memset(buffer, 0, sizeof(buffer));
@@ -164,7 +163,8 @@ void	manageClient(int &epollFd, int &clientSocket)
 	if (bytes_read == -1)
 	{
 		std::cout << "Error recv" << std::endl;
-		socketStatement = 1;
+		delEpollEvent(epollFd, clientSocket);
+		close(clientSocket);
 	}
 	// else if (bytes_read == 0)
 	// {
@@ -183,18 +183,17 @@ void	manageClient(int &epollFd, int &clientSocket)
 				msg.append(buffer);
 			}
 		}
-		std::cout << msg << std::endl;
+		std::cout << "Message recu : " << msg << std::endl;
 		Response resp(msg);
 		std::string rep = resp.create_response();
-		std::cout << rep << std::endl;
-		//std::string reponse = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n\n<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>\n";
+		std::cout << "Message envoyee : " << rep << std::endl;
 		send(clientSocket, rep.c_str(), rep.size(), 0);
 	}
-	if (socketStatement == 1)
-	{
-		delEpollEvent(epollFd, clientSocket);
-		close(clientSocket);
-	}
+	// if (socketStatement == 1)
+	// {
+	// 	delEpollEvent(epollFd, clientSocket);
+	// 	close(clientSocket);
+	// }
 }
 
 int main (/*File conf*/)
@@ -223,13 +222,16 @@ int main (/*File conf*/)
 			}
 			else if (events[i].events & EPOLLRDHUP)
 			{
-				std::cout << "POLLHUP" << std::endl;
+				std::cout << "Deconnexion client" << std::endl;
 				delEpollEvent(epollFd, events[i].data.fd);
 				close(clientSocket);
 			}
 			else if (events[i].events & EPOLLIN)//C'est une socket client donc on doit gerer la demande
-			{
 				manageClient(epollFd, events[i].data.fd);
+			else if (events[i].events & EPOLLERR)
+			{
+				delEpollEvent(epollFd, clientSocket);
+				close(clientSocket);
 			}
 		}
 	}
