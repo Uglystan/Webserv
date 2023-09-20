@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/20 15:09:13 by lgirault         ###   ########.fr       */
+/*   Updated: 2023/09/20 16:44:51 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ class Response
 		std::string	find_content_type(void);
 		std::string	find_content_lenght(void);
 		std::string	find_connection(void);
+		std::string	find_langage(void);
 		
 		std::string	get_response(void) const;
 		std::string	get_request(void) const;
