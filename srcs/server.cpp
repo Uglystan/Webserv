@@ -27,7 +27,12 @@ void	createSocketListening(struct sockaddr_in *clientAddr, struct pollfd *fds)
 	clientAddr[0].sin_family = AF_INET;
 	clientAddr[0].sin_port = htons(8080);
 	clientAddr[0].sin_addr.s_addr = inet_addr("127.0.0.1");
-	if (bind(fds[0].fd, (struct sockaddr *) &clientAddr[0], (socklen_t)sizeof(clientAddr[0])) < 0)
+	if (bind(fds[0].fd, (strl.h>
+#include <errno.h>
+#include <fstream>
+#include <cstdio>
+#include <sys/types.h>
+#include <map>uct sockaddr *) &clientAddr[0], (socklen_t)sizeof(clientAddr[0])) < 0)
 	{
 		std::cout << "Error bind" << std::endl;
 		/*throw exception*/
