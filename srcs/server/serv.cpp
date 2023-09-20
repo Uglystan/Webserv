@@ -16,65 +16,7 @@
 
 #define NB_EVENT 10
 #define MAX_CLIENT 100
-
-std::string	get_method(std::string	request)
-{
-	std::string answer;
-	size_t	position = request.find("GET /");
-	position += 4;
-	int i = 0;
-	while (request[position + i] != ' ')
-		i++;
-	std::string path = request.substr(position, i);
-	std::string htmlpath = "../html" + path + ".html";
-	std::ifstream html_file;
-	if (htmlpath == "../html/.html")
-	{
-		html_file.open("../html/monsite.html");
-	}
-	else
-		html_file.open(htmlpath.c_str());
-	if (html_file.is_open())
-	{
-		std::string buffer;
-		while (std::getline(html_file, buffer))
-		{
-			if (!html_file.eof())
-				answer.append(buffer + '\n');
-			else //pas de \n si derniere ligne
-				answer.append(buffer);
-		}
-		html_file.close();
-	}
-	else
-	{
-		 std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl;
-	}
-	//std::cout << answer << std::endl;
-	return (answer);
-}
-
-
-std::string	parsing_request(std::string	request)
-{
-	size_t posGET = request.find("GET");
-	size_t posPOST = request.find("POST");
-	size_t posDELETE = request.find("DELETE");
-	if (posGET != std::string::npos || posPOST != std::string::npos || posDELETE != std::string::npos)
-	{
-		if(posGET != std::string::npos)
-			return (get_method(request));
-		if(posPOST != std::string::npos)
-			std::cout << "POST find" << std::endl;
-		if(posDELETE != std::string::npos)
-			std::cout << "DELETE find" << std::endl;
-	}
-	else if (request != "\n")
-	{
-		std::cout << "METHOD not found" << std::endl;
-	}
-	return (request);
-}
+#define MAX_CLIENT_BODYSIZEP 20000
 
 void	initAdresse(struct sockaddr_in	&adresse)
 {
@@ -166,11 +108,6 @@ void	manageClient(int &epollFd, int &clientSocket)
 		delEpollEvent(epollFd, clientSocket);
 		close(clientSocket);
 	}
-	// else if (bytes_read == 0)
-	// {
-	// 	std::cout << "Client deco" << std::endl;
-	// 	socketStatement = 1;
-	// }
 	else if (bytes_read > 0)
 	{
 		msg.append(buffer);
@@ -179,8 +116,12 @@ void	manageClient(int &epollFd, int &clientSocket)
 			while (bytes_read == 1024)
 			{
 				memset(buffer, 0, sizeof(buffer));
-				bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
+				bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);//proteger ecv encore ?
 				msg.append(buffer);
+				if (msg.size() > MAX_CLIENT_BODYSIZEP)
+				{
+					/*Error page 413*/
+				}
 			}
 		}
 		std::cout << "Message recu : " << msg << std::endl;
@@ -189,11 +130,20 @@ void	manageClient(int &epollFd, int &clientSocket)
 		std::cout << "Message envoyee : " << rep << std::endl;
 		send(clientSocket, rep.c_str(), rep.size(), 0);
 	}
-	// if (socketStatement == 1)
-	// {
-	// 	delEpollEvent(epollFd, clientSocket);
-	// 	close(clientSocket);
-	// }
+}
+
+void	disconnectClient(int &epollFd, int &socket)
+{
+	std::cout << "Deconnexion client" << std::endl;
+	delEpollEvent(epollFd, socket);
+	close(socket);
+}
+
+void	errorClient(int &epollFd, int &socket)
+{
+	std::cout << "Error sur socket" << std::endl;
+	delEpollEvent(epollFd, socket);
+	close(socket);
 }
 
 int main (/*File conf*/)
@@ -208,32 +158,25 @@ int main (/*File conf*/)
 	int clientSocket;
 	while(1)
 	{
-		//Le nombre de client qu'on souhaite gerer j'ai mis 2 au hasard. nfds c'est le nombre d'evenement qui on un truc EPOLLIN etc...
-		int nfds = epoll_wait(epollFd, events, 2, -1);
+		//Le nombre de client qu'on souhaite gerer j'ai mis 2 cela depend du trafic que notre reseau va gerer si beaucoup de trafic
+		// il vaut mieux un nombre eleve si probleme on monte le nombre inon peut etre file d'attente. nfds c'est le nombre d'evenement qui on un truc EPOLLIN etc...
+		//Peut etre ajouter un timer pour chaque socket pour les closes si pas d'activite recu
+		int nfds = epoll_wait(epollFd, events, 5, -1);
 		for (int i = 0; i < nfds; i++)
 		{
 			if (events[i].data.fd == serverSocket)//C'est la socket serveur donc on recoit un nouveau client
 			{
 				clientSocket = waitForClient(serverSocket);
 				if (clientSocket != -1)
-				{
 					addEpollEvent(epollFd, clientSocket);
-				}
 			}
-			else if (events[i].events & EPOLLRDHUP)
-			{
-				std::cout << "Deconnexion client" << std::endl;
-				delEpollEvent(epollFd, events[i].data.fd);
-				close(clientSocket);
-			}
-			else if (events[i].events & EPOLLIN)//C'est une socket client donc on doit gerer la demande
+			else if (events[i].events & EPOLLIN)
 				manageClient(epollFd, events[i].data.fd);
+			else if (events[i].events & EPOLLRDHUP)
+				disconnectClient(epollFd, events[i].data.fd);
 			else if (events[i].events & EPOLLERR)
-			{
-				delEpollEvent(epollFd, clientSocket);
-				close(clientSocket);
-			}
+				errorClient(epollFd, events[i].data.fd);
 		}
 	}
-	//close(serverSocket);
+	close(serverSocket);
 }

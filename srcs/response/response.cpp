@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 11:42:04 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/20 17:42:23 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/20 18:04:52 by lgirault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ std::string	Response::find_content_type(void)
 		_content_type = "Content-Type: text/html; charset=UTF-8\n";
 	else if (find_langage() == "html" || find_langage() == "css" || find_langage() == "javascript" || find_langage() == "xml" || find_langage() == "plain")
 		_content_type = "Content-Type: text/" + find_langage() +"; charset=UTF-8\n";
-	else if (find_langage() == "jpeg" || find_langage() == "png" || find_langage() == "gif" || find_langage() == "bmp")
+	else if (find_langage() == "jpeg" || find_langage() == "png" || find_langage() == "gif" || find_langage() == "bmp" || find_langage() == "ico")
 		_content_type = "Content-Type: image/" + find_langage() +"; charset=UTF-8\n";
 	else if (find_langage() == "mpeg" || find_langage() == "wav" || find_langage() == "ogg")
 		_content_type = "Content-Type: audio/" + find_langage() +"; charset=UTF-8\n";
@@ -167,7 +167,7 @@ void	Response::create_body()
 {
 	std::ifstream html_file;
 	if (_path == "html/")
-		html_file.open("html/monsite.html", std::ios::in);
+		html_file.open("html/index.html", std::ios::in);
 	else
 		html_file.open(_path.c_str(), std::ios::in);
 	if (html_file.is_open())
