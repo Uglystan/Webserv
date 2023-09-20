@@ -173,18 +173,22 @@ void	manageClient(int &epollFd, int &clientSocket)
 	// }
 	else if (bytes_read > 0)
 	{
+		msg.append(buffer);
 		if (bytes_read == 1024)
 		{
 			while (bytes_read == 1024)
 			{
-				msg.append(buffer);
 				memset(buffer, 0, sizeof(buffer));
 				bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
+				msg.append(buffer);
 			}
 		}
-		std::cout << buffer << std::endl;
-		std::string reponse = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n\n<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html\n";
-		send(clientSocket, reponse.c_str(), reponse.size(), 0);
+		std::cout << msg << std::endl;
+		Response resp(msg);
+		std::string rep = resp.create_response();
+		std::cout << rep << std::endl;
+		//std::string reponse = "HTTP/1.1 200 OK\nContent-Type: text/html; charset=UTF-8\n\n<!DOCTYPE html><html><body><h1>My First Heading</h1><p>My first paragraph.</p></body></html>\n";
+		send(clientSocket, rep.c_str(), rep.size(), 0);
 	}
 	if (socketStatement == 1)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/20 14:22:08 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/20 15:09:13 by lgirault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ class Response
 
 		Response	&operator=(const Response &substitue);
 
-		void	create_response(void);
+		std::string	create_response(void);
 		void	find_method(void);
 		void	find_path(void);
 		void	create_header(void);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 11:42:04 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/20 14:47:30 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/20 15:30:15 by lgirault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ std::string	Response::find_date(void)
 
 std::string	Response::find_content_type(void)
 {
-	_content_type = "Content-Type: text/html\n";
+	_content_type = "Content-Type: text/html; charset=UTF-8\n";
 	return (_content_type);
 }
 
@@ -122,12 +122,13 @@ void	Response::find_path(void)
 	}
 }
 
-void	Response::create_response(void)
+std::string	Response::create_response(void)
 {
 	find_path();
 	create_body();
 	create_header();
 	_response = _header + _body;
+	return (_response);
 	/*body html & assembler*/
 }
 
@@ -136,7 +137,7 @@ void	Response::create_body()
 	std::ifstream html_file;
 	if (_path == "../../html/ ")
 	{
-		html_file.open("html/index.html", std::ios::in);
+		html_file.open("html/monsite.html", std::ios::in);
 	}
 	else
 		std::cout << "find langage" << std::endl;//trouver .html ou .css....
@@ -166,7 +167,7 @@ void	Response::create_header(void)
 	_header += find_content_type();
 	_header += find_content_lenght();
 	_header += find_connection();
-	_header += "\r\n";
+	_header += "\n";
 }
 
 std::string	Response::get_response(void) const

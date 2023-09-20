@@ -10,9 +10,8 @@ BOLD=\033[1m
 RESET=\033[0m
 
 	
-SRC = 	srcs/response/main.cpp\
-	srcs/response/response.cpp\
-	srcs/
+SRC =	srcs/response/response.cpp\
+	srcs/server/serveurepoll.cpp\
 	
 OBJ = $(SRC:.cpp=.o)
 
