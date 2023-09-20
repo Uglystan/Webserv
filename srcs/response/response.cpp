@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 11:42:04 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/20 15:30:15 by lgirault         ###   ########.fr       */
+/*   Updated: 2023/09/20 17:42:23 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,19 +71,34 @@ std::string	Response::find_date(void)
 
 std::string	Response::find_content_type(void)
 {
-	_content_type = "Content-Type: text/html; charset=UTF-8\n";
+	if (find_langage() == "")
+		_content_type = "Content-Type: text/html; charset=UTF-8\n";
+	else if (find_langage() == "html" || find_langage() == "css" || find_langage() == "javascript" || find_langage() == "xml" || find_langage() == "plain")
+		_content_type = "Content-Type: text/" + find_langage() +"; charset=UTF-8\n";
+	else if (find_langage() == "jpeg" || find_langage() == "png" || find_langage() == "gif" || find_langage() == "bmp")
+		_content_type = "Content-Type: image/" + find_langage() +"; charset=UTF-8\n";
+	else if (find_langage() == "mpeg" || find_langage() == "wav" || find_langage() == "ogg")
+		_content_type = "Content-Type: audio/" + find_langage() +"; charset=UTF-8\n";
+	else if (find_langage() == "mp4" || find_langage() == "webm" || find_langage() == "mpeg" || find_langage() == "avi")
+		_content_type = "Content-Type: video/" + find_langage() +"; charset=UTF-8\n";
+	else if (find_langage() == "json" || find_langage() == "pdf" || find_langage() == "octet-stream" || find_langage() == "x-www-form-urlencoded")
+		_content_type = "Content-Type: application/" + find_langage() +"; charset=UTF-8\n";
+	else if (find_langage() == "form-data" || find_langage() == "byteranges")
+		_content_type = "Content-Type: multipart/" + find_langage() +"; charset=UTF-8\n";
 	return (_content_type);
 }
 
 std::string	Response::find_content_lenght(void)
 {
-	_content_lenght = "Content-Lenght: 88\n";
+	std::ostringstream oss;
+	oss << "Content-Length: " << _body.size() << "\n";
+	_content_lenght = oss.str();
 	return (_content_lenght);
 }
 
 std::string	Response::find_connection(void)
 {
-	_connection = "Connection: Closed\n";
+	_connection = "Connection: keep-alive\n";
 	return (_connection);
 }
 
@@ -109,7 +124,7 @@ void	Response::find_method(void)
 
 void	Response::find_path(void)
 {
-	_path = "../../html/";
+	_path = "html/";
 	std::string firstLine;
 	std::istringstream iss(_request);
 	std::getline(iss, firstLine);
@@ -118,7 +133,7 @@ void	Response::find_path(void)
 	{
 		size_t	nextspacepos = firstLine.find(' ', firstslahpos + 1);
 		if (nextspacepos != std::string::npos)
-			_path += firstLine.substr(firstslahpos + 1, nextspacepos - firstslahpos);
+			_path += firstLine.substr(firstslahpos + 1, nextspacepos - firstslahpos - 1);
 	}
 }
 
@@ -132,15 +147,29 @@ std::string	Response::create_response(void)
 	/*body html & assembler*/
 }
 
+std::string	Response::find_langage(void)
+{
+	std::string	language;
+	std::string firstLine;
+	std::istringstream iss(_request);
+	std::getline(iss, firstLine);
+	size_t	firstpointpos = firstLine.find('.');
+	if (firstpointpos != std::string::npos)
+	{
+		size_t	nextspacepos = firstLine.find(' ', firstpointpos + 1);
+		if (nextspacepos != std::string::npos)
+			language += firstLine.substr(firstpointpos + 1, nextspacepos - firstpointpos - 1);
+	}
+	return (language);
+}
+
 void	Response::create_body()
 {
 	std::ifstream html_file;
-	if (_path == "../../html/ ")
-	{
+	if (_path == "html/")
 		html_file.open("html/monsite.html", std::ios::in);
-	}
 	else
-		std::cout << "find langage" << std::endl;//trouver .html ou .css....
+		html_file.open(_path.c_str(), std::ios::in);
 	if (html_file.is_open())
 	{
 		std::string buffer;
@@ -154,9 +183,7 @@ void	Response::create_body()
 		html_file.close();
 	}
 	else
-	{
 		 std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl;
-	}
 }
 
 void	Response::create_header(void)
