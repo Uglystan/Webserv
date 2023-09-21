@@ -13,11 +13,11 @@
 #include <sys/types.h>
 #include <map>
 #include "../response/response.hpp"
-#include <ctime>
+#include <sys/time.h>
 
 #define NB_EVENT 10
 #define MAX_CLIENT 100
-#define MAX_CLIENT_BODYSIZEP 20000
+#define MAX_CLIENT_BODYSIZE 20000
 #define MAZ_TIME_BEFOR_CLOSE 
 
 void	initAdresse(struct sockaddr_in	&adresse)
@@ -71,11 +71,12 @@ void	addEpollEvent(int &epollFd, int &socket)
 	epoll_ctl(epollFd, EPOLL_CTL_ADD, socket, &event);
 }
 
-int	waitForClient(int &serverSocket, std::map<int, std::clock_t> &timer)
+int	waitForClient(int &serverSocket, std::map<int, struct timeval> &timer)
 {
 	int clientSocket;
 	struct sockaddr_in clientAdresse;
 	int addresseLen = sizeof(clientAdresse);
+	struct timeval time;
 
 	clientSocket = accept(serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
 	if (clientSocket != -1)
@@ -83,7 +84,8 @@ int	waitForClient(int &serverSocket, std::map<int, std::clock_t> &timer)
 		//On met la socket en non bloquant c'est important sinon ca marche pas
 		int opt = 1;
 		setsockopt(clientSocket, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(1));
-		timer[clientSocket] = std::clock();
+		gettimeofday(&time, NULL);//creation init
+		timer[clientSocket] = time;
 	}
 	return (clientSocket);
 }
@@ -99,7 +101,7 @@ void	delEpollEvent(int &epollFd, int &socket)
 	epoll_ctl(epollFd, EPOLL_CTL_DEL, socket, &event);
 }
 
-void	manageClient(int &epollFd, int &clientSocket, std::map<int, std::clock_t> &timer)
+void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
 {
 	char	buffer[1025];
 	int	bytes_read = 0;
@@ -116,7 +118,7 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, std::clock_t> &
 	}
 	else if (bytes_read > 0)
 	{
-		timer[clientSocket] = std::clock();
+		gettimeofday(&timer[clientSocket], NULL);//reset
 		msg.append(buffer);
 		if (bytes_read == 1024)
 		{
@@ -125,7 +127,7 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, std::clock_t> &
 				memset(buffer, 0, sizeof(buffer));
 				bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);//proteger recv encore ?
 				msg.append(buffer);
-				if (msg.size() > MAX_CLIENT_BODYSIZEP)
+				if (msg.size() > MAX_CLIENT_BODYSIZE)
 				{
 					/*Error page 413*/
 				}
@@ -139,7 +141,7 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, std::clock_t> &
 	}
 }
 
-void	disconnectClient(int &epollFd, int &socket, std::map<int, std::clock_t> &timer)
+void	disconnectClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
 {
 	std::cout << "Deconnexion client" << std::endl;
 	timer.erase(socket);
@@ -147,7 +149,7 @@ void	disconnectClient(int &epollFd, int &socket, std::map<int, std::clock_t> &ti
 	close(socket);
 }
 
-void	errorClient(int &epollFd, int &socket, std::map<int, std::clock_t> &timer)
+void	errorClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
 {
 	std::cout << "Error sur socket" << std::endl;
 	timer.erase(socket);
@@ -155,33 +157,29 @@ void	errorClient(int &epollFd, int &socket, std::map<int, std::clock_t> &timer)
 	close(socket);
 }
 
-int	checkTimeAndWaitPoll(int &epollFd, struct epoll_event *events, std::map<int, std::clock_t> &timer)
+int	checkTimeAndWaitPoll(int &epollFd, struct epoll_event *events, std::map<int, struct timeval> &timer)
 {
-	std::clock_t timeNow = std::clock();
-	std::map<int, std::clock_t>::iterator i = timer.begin();
-	std::map<int, std::clock_t>::iterator temp = i;
-	int	j;
+	struct timeval timeNow;
+	gettimeofday(&timeNow, NULL);
+	std::map<int, struct timeval>::iterator i = timer.begin();
+	std::map<int, struct timeval>::iterator temp = i;
+	unsigned long e = 0;
 
 	while (i != timer.end())
 	{
 		temp = i;
-		if (((timeNow - temp->second) / (double) CLOCKS_PER_SEC) > 10)
+		i++;
+		std::cout << (timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 << std::endl;
+		if ((timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 > 10)
 		{
-			std::cout << "Delais trop long" << std::endl;
-			for (j = 0; events[j].data.fd != temp->first || ((timer.end()->first) - 1) != events[j].data.fd; j++)//j = 0
-			{
-			}
-			if (events[j].data.fd == temp->first)
-			{
-				delEpollEvent(epollFd, events[j].data.fd);
-				close(events[j].data.fd);
-			}
+			std::cout << "Delais trop long deco d'une socket" << std::endl;
+			delEpollEvent(epollFd, const_cast<int &>(temp->first));//aaaaa
+			close(temp->first);
 			timer.erase(temp->first);
 		}
-		i++;
+		e++;
 	}
-	int ret = epoll_wait(epollFd, events, 5, -1);
-	return (ret);
+	return (epoll_wait(epollFd, events, 5, -1));
 }
 
 int main (/*File conf*/)
@@ -189,8 +187,9 @@ int main (/*File conf*/)
 	int epollFd = epoll_create1(0);
 	struct epoll_event	events[NB_EVENT];
 	struct sockaddr_in	adresse;
-	std::map <int, std::clock_t>	timer;
+	std::map <int, struct timeval>	timer;
 
+	memset(events, 0, sizeof(events));
 	initAdresse(adresse);
 	int serverSocket = initSocket(adresse);
 	addEpollEvent(epollFd, serverSocket);
