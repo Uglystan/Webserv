@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/21 15:50:07 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/21 19:34:02 by lgirault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef RESPONSE_HPP
-#define RESPONSE_HPP
+#pragma once
 
 #include <iostream>
 #include <string>
@@ -71,5 +70,3 @@ class Response
 		int		_code;
 		std::map<int, std::string>	_errors;
 };
-
-#endif
