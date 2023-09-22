@@ -1,70 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="style.css" />
-    <title>Page Goole</title>
-  </head>
-  <body>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>Le Monde</title>
+</head>
+<body>
     <header>
-      <div>
-        <ul id="header_menu">
-          <li id="li_menu"><a href="">Gmail</a></li>
-          <li id="li_menu"><a href="">Images</a></li>
-          <li id="li_menu">
-            <img src="img/application-mobile.png" alt="" id="img_menu" />
-          </li>
-          <li id="li_menu"><img src="img/user.png" alt="" id="img_menu" /></li>
-        </ul>
-      </div>
+        <div class="div_header">
+            <center> <a href=""><img src="img/2560px-Le_Monde.svg.png" alt="logo le monde" class="img_header"></a> </center>
+            <img src="img/referer.png" alt="se connecter" class="connect_img">
+            <p class="se_connecter"><a href="">Se Connecter</a></p>
+            <button class="button_header">S'abonner</button>
+        </div>
+        <hr class="hr_header">
+        <div class="div_menu">
+            <ul class="ul_menu">
+                <a href=""><img src="img/page-daccueil.png" alt="" class="img_menu"></a>
+                <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Actualités</a></li>
+                <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Présidentielle </a>
+                  <ul class="ul_déroulant">
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Résulat</a></li>                      
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">les candidats</a></li>                    
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">programmes</a></li>                     
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">les élections</a></li>                 
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Fragments de France</a></li>
+                  </ul>
+               </li>
+               <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Economie </a>
+                  <ul class="ul_déroulant">
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">mondiale</a></li>                  
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">française</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Médias</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Emploi</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Tribunes éco</a></li>
+                  </ul>
+               </li>
+               <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Vidéos </a>
+                  <ul class="ul_déroulant">
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">L'actualité</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Les explications</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Enquête vidéo</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Les mini-séries</a></li>
+                  </ul>
+               </li>
+               <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Débats </a>
+                  <ul class="ul_déroulant">
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Editoriaux</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Chroniques</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Enquête idées</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Notions</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Analyses</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Tribunes</a></li>
+                  </ul>
+               </li>
+               <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Culture </a>
+                  <ul class="ul_déroulant">
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Cinéma</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">télévision</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Livres</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Musiques</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Arts</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Scènes</a></li>
+                  </ul>
+               </li>
+               <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Mag</a>
+                  <ul class="ul_déroulant">
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">L'actu</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Le style</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Voyage</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Mode</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu">Les recettes du mondes</a></li>
+                  </ul>
+               </li>
+               <li class="li_menu" id="li_menu"><a href="#" class="link_menu">Services </a>
+                  <ul class="ul_déroulant">
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu"># ▼</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu"># ▼</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu"># ▼</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu"># ▼</a></li>
+                      <li class="li_déroulant" id="li_menu"><a href="#" class="link_menu"># ▼</a></li>
+                  </ul>
+               </li>
+               <a href=""><img src="img/search.png" alt="" class="img_menu"></a>
+              </ul>
+        </div>
+        <div>
+            <ul class="ul_info">
+                <li class="li_info"><p class="heure_info">🔴20:45</p><br><p class="article_info">Mort d'un Afro-Américain : pas de poursuite</p></li>
+                <hr class="hr_info" noshade="">
+                <li class="li_info"> <p class="heure_info">🔴19:56</p> <br> <p class="article_info">Entretien: "les allers-retours entre haute fonction publique et cabinets de conseil on installé un cadre intellectuel commun au sein des ces élites"</p><li>
+                <hr class="hr_info" noshade="">
+                <li class="li_info"> <p class="heure_info">🔴19:47</p><br> <p class="article_info">Présidentiel</p></li>
+                <hr class="hr_info" noshade="">
+                <li class="li_info"> <p class="heure_info">🔴19:36</p><br><p class="article_info">Un passe pour le parque national des calanques</p></li>
+                <hr class="hr_info" noshade="">
+                <li class="li_info"><a href=""><p class="article_info" id="voir_plus">Voir Plus ></p></a></li>
+            </ul>
+        </div>
     </header>
     <main>
-      <div id="div_main">
-        <div>
-          <img src="img/Logo.png" alt="" />
+        <div class="div_main">
+        <div class="div_main1">
+         <a href=""><h2 class="h2_main">"Au XXe siècle, les sanctions économiques se sont souvent révélées contre-productives"</h2></a>
+        <img src="img/article1.png" alt="" class="img_article1">
+        <br>
+        <p class="p_article1">Dans un entretien au "Monde", l'historien Nicholas Mulder retrace l'histoire des sanctions économiques et s'interroge sur l'efficacité de celles imposiées aujourd'hui à la Russie.</p>
+        <br>
+        <ul class="ul_article1">
+            <li class="li_article1"><a href=""><p>🔴Les Etats-Unis elargissent encore les sanctions financière contre la Russie</p></a></li>
+            <li class="li_article1"><a href=""><p>🔴L'est de l'Ukraine se prépare à d'intenses combats, le pays réclame plus d'armes à l'OTANT</p></a></li>
+            <li class="li_article1"><a href=""><p>🔴Les pays baltes cherchent à se sevrer du gaz russe</p></a></li>
+        </ul>
         </div>
-        <div id="recherche_barre">
-          <img src="img/search.png" alt="loop" id="img_barre" />
-          <input
-            type="text"
-            placeholder="Effectuez une recherche sur Goole ou saisissez une URL"
-            id="input_recherche"
-          />
-          <img src="img/micro.png" alt="micro" id="img_barre" />
+        <div class="asidebackgrood">
+        <aside>
+            <img src="img/aside.png" alt="" class="img_aside">
+            <div class="div_aside">
+            <h2 class="h2_aside">DECRIPTAGE</h2>
+            <p class="p1_aside">Allan Kaval</p>
+            <br>
+            <p class="p2_aside">La campagne des Tchétchènes de Kadyrov dans la guerre en Ukraine : violence, impunité et propagande.</p>
+            <br>
+            <p class="p3_aside">Le dirieant du petit territoire du caucase du Nord met en scène l'intervention de son armée personnelle dans la guerre. Sa chaîne Telegram est surtout devenue l'un des principaux canaux de propagande pour l'"opération spéciale"russe.</p> <br> <br>
+            <p class="p4_aside">9 min de lecture</p>
+            </div>
+        </aside>
         </div>
-        <div>
-          <button id="but_main">Recherche Google</button>
-          <button id="but_main">J'ai de la chance</button>
         </div>
-      </div>
     </main>
-    <footer>
-      <div id="text_footer1">
-        <p>France</p>
-      </div>
-      <hr />
-      <div id="text_footer2">
-        <center><p>Neutre en carbone depuis 2007</p></center>
-      </div>
-      <div>
-        <ul id="ul_footer1">
-          <li>A propos</li>
-          <li>Publicité</li>
-          <li>Entreprise</li>
-          <li>Comment fonctionne la recherche Google ?</li>
-        </ul>
-      </div>
-      <div>
-        <ul id="ul_footer2">
-          <li><a href="monsite.htm" id="a_footer">Signaler un contenu inappropié</a></li>
-          <li>Info consommateurs</li>
-          <li>Confidentialité</li>
-          <li>Conditions</li>
-          <li>Paramètres</li>
-        </ul>
-      </div>
-    </footer>
-  </body>
+    <section>
+        <div class="divsection">
+            <ul class="ul_section">
+                <li class="li_section">
+                    <img src="img/photosection1.png" alt="" class="img_li_section">
+                    <p class="p_li_section1">🔴Campagne électorale cherche culture désepérément</p>
+                    <br>
+                    <p class="p_li_section2">Alors que la thématique a été écrasée par celle sur la sécurité ou le pouvoir d'achat, les propositions des principaux candidats divergent peu.</p>
+                    <br>
+                    <a href=""><p class="p_li_section3">Enquête</p></a>
+                </li>
+                <li class="li_section">
+                    <img src="img/photosection2.png" alt="" class="img_li_section">
+                    <p class="p_li_section1">🔴Marion Maréchal appelle à une "union des droites" aux législatives:suivez la campagne présidentielle en direct</p>
+                    <br>
+                    <p class="p_li_section2">A trois jours du premier tour de l'élection présidentielle, les douze candidats multiplient les interviews dans les médias et les meetings, pour convaincre les indécis, qui sont encore nombreux.</p>
+                </li>
+                <li class="li_section">
+                    <img src="img/photosection3.png" alt="" class="img_li_section">
+                    <p class="p_li_section1">🔴Le système de santé britannique secoué par un vaste scandale</p>
+                    <br>
+                    <p class="p_li_section2">Au royaume-Unis, de graves dysfonctionnements sont à l'origine de plus de 200 décès de bébés en vingt ans dans deux maternités des Midlands</p>
+                </li>
+            </ul>
+        </div>
+    </section>
+</body>
 </html>

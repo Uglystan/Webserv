@@ -15,13 +15,13 @@
 #include <sys/types.h>
 #include <map>
 #include <sys/time.h>
+#include <vector>
 
-#define NB_EVENT 10
-#define MAX_CLIENT 100
+#define NB_EVENT_BASE 100
 #define MAX_CLIENT_BODYSIZE 20000
-#define MAZ_TIME_BEFOR_CLOSE
+#define MAX_TIME_BEFORE_CLOSE 300
 
-int	checkTimeAndWaitPoll(int &epollFd, struct epoll_event *events, std::map<int, struct timeval> &timer);
+int	checkTimeAndWaitPoll(int &epollFd, std::vector<struct epoll_event> &events, std::map<int, struct timeval> &timer);
 void	delEpollEvent(int &epollFd, int &socket);
 void	addEpollEvent(int &epollFd, int &socket);
 void	initAdresse(struct sockaddr_in &adresse);
@@ -30,3 +30,5 @@ void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, in
 void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer);
 void	disconnectClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer);
 void	errorClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer);
+void	addPlaceEventLog(int nfds, std::vector<struct epoll_event> &events);
+void	delPlaceEventLog(int nfds, std::vector<struct epoll_event> &events);

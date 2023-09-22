@@ -55,7 +55,7 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval>
 		std::cout << "Message recu : " << msg << std::endl;
 		Response resp(msg);
 		std::string rep = resp.create_response();
-		std::cout << "Message envoyee : " << rep << std::endl;
+		//std::cout << "Message envoyee : " << rep << std::endl;
 		send(clientSocket, rep.c_str(), rep.size(), 0);
 	}
 }
