@@ -16,6 +16,7 @@
 #include <map>
 #include <sys/time.h>
 #include <vector>
+#include <sys/wait.h>
 
 #define NB_EVENT_BASE 100
 #define MAX_CLIENT_BODYSIZE 20000
@@ -32,3 +33,4 @@ void	disconnectClient(int &epollFd, int &socket, std::map<int, struct timeval> &
 void	errorClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer);
 void	addPlaceEventLog(int nfds, std::vector<struct epoll_event> &events);
 void	delPlaceEventLog(int nfds, std::vector<struct epoll_event> &events);
+std::string	readClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer, int &bytes_read);

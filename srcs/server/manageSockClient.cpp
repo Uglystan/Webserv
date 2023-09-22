@@ -20,10 +20,9 @@ void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, in
 	}
 }
 
-void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
+std::string	readClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer, int &bytes_read)
 {
 	char	buffer[1025];
-	int	bytes_read = 0;
 	std::string	msg;
 
 	memset(buffer, 0, sizeof(buffer));
@@ -52,11 +51,60 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval>
 				}
 			}
 		}
+	}
+	return (msg);
+}
+
+void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
+{
+	int	bytes_read = 0;
+	std::string	msg = readClient(epollFd, clientSocket, timer, bytes_read);
+	// std::string	reponse;
+	// std::string	line;
+	// int	status;
+	// int	fd[2];
+	// int	pid;
+
+	if (bytes_read > 0)
+	{
 		std::cout << "Message recu : " << msg << std::endl;
+		/*Ici fork pour appeller le CGI*/
+		// if (pipe(fd) == -1)
+		// 	std::cout << "Error pipe" << std::endl;
+		// pid = fork();
+		// if (pid == -1)
+		// 	std::cout << "Error fork" << std::endl;
+		// if (!pid)
+		// {
+		// 	if (dup2(fd[1], 1) == -1)
+		// 		std::cout << "Error dup2 fils" << std::endl;
+		// 	if (close(fd[0]) == -1)
+		// 		std::cout << "Error close fd[0] fils" << std::endl;
+		// 	if (close(fd[1]) == -1)
+		// 		std::cout << "Error close fd[1] fils" << std::endl;
+		// 	execve(/*Programme alex avec msg comme argument*/);
+		// 	std::cout << "Error execve" << std::endl;
+		// }
+		// waitpid(pid, &status, 0);
+		// if (dup2(fd[0], /*Dans un fichier*/) == -1)
+		// 		std::cout << "Error dup2 parent" << std::endl;
+		// if (close(fd[0]) == -1)
+		// 	std::cout << "Error close fd[0] parent" << std::endl;
+		// if (close(fd[1]) == -1)
+		// 	std::cout << "Error close fd[1] parent" << std::endl;
+		// std::ifstream 	flux_reponse("/*nom du fichier*/");//Nom fichier ici
+		// if (flux_reponse.is_open() == -1)
+		// 	std::cout << "Error ifstream open" << std::endl;
+		// while (std::getline(flux_reponse, line))
+		// {
+		// 	reponse.append(line);
+		// 	reponse.append("\n");
+		// }
+		/*Fin du fork*/
 		Response resp(msg);
 		std::string rep = resp.create_response();
 		//std::cout << "Message envoyee : " << rep << std::endl;
-		send(clientSocket, rep.c_str(), rep.size(), 0);
+		send(clientSocket, rep.c_str(), rep.size(), 0);//send reponse
 	}
 }
 
