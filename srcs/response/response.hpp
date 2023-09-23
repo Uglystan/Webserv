@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/21 19:34:02 by lgirault         ###   ########.fr       */
+/*   Updated: 2023/09/23 13:26:58 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class Response
 		Response(std::string request);
 		~Response(void);
 
-		std::string	create_response(void);
-		void	find_method(void);
+		std::string	get_response(void);
+		std::string	find_method(void);
 		void	find_path(void);
 		void	create_header(void);
 		void	create_body();
@@ -68,5 +68,6 @@ class Response
 		std::string	_body;
 		std::string	_header;
 		int		_code;
+		int		_bool;
 		std::map<int, std::string>	_errors;
 };

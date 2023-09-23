@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.cpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 11:42:04 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/23 10:56:30 by lgirault         ###   ########.fr       */
+/*   Updated: 2023/09/23 13:33:08 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,29 @@ void	Response::cleanHeader(void)
 	_header = "";
 }
 
-std::string	Response::create_response(void)
+std::string	Response::find_method(void)
+{
+	size_t posGET = _request.find("GET");
+	size_t posPOST = _request.find("POST");
+	size_t posDELETE = _request.find("DELETE");
+	if (posGET != std::string::npos || posPOST != std::string::npos || posDELETE != std::string::npos)
+	{
+		if(posGET != std::string::npos)
+			return (get_response());
+		if(posPOST != std::string::npos)
+			std::cout << "POST find" << std::endl;
+		if(posDELETE != std::string::npos)
+			std::cout << "DELETE find" << std::endl;
+	}
+	else if (_request != "\n")
+	{
+		//std::cout << "METHOD not found" << std::endl;
+		_code = 400;
+	}
+	return (_response);
+}
+
+std::string	Response::get_response(void)
 {
 	find_path();
 	create_body();
@@ -98,50 +120,50 @@ void	Response::create_body()
 	{
 		_code = 404;
 		_path = "html/error.html";
-		create_body();
+		//create_body();//peu etre a laisser
 		//std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl;
 	}
 }
 
 void	Response::body_error_page(void)
 {
-		_body.clear();
-		std::ifstream html_file("html/error.html");
-		if (html_file.is_open())
+	_body.clear();
+	std::ifstream html_file("html/error.html");
+	if (html_file.is_open())
+	{
+		if (html_file.peek() ==  std::ifstream::traits_type::eof())
+			_code = 204;
+		std::string buffer;
+		while (std::getline(html_file, buffer))
 		{
-			if (html_file.peek() ==  std::ifstream::traits_type::eof())
-				_code = 204;
-			std::string buffer;
-			while (std::getline(html_file, buffer))
-			{
-				if (!html_file.eof())
-					_body.append(buffer + '\n');
-				else //pas de \n si derniere ligne
-					_body.append(buffer);
-			}
-			html_file.close();
+			if (!html_file.eof())
+				_body.append(buffer + '\n');
+			else //pas de \n si derniere ligne
+				_body.append(buffer);
 		}
-		else
-		{
-			_code = 404;
-			//std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl
-		}
-		std::stringstream ss;
-		ss << _code;
-		size_t codePos = _body.find("[CODE]");
-		if (codePos != std::string::npos) {
-			_body.replace(codePos, 6, ss.str());
-		}
-		codePos = _body.find("[CODE]");
-		if (codePos != std::string::npos) {
-			_body.replace(codePos, 6, ss.str());
-		}
-		std::string errorMessage = _errors[_code];
-		size_t messagePos = _body.find("[MESSAGE]");
-		if (messagePos != std::string::npos) {
-			_body.replace(messagePos, 9, errorMessage);
-		}
-		_code = 200;
+		html_file.close();
+	}
+	else
+	{
+		_code = 404;
+		//std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl
+	}
+	std::stringstream ss;
+	ss << _code;
+	size_t codePos = _body.find("[CODE]");
+	if (codePos != std::string::npos) {
+		_body.replace(codePos, 6, ss.str());
+	}
+	codePos = _body.find("[CODE]");
+	if (codePos != std::string::npos) {
+		_body.replace(codePos, 6, ss.str());
+	}
+	std::string errorMessage = _errors[_code];
+	size_t messagePos = _body.find("[MESSAGE]");
+	if (messagePos != std::string::npos) {
+		_body.replace(messagePos, 9, errorMessage);
+	}
+	_code = 200;
 }
 
 void	Response::create_header(void)
@@ -152,7 +174,7 @@ void	Response::create_header(void)
 	_header += find_content_type();
 	_header += find_content_lenght();
 	_header += find_content_lang();
-	//_header += find_LastModified();
+	_header += find_LastModified();
 	_header += find_tranfertencoding();
 	_header += find_WwwAuthenticate();
 	_header += find_connection();
@@ -308,26 +330,6 @@ std::string	Response::find_langage(void)
 	return (language);
 }
 
-void	Response::find_method(void)
-{
-	size_t posGET = _request.find("GET");
-	size_t posPOST = _request.find("POST");
-	size_t posDELETE = _request.find("DELETE");
-	if (posGET != std::string::npos || posPOST != std::string::npos || posDELETE != std::string::npos)
-	{
-		if(posGET != std::string::npos)
-			create_response();
-		if(posPOST != std::string::npos)
-			std::cout << "POST find" << std::endl;
-		if(posDELETE != std::string::npos)
-			std::cout << "DELETE find" << std::endl;
-	}
-	else if (_request != "\n")
-	{
-		//std::cout << "METHOD not found" << std::endl;
-		_code = 400;
-	}
-}
 
 
 std::string	Response::get_response(void) const
