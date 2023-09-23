@@ -6,7 +6,6 @@ int	checkTimeAndWaitPoll(int &epollFd, std::vector<struct epoll_event> &events, 
 	gettimeofday(&timeNow, NULL);
 	std::map<int, struct timeval>::iterator i = timer.begin();
 	std::map<int, struct timeval>::iterator temp = i;
-	unsigned long e = 0;
 
 	while (i != timer.end())
 	{
@@ -15,12 +14,11 @@ int	checkTimeAndWaitPoll(int &epollFd, std::vector<struct epoll_event> &events, 
 		std::cout << (timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 << std::endl;
 		if ((timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 > MAX_TIME_BEFORE_CLOSE)
 		{
-			std::cout << "Delais trop long deco d'une socket" << std::endl;
+			std::cout << "Delais trop long deco de la socket : " << temp->first << std::endl;
 			delEpollEvent(epollFd, const_cast<int &>(temp->first));//aaaaa
 			close(temp->first);
 			timer.erase(temp->first);
 		}
-		e++;
 	}
 	return (epoll_wait(epollFd, events.data(), events.size(), -1));
 }
@@ -52,7 +50,7 @@ void	addPlaceEventLog(int nfds, std::vector<struct epoll_event> &events)
 {
 	if (nfds == static_cast<int>(events.size()))
 	{
-		std::cout << "Redim tab evenement add place.Taille now = "<< events.size() * 2 << std::endl;
+		std::cout << "Redim tab evenement add place. Taille now = "<< events.size() * 2 << std::endl;
 		std::cout << std::endl;
 		events.resize(nfds * 2);
 	}
@@ -62,7 +60,7 @@ void	delPlaceEventLog(int nfds, std::vector<struct epoll_event> &events)
 {
 	if (nfds < static_cast<int>(events.size()) / 4 && events.size() > NB_EVENT_BASE)
 	{
-		std::cout << "Redim tab evenement delete place.Taille now = " << events.size() / 2 << std::endl;
+		std::cout << "Redim tab evenement delete place. Taille now = " << events.size() / 2 << std::endl;
 		std::cout << std::endl;
 		events.resize(nfds / 2);
 	}

@@ -20,9 +20,10 @@ void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, in
 	}
 }
 
-std::string	readClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer, int &bytes_read)
+void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
 {
 	char	buffer[1025];
+	int	bytes_read = 0;
 	std::string	msg;
 
 	memset(buffer, 0, sizeof(buffer));
@@ -51,24 +52,37 @@ std::string	readClient(int &epollFd, int &clientSocket, std::map<int, struct tim
 				}
 			}
 		}
+		std::cout << "Message recu : " << msg << std::endl;
+		Response resp(msg);
+		std::string rep = resp.create_response();
+		//std::cout << "Message envoyee : " << rep << std::endl;
+		send(clientSocket, rep.c_str(), rep.size(), 0);
 	}
-	return (msg);
 }
 
-void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
+void	disconnectClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
 {
-	int	bytes_read = 0;
-	std::string	msg = readClient(epollFd, clientSocket, timer, bytes_read);
+	std::cout << "Deconnexion socket : " << socket << std::endl;
+	timer.erase(socket);
+	delEpollEvent(epollFd, socket);
+	close(socket);
+}
+
+void	errorClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
+{
+	std::cout << "Error sur socket : " << socket << std::endl;
+	timer.erase(socket);
+	delEpollEvent(epollFd, socket);
+	close(socket);
+}
+
 	// std::string	reponse;
 	// std::string	line;
 	// int	status;
 	// int	fd[2];
 	// int	pid;
 
-	if (bytes_read > 0)
-	{
-		std::cout << "Message recu : " << msg << std::endl;
-		/*Ici fork pour appeller le CGI*/
+/*Ici fork pour appeller le CGI*/
 		// if (pipe(fd) == -1)
 		// 	std::cout << "Error pipe" << std::endl;
 		// pid = fork();
@@ -101,25 +115,3 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval>
 		// 	reponse.append("\n");
 		// }
 		/*Fin du fork*/
-		Response resp(msg);
-		std::string rep = resp.create_response();
-		//std::cout << "Message envoyee : " << rep << std::endl;
-		send(clientSocket, rep.c_str(), rep.size(), 0);//send reponse
-	}
-}
-
-void	disconnectClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
-{
-	std::cout << "Deconnexion client" << std::endl;
-	timer.erase(socket);
-	delEpollEvent(epollFd, socket);
-	close(socket);
-}
-
-void	errorClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
-{
-	std::cout << "Error sur socket" << std::endl;
-	timer.erase(socket);
-	delEpollEvent(epollFd, socket);
-	close(socket);
-}

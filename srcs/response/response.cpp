@@ -6,7 +6,7 @@
 /*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 11:42:04 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/22 12:49:37 by lgirault         ###   ########.fr       */
+/*   Updated: 2023/09/23 10:56:30 by lgirault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	Response::create_body()
 {
 	std::ifstream html_file;
 	if (_path == "html/")
-		html_file.open("html/index.html", std::ios::in);
+		html_file.open("html/monsite.html", std::ios::in);
 	else
 		html_file.open(_path.c_str(), std::ios::in);
 	if (html_file.is_open())
