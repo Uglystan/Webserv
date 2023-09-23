@@ -22,12 +22,15 @@ void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, in
 
 void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
 {
-	char	buffer[1025];
+	char	buffer[1024];
 	int	bytes_read = 0;
+	int	totalBytesRead = 0;
 	std::string	msg;
 
 	memset(buffer, 0, sizeof(buffer));
 	bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
+	int	sizeMessageTotal = sizeMessage(buffer);
+
 	if (bytes_read == -1)
 	{
 		std::cout << "Error recv" << std::endl;
@@ -39,23 +42,18 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval>
 	{
 		gettimeofday(&timer[clientSocket], NULL);//reset
 		msg.append(buffer);
-		if (bytes_read == 1024)
+		totalBytesRead += bytes_read;
+		while (totalBytesRead != sizeMessageTotal)//avant y'avait "<" et ca marchais !!!!!!!!!!!!!!!!!!!!!!
 		{
-			while (bytes_read == 1024)
-			{
-				memset(buffer, 0, sizeof(buffer));
-				bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);//proteger recv encore ?
-				msg.append(buffer);
-				if (msg.size() > MAX_CLIENT_BODYSIZE)
-				{
-					/*Error page 413*/
-				}
-			}
+			memset(buffer, 0, sizeof(buffer));
+			bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);//proteger recv encore ?
+			msg.append(buffer);
+			if (bytes_read != -1)
+				totalBytesRead += bytes_read;
 		}
 		std::cout << "Message recu : " << msg << std::endl;
 		Response resp(msg);
 		std::string rep = resp.find_method();
-		std::cout << "Message envoyee : " << rep << std::endl;
 		send(clientSocket, rep.c_str(), rep.size(), 0);
 	}
 }

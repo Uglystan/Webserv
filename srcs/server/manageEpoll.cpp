@@ -11,7 +11,6 @@ int	checkTimeAndWaitPoll(int &epollFd, std::vector<struct epoll_event> &events, 
 	{
 		temp = i;
 		i++;
-		std::cout << (timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 << std::endl;
 		if ((timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 > MAX_TIME_BEFORE_CLOSE)
 		{
 			std::cout << "Delais trop long deco de la socket : " << temp->first << std::endl;
