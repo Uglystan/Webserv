@@ -42,7 +42,7 @@ void	recvMessage(int &bytes_read, int &clientSocket, char *buffer)
 		std::cerr << "Error execve" << std::endl;
 	}
 	waitpid(pid, &status, 0);
-	int gnlfd = open("/mnt/nfs/homes/abourdon/Desktop/Webserv/srcs/server/test", O_RDONLY, O_WRONLY,O_TRUNC);
+	int gnlfd = open("srcs/server/test", O_RDONLY, O_WRONLY,O_TRUNC);
 	if (gnlfd == -1)
 		std::cout << "Error opening file" << std::endl;
 	if (dup2(fd[0], gnlfd) == -1)
