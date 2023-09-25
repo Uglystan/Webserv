@@ -10,12 +10,13 @@ BOLD=\033[1m
 RESET=\033[0m
 
 	
-SRC =	srcs/response/response.cpp\
-	srcs/server/serv.cpp\
+SRC =	srcs/server/serv.cpp\
 	srcs/server/manageEpoll.cpp\
 	srcs/server/initSockServ.cpp\
 	srcs/server/manageSockClient.cpp\
+	srcs/utils/gnl.cpp\
 	#srcs/response/main.cpp\
+	#srcs/response/response.cpp\
 	
 OBJ = $(SRC:.cpp=.o)
 

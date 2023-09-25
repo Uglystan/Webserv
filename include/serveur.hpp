@@ -17,6 +17,12 @@
 #include <sys/time.h>
 #include <vector>
 #include <sys/wait.h>
+#include <stdlib.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <cstdio>
+#include <sstream>
+#include "../srcs/utils/gnl.hpp"
 
 #define NB_EVENT_BASE 100
 #define MAX_CLIENT_BODYSIZE 20000

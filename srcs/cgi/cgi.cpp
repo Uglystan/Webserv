@@ -1,16 +1,4 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   response.cpp                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/20 11:42:04 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/23 13:33:08 by abourdon         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
-#include "response.hpp"
+#include "cgi.hpp"
 
 Response::Response(std::string request): _request(request), _code(200)
 {
@@ -68,7 +56,7 @@ std::string	Response::find_method(void)
 		if(posDELETE != std::string::npos)
 			std::cout << "DELETE find" << std::endl;
 	}
-	else if (_request != "\n")
+	else
 	{
 		//std::cout << "METHOD not found" << std::endl;
 		_code = 400;
@@ -335,4 +323,11 @@ std::string	Response::find_langage(void)
 std::string	Response::get_response(void) const
 {
 	return (_response);
+}
+
+int	main(int ac, char **av)
+{
+	(void)ac;
+	Response reponse(av[1]);
+	std::cout << reponse.find_method() << std::endl;
 }

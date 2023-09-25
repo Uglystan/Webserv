@@ -6,11 +6,12 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/23 13:26:58 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/23 13:49:11 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#pragma once
+# ifndef CGI_HPP
+#define CGI_HPP
 
 #include <iostream>
 #include <string>
@@ -71,3 +72,5 @@ class Response
 		int		_bool;
 		std::map<int, std::string>	_errors;
 };
+
+#endif
