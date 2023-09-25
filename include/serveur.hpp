@@ -38,3 +38,5 @@ std::string	readClient(int &epollFd, int &clientSocket, std::map<int, struct tim
 int	sizeBody(std::string buffer);
 int	sizeHeader(std::string buffer);
 int	sizeMessage(char *buffer);
+void	recvMessage(int &bytes_read, int &clientSocket, char *buffer);
+int	is_chunked(char *buffer);

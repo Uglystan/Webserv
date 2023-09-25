@@ -20,17 +20,22 @@ void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, in
 	}
 }
 
+int	is_chunked(char *buffer)
+{
+	std::string	buf = buffer;
+	if (buf.find("Transfer-Encoding: chunked") != std::string::npos)
+		return(1);
+	else
+		return (0);
+}
+
 void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
 {
 	char	buffer[1024];
 	int	bytes_read = 0;
-	int	totalBytesRead = 0;
-	std::string	msg;
 
 	memset(buffer, 0, sizeof(buffer));
 	bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
-	int	sizeMessageTotal = sizeMessage(buffer);
-
 	if (bytes_read == -1)
 	{
 		std::cout << "Error recv" << std::endl;
@@ -41,20 +46,11 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval>
 	else if (bytes_read > 0)
 	{
 		gettimeofday(&timer[clientSocket], NULL);//reset
-		msg.append(buffer);
-		totalBytesRead += bytes_read;
-		while (totalBytesRead != sizeMessageTotal)//avant y'avait "<" et ca marchais !!!!!!!!!!!!!!!!!!!!!!
+		if (is_chunked(buffer) == 1)
 		{
-			memset(buffer, 0, sizeof(buffer));
-			bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);//proteger recv encore ?
-			msg.append(buffer);
-			if (bytes_read != -1)
-				totalBytesRead += bytes_read;
 		}
-		std::cout << "Message recu : " << msg << std::endl;
-		Response resp(msg);
-		std::string rep = resp.find_method();
-		send(clientSocket, rep.c_str(), rep.size(), 0);
+		else
+			recvMessage(bytes_read, clientSocket, buffer);
 	}
 }
 
