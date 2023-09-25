@@ -14,9 +14,9 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/manageEpoll.cpp\
 	srcs/server/initSockServ.cpp\
 	srcs/server/manageSockClient.cpp\
+	srcs/server/sizeMessageRecv.cpp\
+	srcs/server/readMessage.cpp\
 	srcs/utils/gnl.cpp\
-	#srcs/response/main.cpp\
-	#srcs/response/response.cpp\
 	
 OBJ = $(SRC:.cpp=.o)
 
