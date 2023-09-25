@@ -16,6 +16,7 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/manageSockClient.cpp\
 	srcs/server/sizeMessageRecv.cpp\
 	srcs/server/readMessage.cpp\
+	srcs/server/execCgi.cpp\
 	srcs/utils/gnl.cpp\
 	
 OBJ = $(SRC:.cpp=.o)
