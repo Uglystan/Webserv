@@ -40,6 +40,7 @@ void	Response::cleanHeader(void)
 	_path = "";
 	_body = "";
 	_header = "";
+	_method = "";
 }
 
 std::string	Response::find_method(void)
@@ -52,7 +53,7 @@ std::string	Response::find_method(void)
 		if(posGET != std::string::npos)
 			return (get_response());
 		if(posPOST != std::string::npos)
-			std::cout << "POST find" << std::endl;
+			return (post_response());
 		if(posDELETE != std::string::npos)
 			std::cout << "DELETE find" << std::endl;
 	}
@@ -64,8 +65,20 @@ std::string	Response::find_method(void)
 	return (_response);
 }
 
+std::string	Response::post_response(void)
+{
+	_method = "POST";
+	find_path();
+	get_file();
+	create_body();
+	create_header();
+	_response = _header + _body;
+	return (_response);
+}
+
 std::string	Response::get_response(void)
 {
+	_method = "GET";
 	find_path();
 	create_body();
 	if (_code >= 400)
@@ -80,13 +93,39 @@ std::string	Response::get_response(void)
 	return (_response);
 }
 
+void	Response::get_file(void)
+{
+	std::string boundaryStart = "name=\"";
+	size_t startPos = _request.find(boundaryStart);
+	if (startPos == std::string::npos) 
+		std::cerr << "Séparateur de fichier introuvable dans les données POST." << std::endl;
+	startPos = _request.find("\r\n\r\n", startPos);
+	if (startPos == std::string::npos) 
+		std::cerr << "En-tete de fichier introuvable" << std::endl;
+	startPos += 4;
+	std::string	 fileContent = _request.substr(startPos);
+	std::ofstream outfile("html/tmp/bguillau.jpg", std::ios::binary);
+	if (outfile)
+	{
+		outfile.write(fileContent.c_str(), fileContent.size());
+		outfile.close();
+	}
+	else
+		std::cerr << "ERREUR creation file" << std::endl;
+}
+
 void	Response::create_body()
 {
 	std::ifstream html_file;
-	if (_path == "html/")
-		html_file.open("html/monsite.html", std::ios::in);
-	else
-		html_file.open(_path.c_str(), std::ios::in);
+	if (_method == "GET")
+	{
+		if (_path == "html/")
+			html_file.open("html/monsite.html", std::ios::in);
+		else
+			html_file.open(_path.c_str(), std::ios::in);
+	}
+	else if(_method == "POST")
+		html_file.open("html/dowmload.html", std::ios::in);
 	if (html_file.is_open())
 	{
 		if (html_file.peek() ==  std::ifstream::traits_type::eof())
@@ -317,8 +356,6 @@ std::string	Response::find_langage(void)
 		_code = 400;
 	return (language);
 }
-
-
 
 std::string	Response::get_response(void) const
 {

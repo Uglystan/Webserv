@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   response.hpp                                       :+:      :+:    :+:   */
+/*   cgi.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/23 13:49:11 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/26 13:57:34 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 #include <unistd.h>
 #include <map>
 #include <sstream>
+#include <vector>
 
 class Response
 {
@@ -31,6 +32,7 @@ class Response
 		~Response(void);
 
 		std::string	get_response(void);
+		std::string	post_response(void);
 		std::string	find_method(void);
 		void	find_path(void);
 		void	create_header(void);
@@ -39,6 +41,7 @@ class Response
 		void	find_error_code(void);
 		void	body_error_page(void);
 		void	cleanHeader(void);
+		void	get_file(void);
 		std::string	find_status_line(void);
 		std::string	find_server(void);
 		std::string	find_date(void);
@@ -68,6 +71,7 @@ class Response
 		std::string	_path;
 		std::string	_body;
 		std::string	_header;
+		std::string	_method;
 		int		_code;
 		int		_bool;
 		std::map<int, std::string>	_errors;
