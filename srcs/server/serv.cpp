@@ -6,6 +6,7 @@ int main (/*File conf*/)
 	std::vector<struct epoll_event> events(NB_EVENT_BASE);
 	struct sockaddr_in	adresse;
 	std::map <int, struct timeval>	timer;
+	std::string msgChunk;
 
 	memset(events.data(), 0, sizeof(events));
 	initAdresse(adresse);
@@ -21,7 +22,7 @@ int main (/*File conf*/)
 			else if (events[i].events & EPOLLRDHUP)//Absolument devant EPOLLIN
 				disconnectClient(epollFd, events[i].data.fd, timer);
 			else if (events[i].events & EPOLLIN)
-				manageClient(epollFd, events[i].data.fd, timer);
+				manageClient(epollFd, events[i].data.fd, timer, msgChunk);
 			else if (events[i].events & EPOLLERR)
 				errorClient(epollFd, events[i].data.fd, timer);
 		}

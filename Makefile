@@ -15,40 +15,32 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/manageSockClient.cpp\
 	srcs/server/sizeMessageRecv.cpp\
 	srcs/server/readMessage.cpp\
+	srcs/server/execCgi.cpp\
+	srcs/server/readChunkMessage.cpp\
 	srcs/utils/gnl.cpp\
-	
-SCRIPT_SRC = srcs/cgi/cgi.cpp
+	srcs/response/response.cpp\
 
 OBJ = $(SRC:.cpp=.o)
-SCRIPT_OBJ = $(SCRIPT_SRC:.cpp=.o)
 
 %.o : %.cpp
 	@$(CC) $(FLAGS) $(C98) -c $< -o $@
 
 all : $(NAME)
 
-$(NAME): $(OBJ) $(SCRIPT_OBJS)
+$(NAME): $(OBJ)
 	@echo "$(BLUE)$(BOLD)Compiling $(NAME)...$(RESET)"
 	@$(CC) $(FLAGS) $(C98) $(OBJ) -o $(NAME)
 	@echo "$(GREEN)$(BOLD)$(NAME) compiled!$(RESET)"
 
-a.out: $(SCRIPT_OBJ)
-	@echo "$(BLUE)$(BOLD)Compiling a.out...$(RESET)"
-	@$(CC) $(FLAGS) $(C98) $(SCRIPT_OBJ) -o srcs/cgi/a.out
-	@echo "$(GREEN)$(BOLD)a.out compiled!$(RESET)"
-
-all: $(NAME) a.out
+all: $(NAME)
 
 clean:
 	@echo "$(BLUE)$(BOLD)Cleaning object files...$(RESET)"
-	@$(RM) $(OBJ) $(SCRIPT_OBJ)
+	@$(RM) $(OBJ)
 
 fclean: clean
 	@echo "$(BLUE)$(BOLD)Cleaning $(NAME)...$(RESET)"
 	@$(RM) $(NAME)
-
-	@echo "$(BLUE)$(BOLD)Cleaning a.out...$(RESET)"
-	@$(RM) srcs/cgi/a.out
 
 re: fclean all
 

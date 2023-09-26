@@ -1,4 +1,4 @@
-#include "cgi.hpp"
+#include "response.hpp"
 
 Response::Response(std::string request): _request(request), _code(200)
 {
@@ -43,6 +43,17 @@ void	Response::cleanHeader(void)
 	_method = "";
 }
 
+std::string	Response::statik_or_dynamik(void)
+{
+	find_path();
+	size_t posPHP = _path.find(".php");
+	if (posPHP != std::string::npos)
+		std::cout << "DYNAMIK\n";
+	else
+		find_method();
+	return (_response);
+}
+
 std::string	Response::find_method(void)
 {
 	size_t posGET = _request.find("GET");
@@ -60,7 +71,7 @@ std::string	Response::find_method(void)
 	else
 	{
 		//std::cout << "METHOD not found" << std::endl;
-		_code = 400;
+		_code = 400;//error page
 	}
 	return (_response);
 }
@@ -68,7 +79,7 @@ std::string	Response::find_method(void)
 std::string	Response::post_response(void)
 {
 	_method = "POST";
-	find_path();
+	//find_path();
 	get_file();
 	create_body();
 	create_header();
@@ -79,7 +90,7 @@ std::string	Response::post_response(void)
 std::string	Response::get_response(void)
 {
 	_method = "GET";
-	find_path();
+	//find_path();
 	create_body();
 	if (_code >= 400)
 		body_error_page();
@@ -360,11 +371,4 @@ std::string	Response::find_langage(void)
 std::string	Response::get_response(void) const
 {
 	return (_response);
-}
-
-int	main(int ac, char **av)
-{
-	(void)ac;
-	Response reponse(av[1]);
-	std::cout << reponse.find_method() << std::endl;
 }

@@ -56,3 +56,24 @@ int	sizeMessage(char *buffer)
 	else
 		return (sizeHeader(buf));
 }
+
+int	sizeMessageChunk(char *buffer)
+{
+	std::string	hexa;
+	std::string	sizeMessage;
+	int	i = 0;
+	int	decimal;
+
+	while (buffer[i] != '\r')
+	{
+		hexa.append(&buffer[i]);
+		i++;
+	}
+	i++;
+	std::stringstream stream(hexa);
+	stream << std::hex;
+	stream >> std::hex >> decimal;
+	if (decimal == 0)
+		return (0);
+	return (i + decimal);
+}

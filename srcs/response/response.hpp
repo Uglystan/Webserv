@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cgi.hpp                                            :+:      :+:    :+:   */
+/*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/26 13:57:34 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/26 15:03:38 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# ifndef CGI_HPP
-#define CGI_HPP
+# ifndef RESPONSE_HPP
+#define RESPONSE_HPP
 
 #include <iostream>
 #include <string>
@@ -34,6 +34,7 @@ class Response
 		std::string	get_response(void);
 		std::string	post_response(void);
 		std::string	find_method(void);
+		std::string	statik_or_dynamik(void);
 		void	find_path(void);
 		void	create_header(void);
 		void	create_body();

@@ -19,19 +19,11 @@ void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, in
 	}
 }
 
-int	is_chunked(char *buffer)
-{
-	std::string	buf = buffer;
-	if (buf.find("Transfer-Encoding: chunked") != std::string::npos)
-		return(1);
-	else
-		return (0);
-}
-
-void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer)
+void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer, std::string &msgChunk)
 {
 	char	buffer[1024];
 	int	bytes_read = 0;
+	std::string	msg;
 
 	memset(buffer, 0, sizeof(buffer));
 	bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
@@ -45,9 +37,8 @@ void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval>
 	else if (bytes_read > 0)
 	{
 		gettimeofday(&timer[clientSocket], NULL);//reset
-		if (is_chunked(buffer) == 1)
-		{
-		}
+		if (is_chunked(buffer) == 1 || is_hexa(buffer) == 1)
+			chunckedMessage(buffer, bytes_read, clientSocket, msgChunk);
 		else
 			recvMessage(bytes_read, clientSocket, buffer);
 	}
