@@ -26,7 +26,7 @@
 #include <cstdlib>
 
 #define NB_EVENT_BASE 100
-#define MAX_CLIENT_BODYSIZE 20000
+#define MAX_CLIENT_BODYSIZE 100000
 #define MAX_TIME_BEFORE_CLOSE 300
 
 int	checkTimeAndWaitPoll(int &epollFd, std::vector<struct epoll_event> &events, std::map<int, struct timeval> &timer);

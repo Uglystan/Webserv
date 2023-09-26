@@ -59,16 +59,21 @@ int	sizeMessage(char *buffer)
 
 int	sizeMessageChunk(char *buffer)
 {
-	std::stringstream stream(buffer);
+	std::string	hexa;
 	std::string	sizeMessage;
 	int	i = 0;
 	int	decimal;
 
-	while (buffer[i] != '\n')
+	while (buffer[i] != '\r')
+	{
+		hexa.append(&buffer[i]);
 		i++;
-	std::getline(stream, sizeMessage);
-	std::stringstream line(sizeMessage);
-	line << std::hex;
-	line >> std::hex >> decimal;
+	}
+	i++;
+	std::stringstream stream(hexa);
+	stream << std::hex;
+	stream >> std::hex >> decimal;
+	if (decimal == 0)
+		return (0);
 	return (i + decimal);
 }

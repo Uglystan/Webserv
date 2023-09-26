@@ -17,6 +17,7 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/sizeMessageRecv.cpp\
 	srcs/server/readMessage.cpp\
 	srcs/server/execCgi.cpp\
+	srcs/server/readChunkMessage.cpp\
 	srcs/utils/gnl.cpp\
 	
 OBJ = $(SRC:.cpp=.o)
