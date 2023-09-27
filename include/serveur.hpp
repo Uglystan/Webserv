@@ -37,6 +37,7 @@ typedef struct s_server
 	struct sockaddr_in	adresse;
 	std::map <int, struct timeval>	timer;
 	std::map <int, std::string>	request;
+	std::map <int, int>	bytes;
 	int	bytes_read;
 
 }t_server;

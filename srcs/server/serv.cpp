@@ -5,7 +5,6 @@ int main (/*File conf*/)
 	t_server data;
 	data.epollFd = epoll_create1(0);
 	std::vector<struct epoll_event> events(NB_EVENT_BASE);
-	data.bytes_read = 0;
 
 	memset(events.data(), 0, sizeof(events));
 	initAdresse(data);

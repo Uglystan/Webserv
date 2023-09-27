@@ -23,24 +23,24 @@ void	manageClient(t_server &data, int &clientSocket)
 {
 	char	buffer[1024];
 	size_t	sizeHeader = 0;
-
+	//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!Faire une map avec une structure associe au fd socket et dans la structure la string et le nbr de bytes
 	memset(buffer, 0, sizeof(buffer));
-	data.bytes_read += recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
+	data.bytes[clientSocket] += recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
 	data.request[clientSocket] += std::string(buffer);
 	sizeHeader = data.request[clientSocket].find("\r\n\r\n");
-	if (data.bytes_read == -1 || data.bytes_read == 0)
+	if (data.bytes[clientSocket] == -1 || data.bytes[clientSocket] == 0)
 	{
-		if (data.bytes_read == -1)
+		if (data.bytes[clientSocket] == -1)
 			std::cout << "Error recv" << std::endl;
 		else
 			std::cout << "Client deco" << std::endl;
-		data.bytes_read = 0;
+		data.bytes.erase(clientSocket);
 		data.request[clientSocket].erase();
 		data.timer.erase(clientSocket);
 		delEpollEvent(data.epollFd, clientSocket);
 		close(clientSocket);
 	}
-	else if (data.bytes_read > 0)
+	else if (data.bytes[clientSocket] > 0)
 	{
 		gettimeofday(&data.timer[clientSocket], NULL);//reset
 		if (data.request[clientSocket].find("Content-Length: ") != std::string::npos)//Post en plusieur morceau
