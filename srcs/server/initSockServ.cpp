@@ -1,13 +1,13 @@
 #include "../../include/serveur.hpp"
 
-void	initAdresse(struct sockaddr_in &adresse)
+void	initAdresse(t_server &data)
 {
-	adresse.sin_family = AF_INET;
-	adresse.sin_addr.s_addr = inet_addr("127.0.0.1");
-	adresse.sin_port = htons(8080);
+	data.adresse.sin_family = AF_INET;
+	data.adresse.sin_addr.s_addr = inet_addr("127.0.0.1");
+	data.adresse.sin_port = htons(8080);
 }
 
-int	initSocket(struct sockaddr_in &adresse, int &epollFd)
+int	initSocket(t_server &data)
 {
 	int	socketServeur;
 	int opt = 1;
@@ -24,7 +24,7 @@ int	initSocket(struct sockaddr_in &adresse, int &epollFd)
 		/*Gestion erreur*/
 	}
 	//On place la socket sur le port et l'adresse IP defini
-	if (bind(socketServeur, (struct sockaddr *) &adresse, sizeof(adresse)) != 0)
+	if (bind(socketServeur, (struct sockaddr *) &data.adresse, sizeof(data.adresse)) != 0)
 	{
 		perror("Erreur bind");
 		std::cout << "Echec de bind" << std::endl;
@@ -36,6 +36,6 @@ int	initSocket(struct sockaddr_in &adresse, int &epollFd)
 		std::cout << "Echec de listen" << std::endl;
 		/*Gestion erreur*/
 	}
-	addEpollEvent(epollFd, socketServeur);
+	addEpollEvent(data.epollFd, socketServeur);
 	return (socketServeur);
 }

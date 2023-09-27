@@ -2,31 +2,30 @@
 
 int main (/*File conf*/)
 {
-	int epollFd = epoll_create1(0);
+	t_server data;
+	data.epollFd = epoll_create1(0);
 	std::vector<struct epoll_event> events(NB_EVENT_BASE);
-	struct sockaddr_in	adresse;
-	std::map <int, struct timeval>	timer;
-	std::string msgChunk;
+	data.bytes_read = 0;
 
 	memset(events.data(), 0, sizeof(events));
-	initAdresse(adresse);
-	int serverSocket = initSocket(adresse, epollFd);
+	initAdresse(data);
+	data.serverSocket = initSocket(data);
 	while(1)
 	{
-		int nfds = checkTimeAndWaitPoll(epollFd, events, timer);
-		addPlaceEventLog(epollFd, events);
+		int nfds = checkTimeAndWaitPoll(data, events);
+		addPlaceEventLog(data.epollFd, events);
 		for (int i = 0; i < nfds; i++)
 		{
-			if (events[i].data.fd == serverSocket)//C'est la socket serveur donc on recoit un nouveau client
-				acceptNewClient(serverSocket, timer, epollFd);
+			if (events[i].data.fd == data.serverSocket)//C'est la socket serveur donc on recoit un nouveau client
+				acceptNewClient(data);
 			else if (events[i].events & EPOLLRDHUP)//Absolument devant EPOLLIN
-				disconnectClient(epollFd, events[i].data.fd, timer);
+				disconnectClient(data, events[i].data.fd);
 			else if (events[i].events & EPOLLIN)
-				manageClient(epollFd, events[i].data.fd, timer, msgChunk);
+				manageClient(data, events[i].data.fd);
 			else if (events[i].events & EPOLLERR)
-				errorClient(epollFd, events[i].data.fd, timer);
+				errorClient(data, events[i].data.fd);
 		}
-		delPlaceEventLog(epollFd, events);
+		delPlaceEventLog(data.epollFd, events);
 	}
-	close(serverSocket);
+	close(data.serverSocket);
 }

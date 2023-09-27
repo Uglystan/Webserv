@@ -1,25 +1,25 @@
 #include "../../include/serveur.hpp"
 
-int	checkTimeAndWaitPoll(int &epollFd, std::vector<struct epoll_event> &events, std::map<int, struct timeval> &timer)
+int	checkTimeAndWaitPoll(t_server &data, std::vector<struct epoll_event> &events)
 {
 	struct timeval timeNow;
 	gettimeofday(&timeNow, NULL);
-	std::map<int, struct timeval>::iterator i = timer.begin();
+	std::map<int, struct timeval>::iterator i = data.timer.begin();
 	std::map<int, struct timeval>::iterator temp = i;
 
-	while (i != timer.end())
+	while (i != data.timer.end())
 	{
 		temp = i;
 		i++;
 		if ((timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 > MAX_TIME_BEFORE_CLOSE)
 		{
 			std::cout << "Delais trop long deco de la socket : " << temp->first << std::endl;
-			delEpollEvent(epollFd, const_cast<int &>(temp->first));//aaaaa
+			delEpollEvent(data.epollFd, const_cast<int &>(temp->first));//aaaaa
 			close(temp->first);
-			timer.erase(temp->first);
+			data.timer.erase(temp->first);
 		}
 	}
-	return (epoll_wait(epollFd, events.data(), events.size(), -1));
+	return (epoll_wait(data.epollFd, events.data(), events.size(), -1));
 }
 
 void	delEpollEvent(int &epollFd, int &socket)

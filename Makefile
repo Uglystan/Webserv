@@ -14,9 +14,9 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/initSockServ.cpp\
 	srcs/server/manageSockClient.cpp\
 	srcs/server/sizeMessageRecv.cpp\
-	srcs/server/readMessage.cpp\
 	srcs/server/execCgi.cpp\
 	srcs/server/readChunkMessage.cpp\
+	srcs/server/recvMultipart.cpp\
 	srcs/utils/gnl.cpp\
 	srcs/response/response.cpp\
 

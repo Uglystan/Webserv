@@ -30,23 +30,31 @@
 #define MAX_CLIENT_BODYSIZE 100000
 #define MAX_TIME_BEFORE_CLOSE 300
 
-int	checkTimeAndWaitPoll(int &epollFd, std::vector<struct epoll_event> &events, std::map<int, struct timeval> &timer);
+typedef struct s_server
+{
+	int epollFd;
+	int serverSocket;
+	struct sockaddr_in	adresse;
+	std::map <int, struct timeval>	timer;
+	std::map <int, std::string>	request;
+	int	bytes_read;
+
+}t_server;
+
+int	checkTimeAndWaitPoll(t_server &data, std::vector<struct epoll_event> &events);
 void	delEpollEvent(int &epollFd, int &socket);
 void	addEpollEvent(int &epollFd, int &socket);
-void	initAdresse(struct sockaddr_in &adresse);
-int	initSocket(struct sockaddr_in &adresse, int &epollFd);
-void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, int &epollFd);
-void	disconnectClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer);
-void	errorClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer);
+void	initAdresse(t_server &data);
+int	initSocket(t_server &data);
+void	acceptNewClient(t_server &data);
+void	disconnectClient(t_server &data, int &socket);
+void	errorClient(t_server &data, int &socket);
 void	addPlaceEventLog(int nfds, std::vector<struct epoll_event> &events);
 void	delPlaceEventLog(int nfds, std::vector<struct epoll_event> &events);
-int	sizeBody(std::string buffer);
-int	sizeHeader(std::string buffer);
-int	sizeMessage(char *buffer);
-void	recvMessage(int &bytes_read, int &clientSocket, char *buffer);
+void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader);
+void	recvBase(t_server &data, int &clientSocket);
+void	recvChunk(t_server &data, int &clientSocket);
 int	is_chunked(char *buffer);
 void	execCgi(std::string &msg, int &clientSocket);
 int	is_hexa(char * buffer);
-int	sizeMessageChunk(char *buffer);
-void	chunckedMessage(char *buffer, int &bytes_read, int &clientSocket, std::string &msg);
-void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer, std::string &msgChunk);
+void	manageClient(t_server &data, int &clientSocket);
