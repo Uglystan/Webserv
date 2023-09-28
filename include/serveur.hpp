@@ -38,7 +38,9 @@ typedef struct s_requestData
 
 typedef struct s_location
 {
-
+	std::string	directory;
+	std::string	root;
+	std::string	allow_methods;
 }t_location;
 
 typedef struct s_configServ
@@ -52,7 +54,7 @@ typedef struct s_configServ
 	int	maxBodySize;
 	std::string	cgi;
 	std::string	allowMethods;
-	t_location	location;
+	std::vector<t_location>	locationVec;
 }t_configServ;
 
 typedef struct s_server

@@ -65,11 +65,16 @@ int	getMaxBodySize(std::string servString)
 	return(atoi(servString.substr(start, len).c_str()));
 }
 
-// t_location	getLocation(std::string servString)
-// {
-// 	(void)servString;
-// 	return (NULL);
-// }
+void	getLocation(std::vector<t_location> &locationVec, std::string servString)
+{
+	while (servString.find("location ") != std::string::npos)
+	{
+		t_location	location;
+		//faire substr de la partie location et travailler avec le substr pour remplir location
+		locationVec.push_back(location);
+		//supprimer location de la string
+	}
+}
 
 t_configServ	fillEachServ(std::string servString)
 {
@@ -92,7 +97,7 @@ t_configServ	fillEachServ(std::string servString)
 	std::cout << "cgi : " << serv.cgi << std::endl;
 	serv.allowMethods = getServerName(servString, "allow_methods ");
 	std::cout << "allow_methods : " << serv.allowMethods << std::endl;
-	//serv.location = getLocation(servString);
+	//getLocation(serv.locationVec, servString);
 	return (serv);
 }
 

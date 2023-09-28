@@ -19,8 +19,6 @@ int	checkEachServString(std::vector<std::string> eachServString)
 
 	while(i < eachServString.size())
 	{
-		if (eachServString[i].find("location ") == std::string::npos || eachServString[i][eachServString[i].find("location ") + 9] <= 32)
-			return (-1);
 		if (eachServString[i].find("listen ") == std::string::npos || eachServString[i].find("listen ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("listen ") + 7] <= 32)
 			return (-1);
 		if (eachServString[i].find("root ") == std::string::npos || eachServString[i].find("root ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("root ") + 5] <= 32)
