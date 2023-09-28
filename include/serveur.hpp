@@ -30,14 +30,19 @@
 #define MAX_CLIENT_BODYSIZE 100000
 #define MAX_TIME_BEFORE_CLOSE 300
 
+typedef struct s_requestData
+{
+	int	bytes;
+	std::string	message;
+}t_requestData;
+
 typedef struct s_server
 {
 	int epollFd;
 	int serverSocket;
 	struct sockaddr_in	adresse;
 	std::map <int, struct timeval>	timer;
-	std::map <int, std::string>	request;
-	std::map <int, int>	bytes;
+	std::map <int, t_requestData> req;
 	int	bytes_read;
 
 }t_server;
