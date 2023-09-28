@@ -36,6 +36,25 @@ typedef struct s_requestData
 	std::string	message;
 }t_requestData;
 
+typedef struct s_location
+{
+
+}t_location;
+
+typedef struct s_configServ
+{
+	std::string	serverName;
+	std::string	ip;
+	int	port;
+	std::string	root;
+	std::string	index;
+	std::string	errorPage;
+	int	maxBodySize;
+	std::string	cgi;
+	std::string	allowMethods;
+	t_location	location;
+}t_configServ;
+
 typedef struct s_server
 {
 	int epollFd;
@@ -43,6 +62,7 @@ typedef struct s_server
 	struct sockaddr_in	adresse;
 	std::map <int, struct timeval>	timer;
 	std::map <int, t_requestData> req;
+	std::map <int, t_configServ> config;
 	int	bytes_read;
 
 }t_server;
@@ -64,3 +84,6 @@ int	is_chunked(char *buffer);
 void	execCgi(std::string &msg, int &clientSocket);
 int	is_hexa(char * buffer);
 void	manageClient(t_server &data, int &clientSocket);
+int	parsingConf(t_server &data, char **argv);
+int	cutEachServ(std::string &stringFile, std::vector<std::string> &eachServString);
+int	fillServ(std::vector<t_configServ> &eachServ, std::vector<std::string> &eachServString);

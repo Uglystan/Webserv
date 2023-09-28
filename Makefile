@@ -15,6 +15,9 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/manageSockClient.cpp\
 	srcs/server/execCgi.cpp\
 	srcs/server/recvMultipart.cpp\
+	srcs/parsingconf/parsingConf.cpp\
+	srcs/parsingconf/cutStringConf.cpp\
+	srcs/parsingconf/fillServConf.cpp\
 	srcs/utils/gnl.cpp\
 	srcs/response/response.cpp\
 
