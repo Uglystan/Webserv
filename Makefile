@@ -13,7 +13,6 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/manageEpoll.cpp\
 	srcs/server/initSockServ.cpp\
 	srcs/server/manageSockClient.cpp\
-	srcs/server/execCgi.cpp\
 	srcs/server/recvMultipart.cpp\
 	srcs/parsingconf/parsingConf.cpp\
 	srcs/parsingconf/cutStringConf.cpp\
