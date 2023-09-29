@@ -19,10 +19,11 @@ SRC =	srcs/server/serv.cpp\
 	srcs/parsingconf/fillServConf.cpp\
 	srcs/parsingconf/getLocation.cpp\
 	srcs/parsingconf/checkData.cpp\
-	srcs/utils/gnl.cpp\
-	srcs/response/response.cpp\
-	srcs/cgi_handler/cgi_handler.cpp\
-	srcs/httpparsing/httpparsing.cpp\
+	srcs/http/utils/gnl.cpp\
+	srcs/http/response/response.cpp\
+	srcs/http/CGIparsing/CGIparsing.cpp\
+	srcs/http/header_parsing/header_parsing.cpp\
+	srcs/http/cgi_handler/cgi_handler.cpp\
 
 OBJ = $(SRC:.cpp=.o)
 

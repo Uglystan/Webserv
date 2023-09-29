@@ -6,7 +6,7 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/29 15:24:00 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/29 17:51:57 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@
 #include <sstream>
 #include <cstdlib>
 #include "../cgi_handler/cgi_handler.hpp"
-#include "../httpparsing/httpparsing.hpp"
+#include "../CGIparsing/CGIparsing.hpp"
 
 class Response
 {
@@ -34,7 +34,7 @@ class Response
 		~Response(void);
 
 		std::string GetFileSizeAsString(void);
-		void	get_response(void);
+		void	statik_response(void);
 		std::string	post_response(void);
 		void	find_method(void);
 		std::string	statik_or_dynamik(void);
@@ -45,11 +45,6 @@ class Response
 		void	find_error_code(void);
 		void	body_error_page(void);
 		void	cleanHeader(void);
-		std::string	get_file_size(void);
-		std::string extractQueryString(void);
-		std::string extractContentType(void);
-		std::string extractContentLength(void);
-		std::string extractPostData(void);
 		void	cgi_handler(void);
 		void	put_in_env(void);
 		void	fill_strings(void);

@@ -49,20 +49,17 @@ std::string	Response::statik_or_dynamik(void)
 	find_path();
 	size_t posPHP = _path.find(".php");
 	if (posPHP != std::string::npos)
-	{
 		cgi_handler();
-	}
 	else
-		get_response();
+		statik_response();
 	std::cout << "Message envoyee : \n" << _response << std::endl;
 	return (_response);
 }
 
 void	Response::cgi_handler(void)
 {
-	// std::string	temp;
 	put_in_env();
-	_body = execCgi(_path, extractPostData());
+	_body = execCgi(_path, extractPostData(_request));
 	if (_body == "")
 	{
 		std::cout << "OOOOOOOOOOOOOOOOOPS\n";
@@ -83,7 +80,6 @@ void	Response::put_in_env(void)
 	setenv("SERVER_NAME", _server_name.c_str(), 1);
 	setenv("SERVER_PORT", _server_port.c_str(), 1);
 	setenv("SERVER_PROTOCOL", _server_protocol.c_str(), 1);
-	setenv("PATH_INFO", _path_info.c_str(), 1);
 	setenv("REQUEST_URI", _path.c_str(), 1);
 	setenv("REDIRECT_STATUS", "200", 1);
 	setenv("DOCUMENT_ROOT", _document_root.c_str(), 1);
@@ -102,18 +98,17 @@ void	Response::fill_strings(void)
 	_request_method = _method;
 	if (_method == "GET")
 	{
-		_query_string = extractQueryString();
+		_query_string = extractQueryString(_request);
 	}
 	if (_method == "POST")
 	{
-		_envcontent_type = extractContentType();
-		_envcontent_lenght = extractContentLength();//0 pour GET
+		_envcontent_type = extractContentType(_request);
+		_envcontent_lenght = extractContentLength(_request);//0 pour GET
 	}
 	_remote_addr = "127.0.0.1";//changer en fonction de config fill
 	_server_name = "Webserver42";//changer en fonction de config fill
 	_server_port = "8080";//changer en fonction de config fill
 	_server_protocol = "HTTP/1.1";//changer en fonction de config fill
-	_path_info = "";//USELESS ??
 	_request_uri = _path;
 }
 
@@ -137,43 +132,11 @@ void	Response::find_method(void)
 	}
 }
 
-std::string	Response::post_response(void)
+void	Response::statik_response(void)
 {
-	//find_path();
-	//get_file();
 	create_body();
 	create_header();
 	_response = _header + _body;
-	return (_response);
-}
-
-void	Response::get_response(void)
-{
-	//find_path();
-	create_body();
-	if (_code >= 400)
-		body_error_page();
-	create_header();
-	if (_code >= 400)
-	{
-		body_error_page();
-		create_header();
-	}
-	_response = _header + _body;
-	// return (_response);
-}
-
-std::string	Response::get_file_size(void)
-{
-	size_t contentStart = _request.find("Content-Length: ");
-	if (contentStart == std::string::npos)
-		return (0);
-	contentStart += 15;
-	size_t endPos = _request.find("\r\n", contentStart);
-	if (contentStart == std::string::npos)
-		return (0);
-	std::string	contentLength = _request.substr(contentStart + 1, endPos - contentStart);
-	return (contentLength);
 }
 
 void	Response::create_body()
@@ -190,11 +153,8 @@ void	Response::create_body()
 		html_file.open("html/dowmload.html", std::ios::in);
 	if (html_file.is_open())
 	{
-		if (html_file.peek() ==  std::ifstream::traits_type::eof())
-		{	
+		if (html_file.peek() ==  std::ifstream::traits_type::eof())	
 			_code = 204;
-			return ;
-		}
 		std::string buffer;
 		while (std::getline(html_file, buffer))
 		{
@@ -208,9 +168,6 @@ void	Response::create_body()
 	else
 	{
 		_code = 404;
-		_path = "html/error.html";
-		//create_body();//peu etre a laisser
-		//std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl;
 	}
 }
 
@@ -233,10 +190,7 @@ void	Response::body_error_page(void)
 		html_file.close();
 	}
 	else
-	{
 		_code = 404;
-		//std::cerr << "Impossible d'ouvrir le fichier HTML." << std::endl
-	}
 	std::stringstream ss;
 	ss << _code;
 	size_t codePos = _body.find("[CODE]");
@@ -252,12 +206,13 @@ void	Response::body_error_page(void)
 	if (messagePos != std::string::npos) {
 		_body.replace(messagePos, 9, errorMessage);
 	}
-	_code = 200;
+	_code = 200;//??
 }
 
 void	Response::create_header(void)
 {
 	_header.clear();
+	init_Error_code();
 	_header += find_status_line();
 	_header += find_server();
 	_header += find_date();
@@ -273,8 +228,6 @@ void	Response::create_header(void)
 
 std::string	Response::find_status_line(void)
 {
-	// find_error_code();
-	init_Error_code();
 	std::stringstream ss;
 	ss << _code;
 	_status_line = "HTTP/1.1 " + ss.str() + " " + _errors[_code] + "\n";
@@ -414,21 +367,6 @@ void Response::find_path(void)
 		_code = 400;
 }
 
-std::string Response::extractQueryString(void)
-{
-	std::string firstLine;
-	std::istringstream iss(_request);
-	std::getline(iss, firstLine);
-	size_t firstQuestionMark = firstLine.find('?');
-	if (firstQuestionMark != std::string::npos)
-	{
-		size_t nextSpacePos = firstLine.find(' ', firstQuestionMark + 1);
-		if (nextSpacePos != std::string::npos)
-			return (firstLine.substr(firstQuestionMark + 1, nextSpacePos - firstQuestionMark - 1));
-	}
-	return ("");
-}
-
 std::string	Response::find_langage(void)
 {
 	std::string	language;
@@ -445,60 +383,6 @@ std::string	Response::find_langage(void)
 	else
 		_code = 400;
 	return (language);
-}
-
-std::string Response::extractContentType(void)
-{
-	size_t contentTypePos = _request.find("Content-Type:");
-	if (contentTypePos != std::string::npos)
-	{
-		size_t lineEndPos = _request.find("\r\n", contentTypePos);
-		if (lineEndPos != std::string::npos)
-		{
-			std::string contentTypeLine = _request.substr(contentTypePos, lineEndPos - contentTypePos);
-			size_t colonPos = contentTypeLine.find(':');
-			if (colonPos != std::string::npos)
-			{
-				std::string contentType = contentTypeLine.substr(colonPos + 1);
-				size_t firstNonSpace = contentType.find_first_not_of(" \t");
-				size_t lastNonSpace = contentType.find_last_not_of(" \t");
-				if (firstNonSpace != std::string::npos && lastNonSpace != std::string::npos)
-				{
-					contentType = contentType.substr(firstNonSpace, lastNonSpace - firstNonSpace + 1);
-					return (contentType);
-				}
-			}
-		}
-	}
-	return ("");
-}
-
-std::string Response::extractContentLength(void)
-{
-	std::string contentLength;
-	size_t contentLengthPos = _request.find("Content-Length: ");
-
-	if (contentLengthPos != std::string::npos)
-	{
-		size_t lineEnd = _request.find("\r\n", contentLengthPos);
-		if (lineEnd != std::string::npos)
-		{
-			contentLength = _request.substr(contentLengthPos + 16, lineEnd - contentLengthPos - 16);
-		}
-	}
-	return (contentLength);
-}
-
-std::string Response::extractPostData(void)
-{
-	size_t headerEnd = _request.find("\r\n\r\n");
-
-	if (headerEnd != std::string::npos)
-	{
-		std::string postData = _request.substr(headerEnd + 4);  // 4 caractères pour sauter "\r\n\r\n"
-	return postData;
-	}
-	return "";
 }
 
 std::string	Response::get_response(void) const
