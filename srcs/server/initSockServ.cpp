@@ -40,6 +40,23 @@ int	initSocket(t_server &data)
 	return (socketServeur);
 }
 
+void	checkSameIp(t_server &data, t_configServ serv)
+{
+	unsigned int	i = 0;
+
+	while (i < data.config.size())
+	{
+		if (data.config[i].serverSocket == -1)//si pas de socket serv
+		{
+			if (data.config[i].ip == serv.ip && data.config[i].port == serv.port)
+			{
+				data.config[i].serverSocket = serv.serverSocket;
+			}
+		}
+		i++;
+	}
+}
+
 int	initAllServ(t_server &data)
 {
 	unsigned int	i = 0;
@@ -78,8 +95,8 @@ int	initAllServ(t_server &data)
 				/*Gestion erreur*/
 			}
 			addEpollEvent(data.epollFd, data.config[i].serverSocket);
+			checkSameIp(data, data.config[i]);
 		}
-		//fonction si port et adresse sont pareil que celui qu'on vient de faire on met meme socket
 		i++;
 	}
 	return (0);

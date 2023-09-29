@@ -93,3 +93,4 @@ int	fillServ(std::vector<t_configServ> &eachServ, std::vector<std::string> &each
 void	getLocation(std::vector<t_location> &locationVec, std::string servString);
 std::string	getStrInfo(std::string servString, std::string finding);
 int	checkData(std::vector<t_configServ> &eachServ);
+int	initAllServ(t_server &data);
