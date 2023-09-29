@@ -43,16 +43,32 @@ int	parsingConf(t_server &data, char **argv)
 {
 	std::string	stringFile;
 	std::vector<std::string>	eachServString;
-	std::vector<t_configServ>	eachServ;
 	(void)data;
 
 	if (getFile(argv, stringFile) == -1)
+	{
+		std::cout << "Error getFile" << std::endl;
 		return (-1);
+	}
 	if (cutEachServ(stringFile, eachServString) == -1)
+	{
+		std::cout << "Error cutEachServ" << std::endl;
 		return (-1);
+	}
 	if (checkEachServString(eachServString) == -1)
+	{
+		std::cout << "CheckEachServString" << std::endl;
 		return (-1);
-	if (fillServ(eachServ, eachServString) == -1)
+	}
+	if (fillServ(data.config, eachServString) == -1)
+	{
+		std::cout << "Error FillServ" << std::endl;
 		return (-1);
+	}
+	if (checkData(data.config) == -1)
+	{
+		std::cout << "Error FillServ" << std::endl;
+		return (-1);
+	}
 	return (0);
 }

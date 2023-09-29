@@ -25,6 +25,7 @@
 #include "../srcs/utils/gnl.hpp"
 #include <cstdlib>
 #include "../srcs/response/response.hpp"
+#include <regex.h>
 
 #define NB_EVENT_BASE 100
 #define MAX_CLIENT_BODYSIZE 100000
@@ -45,6 +46,7 @@ typedef struct s_location
 
 typedef struct s_configServ
 {
+	int	serverSocket;
 	std::string	serverName;
 	std::string	ip;
 	int	port;
@@ -64,7 +66,7 @@ typedef struct s_server
 	struct sockaddr_in	adresse;
 	std::map <int, struct timeval>	timer;
 	std::map <int, t_requestData> req;
-	std::map <int, t_configServ> config;
+	std::vector <t_configServ> config;
 	int	bytes_read;
 
 }t_server;
@@ -89,3 +91,6 @@ void	manageClient(t_server &data, int &clientSocket);
 int	parsingConf(t_server &data, char **argv);
 int	cutEachServ(std::string &stringFile, std::vector<std::string> &eachServString);
 int	fillServ(std::vector<t_configServ> &eachServ, std::vector<std::string> &eachServString);
+void	getLocation(std::vector<t_location> &locationVec, std::string servString);
+std::string	getStrInfo(std::string servString, std::string finding);
+int	checkData(std::vector<t_configServ> &eachServ);

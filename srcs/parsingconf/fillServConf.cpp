@@ -1,6 +1,6 @@
 #include "../../include/serveur.hpp"
 
-std::string	getServerName(std::string servString, std::string finding)
+std::string	getStrInfo(std::string servString, std::string finding)
 {
 	unsigned int	len = 0;
 	unsigned int	start = servString.find(finding);
@@ -22,7 +22,7 @@ std::string	getIp(std::string servString, int &port)
 	unsigned int	start = servString.find("listen ");
 	if (servString.find("listen ") == std::string::npos)
 	{
-		port = 0;
+		port = -1;
 		return ("");
 	}
 	start += 7;
@@ -31,7 +31,7 @@ std::string	getIp(std::string servString, int &port)
 		len++;
 	if (i == servString.size() || len == 0)
 	{
-		port = 0;
+		port = -1;
 		return ("");
 	}
 	ip = servString.substr(start, len);
@@ -45,7 +45,7 @@ std::string	getIp(std::string servString, int &port)
 	}
 	else
 	{
-		port = 0;
+		port = -1;
 		return ("");
 	}
 }
@@ -65,39 +65,35 @@ int	getMaxBodySize(std::string servString)
 	return(atoi(servString.substr(start, len).c_str()));
 }
 
-void	getLocation(std::vector<t_location> &locationVec, std::string servString)
-{
-	while (servString.find("location ") != std::string::npos)
-	{
-		t_location	location;
-		//faire substr de la partie location et travailler avec le substr pour remplir location
-		locationVec.push_back(location);
-		//supprimer location de la string
-	}
-}
-
 t_configServ	fillEachServ(std::string servString)
 {
 	t_configServ	serv;
 
-	serv.serverName = getServerName(servString, "server_name ");
+	serv.serverName = getStrInfo(servString, "server_name ");
 	std::cout << "Server name : " << serv.serverName << std::endl;
 	serv.ip = getIp(servString, serv.port);
 	std::cout << "IP : " << serv.ip << std::endl;
 	std::cout << "Port : " << serv.port << std::endl;
-	serv.root = getServerName(servString, "root ");
+	serv.root = getStrInfo(servString, "root ");
 	std::cout << "Root : " << serv.root << std::endl;
-	serv.index = getServerName(servString, "index ");
+	serv.index = getStrInfo(servString, "index ");
 	std::cout << "Index : " << serv.index << std::endl;
-	serv.errorPage = getServerName(servString, "error_page ");
+	serv.errorPage = getStrInfo(servString, "error_page ");
 	std::cout << "Error_page : " << serv.errorPage << std::endl;
 	serv.maxBodySize = getMaxBodySize(servString);
 	std::cout << "MaxBodySize : " << serv.maxBodySize << std::endl;
-	serv.cgi = getServerName(servString, "cgi ");
+	serv.cgi = getStrInfo(servString, "cgi ");
 	std::cout << "cgi : " << serv.cgi << std::endl;
-	serv.allowMethods = getServerName(servString, "allow_methods ");
+	serv.allowMethods = getStrInfo(servString, "allow_methods ");
 	std::cout << "allow_methods : " << serv.allowMethods << std::endl;
-	//getLocation(serv.locationVec, servString);
+	getLocation(serv.locationVec, servString);
+	std::cout << "location Directory : " << serv.locationVec[0].directory << std::endl;
+	std::cout << "location allow_methods : " << serv.locationVec[0].allow_methods << std::endl;
+	std::cout << "location root : " << serv.locationVec[0].root << std::endl;
+	std::cout << "location Directory : " << serv.locationVec[1].directory << std::endl;
+	std::cout << "location allow_methods : " << serv.locationVec[1].allow_methods << std::endl;
+	std::cout << "location root : " << serv.locationVec[1].root << std::endl;
+	serv.serverSocket = -1;
 	return (serv);
 }
 

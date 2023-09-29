@@ -15,6 +15,9 @@ int main (int argc, char **argv)
 			return (1);
 		}
 		/*Fin config serveur*/
+		/*Init socket server*/
+		//Parcour le tab de serv si socket = -1 regarde si il existe d'autre config comme le serv si oui meme socket jusqu'a la fin du vector
+		/*Fin init socket server*/
 		memset(events.data(), 0, sizeof(events));
 		initAdresse(data);
 		data.serverSocket = initSocket(data);

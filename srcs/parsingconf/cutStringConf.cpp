@@ -6,7 +6,7 @@ int	checkBracket(std::string stringFile)
 	int j = 0;
 	while (i <= stringFile.size())
 	{
-		if (stringFile[i] == '{' || stringFile[j] == '}')
+		if (stringFile[i] == '{' || stringFile[i] == '}')
 			j++;
 		i++;
 	}

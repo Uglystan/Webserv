@@ -18,6 +18,8 @@ SRC =	srcs/server/serv.cpp\
 	srcs/parsingconf/parsingConf.cpp\
 	srcs/parsingconf/cutStringConf.cpp\
 	srcs/parsingconf/fillServConf.cpp\
+	srcs/parsingconf/getLocation.cpp\
+	srcs/parsingconf/checkData.cpp\
 	srcs/utils/gnl.cpp\
 	srcs/response/response.cpp\
 
