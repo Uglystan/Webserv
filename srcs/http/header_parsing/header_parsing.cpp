@@ -19,26 +19,44 @@ std::string	find_date(void)
 	return (date);
 }
 
-std::string	find_content_type(void)
+std::string	find_content_type(std::string &request)
 {
-	std::string content_type
-	if (find_langage() == "")
+	std::string content_type;
+	if (find_langage(request) == "")
 		content_type = "Content-Type: text/html; charset=UTF-8";
-	else if (find_langage() == "html" || find_langage() == "css" || find_langage() == "javascript" || find_langage() == "xml" || find_langage() == "plain")
-		content_type = "Content-Type: text/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "jpeg" || find_langage() == "png" || find_langage() == "gif" || find_langage() == "bmp" || find_langage() == "ico")
-		content_type = "Content-Type: image/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "mpeg" || find_langage() == "wav" || find_langage() == "ogg")
-		content_type = "Content-Type: audio/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "mp4" || find_langage() == "webm" || find_langage() == "mpeg" || find_langage() == "avi")
-		content_type = "Content-Type: video/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "json" || find_langage() == "pdf" || find_langage() == "octet-stream" || find_langage() == "x-www-form-urlencoded")
-		content_type = "Content-Type: application/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "form-data" || find_langage() == "byteranges")
-		content_type = "Content-Type: multipart/" + find_langage() +"; charset=UTF-8";
+	else if (find_langage(request) == "html" || find_langage(request) == "css" || find_langage(request) == "javascript" || find_langage(request) == "xml" || find_langage(request) == "plain")
+		content_type = "Content-Type: text/" + find_langage(request) +"; charset=UTF-8";
+	else if (find_langage(request) == "jpeg" || find_langage(request) == "png" || find_langage(request) == "gif" || find_langage(request) == "bmp" || find_langage(request) == "ico")
+		content_type = "Content-Type: image/" + find_langage(request) +"; charset=UTF-8";
+	else if (find_langage(request) == "mpeg" || find_langage(request) == "wav" || find_langage(request) == "ogg")
+		content_type = "Content-Type: audio/" + find_langage(request) +"; charset=UTF-8";
+	else if (find_langage(request) == "mp4" || find_langage(request) == "webm" || find_langage(request) == "mpeg" || find_langage(request) == "avi")
+		content_type = "Content-Type: video/" + find_langage(request) +"; charset=UTF-8";
+	else if (find_langage(request) == "json" || find_langage(request) == "pdf" || find_langage(request) == "octet-stream" || find_langage(request) == "x-www-form-urlencoded")
+		content_type = "Content-Type: application/" + find_langage(request) +"; charset=UTF-8";
+	else if (find_langage(request) == "form-data" || find_langage(request) == "byteranges")
+		content_type = "Content-Type: multipart/" + find_langage(request) +"; charset=UTF-8";
 	// else
 	// 	_code = 400;//penser code erreur
 	return (content_type);
+}
+
+std::string	find_langage(std::string &request)
+{
+	std::string	language;
+	std::string firstLine;
+	std::istringstream iss(request);
+	std::getline(iss, firstLine);
+	size_t	firstpointpos = firstLine.find('.');
+	if (firstpointpos != std::string::npos)
+	{
+		size_t	nextspacepos = firstLine.find(' ', firstpointpos + 1);
+		if (nextspacepos != std::string::npos)
+			language += firstLine.substr(firstpointpos + 1, nextspacepos - firstpointpos - 1);
+	}
+	// else
+	// 	_code = 400;//gestion code erreur
+	return (language);
 }
 
 std::string	find_content_lenght(std::string &body)

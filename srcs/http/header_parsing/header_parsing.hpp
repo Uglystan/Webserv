@@ -16,6 +16,7 @@
 std::string	find_server(void);
 std::string	find_date(void);
 std::string	find_content_type(void);
+std::string	find_langage(std::string &request);
 std::string	find_content_lenght(std::string &body);
 std::string	find_connection(void);
 std::string	find_content_lang(std::string &request);
