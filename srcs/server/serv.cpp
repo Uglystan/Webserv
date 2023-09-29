@@ -1,32 +1,46 @@
 #include "../../include/serveur.hpp"
 
-int main (/*File conf*/)
+int main (int argc, char **argv)
 {
-	int epollFd = epoll_create1(0);
-	std::vector<struct epoll_event> events(NB_EVENT_BASE);
-	struct sockaddr_in	adresse;
-	std::map <int, struct timeval>	timer;
-	std::string msgChunk;
-
-	memset(events.data(), 0, sizeof(events));
-	initAdresse(adresse);
-	int serverSocket = initSocket(adresse, epollFd);
-	while(1)
+	if (argc == 2)
 	{
-		int nfds = checkTimeAndWaitPoll(epollFd, events, timer);
-		addPlaceEventLog(epollFd, events);
-		for (int i = 0; i < nfds; i++)
+		t_server data;
+		data.epollFd = epoll_create1(0);
+		std::vector<struct epoll_event> events(NB_EVENT_BASE);
+
+		/*Config serveur*/
+		if (parsingConf(data, argv) == -1)
 		{
-			if (events[i].data.fd == serverSocket)//C'est la socket serveur donc on recoit un nouveau client
-				acceptNewClient(serverSocket, timer, epollFd);
-			else if (events[i].events & EPOLLRDHUP)//Absolument devant EPOLLIN
-				disconnectClient(epollFd, events[i].data.fd, timer);
-			else if (events[i].events & EPOLLIN)
-				manageClient(epollFd, events[i].data.fd, timer, msgChunk);
-			else if (events[i].events & EPOLLERR)
-				errorClient(epollFd, events[i].data.fd, timer);
+			std::cerr << strerror(errno) << std::endl;
+			return (1);
 		}
-		delPlaceEventLog(epollFd, events);
+		/*Fin config serveur*/
+		/*Init socket server*/
+		//Parcour le tab de serv si socket = -1 regarde si il existe d'autre config comme le serv si oui meme socket jusqu'a la fin du vector
+		/*Fin init socket server*/
+		memset(events.data(), 0, sizeof(events));
+		initAdresse(data);
+		data.serverSocket = initSocket(data);
+		while(1)
+		{
+			//Pour serveur vituelle map avec num socketserveur et structure avec toute les autres info
+			int nfds = checkTimeAndWaitPoll(data, events);
+			addPlaceEventLog(data.epollFd, events);
+			for (int i = 0; i < nfds; i++)
+			{
+				if (events[i].data.fd == data.serverSocket)//C'est la socket serveur donc on recoit un nouveau client
+					acceptNewClient(data);
+				else if (events[i].events & EPOLLRDHUP)//Absolument devant EPOLLIN
+					disconnectClient(data, events[i].data.fd);
+				else if (events[i].events & EPOLLIN)
+					manageClient(data, events[i].data.fd);
+				else if (events[i].events & EPOLLERR)
+					errorClient(data, events[i].data.fd);
+			}
+			delPlaceEventLog(data.epollFd, events);
+		}
+		close(data.serverSocket);
 	}
-	close(serverSocket);
+	else
+		std::cout << "Incorrect argument number" << std::endl;
 }

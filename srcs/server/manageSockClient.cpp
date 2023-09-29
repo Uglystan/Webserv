@@ -1,61 +1,71 @@
 #include "../../include/serveur.hpp"
 
-void	acceptNewClient(int &serverSocket, std::map<int, struct timeval> &timer, int &epollFd)
+void	acceptNewClient(t_server &data)
 {
 	int clientSocket;
 	struct sockaddr_in clientAdresse;
 	int addresseLen = sizeof(clientAdresse);
 	struct timeval time;
 
-	clientSocket = accept(serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
+	clientSocket = accept(data.serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
 	if (clientSocket != -1)
 	{
 		//On met la socket en non bloquant c'est important sinon ca marche pas
 		int opt = 1;
 		setsockopt(clientSocket, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(1));
 		gettimeofday(&time, NULL);//creation init
-		timer[clientSocket] = time;
-		addEpollEvent(epollFd, clientSocket);
+		data.timer[clientSocket] = time;
+		addEpollEvent(data.epollFd, clientSocket);
 	}
 }
 
-void	manageClient(int &epollFd, int &clientSocket, std::map<int, struct timeval> &timer, std::string &msgChunk)
+void	manageClient(t_server &data, int &clientSocket)
 {
 	char	buffer[1024];
-	int	bytes_read = 0;
-	std::string	msg;
+	size_t	sizeHeader = 0;
 
 	memset(buffer, 0, sizeof(buffer));
-	bytes_read = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
-	if (bytes_read == -1)
+	data.req[clientSocket].bytes += recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
+	data.req[clientSocket].message += std::string(buffer);
+	sizeHeader = data.req[clientSocket].message.find("\r\n\r\n");
+	if (data.req[clientSocket].bytes == -1 || data.req[clientSocket].bytes == 0)
 	{
-		std::cout << "Error recv" << std::endl;
-		timer.erase(clientSocket);
-		delEpollEvent(epollFd, clientSocket);
+		if (data.req[clientSocket].bytes == -1)
+			std::cout << "Error recv" << std::endl;
+		else
+			std::cout << "Client deco" << std::endl;
+		data.req.erase(clientSocket);
+		data.timer.erase(clientSocket);
+		delEpollEvent(data.epollFd, clientSocket);
 		close(clientSocket);
 	}
-	else if (bytes_read > 0)
+	else if (data.req[clientSocket].bytes > 0)
 	{
-		gettimeofday(&timer[clientSocket], NULL);//reset
-		if (is_chunked(buffer) == 1 || is_hexa(buffer) == 1)
-			chunckedMessage(buffer, bytes_read, clientSocket, msgChunk);
-		else
-			recvMessage(bytes_read, clientSocket, buffer);
+		gettimeofday(&data.timer[clientSocket], NULL);//reset
+		if (data.req[clientSocket].message.find("Content-Length: ") != std::string::npos)//Post en plusieur morceau
+			recvMulti(data, clientSocket, sizeHeader);
+		else if (data.req[clientSocket].message.find("Content-Length: ") == std::string::npos)
+		{
+			if (data.req[clientSocket].message.find("Transfer-Encoding") == std::string::npos && data.req[clientSocket].message.size() >= sizeHeader)//Get base
+				recvBase(data, clientSocket);
+			else if (data.req[clientSocket].message.find("Transfer-Encoding") != std::string::npos)//Requete chunk
+				recvChunk(data, clientSocket);
+		}
 	}
 }
 
-void	disconnectClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
+void	disconnectClient(t_server &data, int &socket)
 {
 	std::cout << "Deconnexion socket : " << socket << std::endl;
-	timer.erase(socket);
-	delEpollEvent(epollFd, socket);
+	data.timer.erase(socket);
+	delEpollEvent(data.epollFd, socket);
 	close(socket);
 }
 
-void	errorClient(int &epollFd, int &socket, std::map<int, struct timeval> &timer)
+void	errorClient(t_server &data, int &socket)
 {
 	std::cout << "Error sur socket : " << socket << std::endl;
-	timer.erase(socket);
-	delEpollEvent(epollFd, socket);
+	data.timer.erase(socket);
+	delEpollEvent(data.epollFd, socket);
 	close(socket);
 }

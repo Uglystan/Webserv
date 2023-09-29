@@ -13,9 +13,13 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/manageEpoll.cpp\
 	srcs/server/initSockServ.cpp\
 	srcs/server/manageSockClient.cpp\
-	srcs/server/sizeMessageRecv.cpp\
-	srcs/server/readMessage.cpp\
-	srcs/server/readChunkMessage.cpp\
+	srcs/server/execCgi.cpp\
+	srcs/server/recvMultipart.cpp\
+	srcs/parsingconf/parsingConf.cpp\
+	srcs/parsingconf/cutStringConf.cpp\
+	srcs/parsingconf/fillServConf.cpp\
+	srcs/parsingconf/getLocation.cpp\
+	srcs/parsingconf/checkData.cpp\
 	srcs/utils/gnl.cpp\
 	srcs/response/response.cpp\
 	srcs/cgi_handler/cgi_handler.cpp\
