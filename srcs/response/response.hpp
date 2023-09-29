@@ -6,7 +6,7 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/09/26 15:03:38 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/09/29 15:24:00 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,9 @@
 #include <unistd.h>
 #include <map>
 #include <sstream>
-#include <vector>
+#include <cstdlib>
+#include "../cgi_handler/cgi_handler.hpp"
+#include "../httpparsing/httpparsing.hpp"
 
 class Response
 {
@@ -31,9 +33,10 @@ class Response
 		Response(std::string request);
 		~Response(void);
 
-		std::string	get_response(void);
+		std::string GetFileSizeAsString(void);
+		void	get_response(void);
 		std::string	post_response(void);
-		std::string	find_method(void);
+		void	find_method(void);
 		std::string	statik_or_dynamik(void);
 		void	find_path(void);
 		void	create_header(void);
@@ -42,7 +45,14 @@ class Response
 		void	find_error_code(void);
 		void	body_error_page(void);
 		void	cleanHeader(void);
-		void	get_file(void);
+		std::string	get_file_size(void);
+		std::string extractQueryString(void);
+		std::string extractContentType(void);
+		std::string extractContentLength(void);
+		std::string extractPostData(void);
+		void	cgi_handler(void);
+		void	put_in_env(void);
+		void	fill_strings(void);
 		std::string	find_status_line(void);
 		std::string	find_server(void);
 		std::string	find_date(void);
@@ -76,6 +86,18 @@ class Response
 		int		_code;
 		int		_bool;
 		std::map<int, std::string>	_errors;
-};
 
+		std::string	_document_root;//repertoire racine
+		std::string	_script_filename;//script part
+		std::string	_query_string;//parametres de GET
+		std::string	_request_method;//method
+		std::string	_envcontent_type;//type pour POST
+		std::string	_envcontent_lenght;//taille contenu pour post
+		std::string	_remote_addr;//ip cient de la requete
+		std::string	_server_name;//server name
+		std::string	_server_port;//port server listen
+		std::string	_server_protocol;//protocol(HTTP/1.1)
+		std::string	_path_info;//infos path supplementaires
+		std::string	_request_uri;//URI de la requete en cours
+};
 #endif

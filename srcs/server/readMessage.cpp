@@ -19,6 +19,7 @@ void	recvMessage(int &bytes_read, int &clientSocket, char *buffer)
 	std::cout << "Message recu : " << msg << std::endl;
 	Response reponse(msg);
 	std::string response = reponse.statik_or_dynamik();
+	//std::cout << "Message envoye : " << response << std::endl;
 	send(clientSocket, response.c_str(), response.size(), 0);
 	//execCgi(msg, clientSocket);
 }

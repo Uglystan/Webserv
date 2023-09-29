@@ -45,16 +45,79 @@ void	Response::cleanHeader(void)
 
 std::string	Response::statik_or_dynamik(void)
 {
+	find_method();
 	find_path();
 	size_t posPHP = _path.find(".php");
 	if (posPHP != std::string::npos)
-		std::cout << "DYNAMIK\n";
+	{
+		cgi_handler();
+	}
 	else
-		find_method();
+		get_response();
+	std::cout << "Message envoyee : \n" << _response << std::endl;
 	return (_response);
 }
 
-std::string	Response::find_method(void)
+void	Response::cgi_handler(void)
+{
+	// std::string	temp;
+	put_in_env();
+	_body = execCgi(_path, extractPostData());
+	if (_body == "")
+	{
+		std::cout << "OOOOOOOOOOOOOOOOOPS\n";
+		_code = 404;
+	}
+	create_header();
+	_response = _header + _body;
+}
+
+void	Response::put_in_env(void)
+{
+	fill_strings();
+	setenv("REQUEST_METHOD", _method.c_str(), 1);
+	setenv("CONTENT_TYPE", _envcontent_type.c_str(), 1);
+	setenv("CONTENT_LENGTH", _envcontent_lenght.c_str(), 1);
+	setenv("QUERY_STRING", _query_string.c_str(), 1);
+	setenv("REMOTE_ADDR", _remote_addr.c_str(), 1);
+	setenv("SERVER_NAME", _server_name.c_str(), 1);
+	setenv("SERVER_PORT", _server_port.c_str(), 1);
+	setenv("SERVER_PROTOCOL", _server_protocol.c_str(), 1);
+	setenv("PATH_INFO", _path_info.c_str(), 1);
+	setenv("REQUEST_URI", _path.c_str(), 1);
+	setenv("REDIRECT_STATUS", "200", 1);
+	setenv("DOCUMENT_ROOT", _document_root.c_str(), 1);
+	setenv("SCRIPT_FILENAME", _script_filename.c_str(), 1);
+	extern char** environ;
+	for (char** env = environ; *env; ++env) {
+		std::cout << *env << std::endl;
+	}
+
+}
+
+void	Response::fill_strings(void)
+{
+	_document_root = "/html";//changer en fonction de config fill
+	_script_filename = _path;
+	_request_method = _method;
+	if (_method == "GET")
+	{
+		_query_string = extractQueryString();
+	}
+	if (_method == "POST")
+	{
+		_envcontent_type = extractContentType();
+		_envcontent_lenght = extractContentLength();//0 pour GET
+	}
+	_remote_addr = "127.0.0.1";//changer en fonction de config fill
+	_server_name = "Webserver42";//changer en fonction de config fill
+	_server_port = "8080";//changer en fonction de config fill
+	_server_protocol = "HTTP/1.1";//changer en fonction de config fill
+	_path_info = "";//USELESS ??
+	_request_uri = _path;
+}
+
+void	Response::find_method(void)
 {
 	size_t posGET = _request.find("GET");
 	size_t posPOST = _request.find("POST");
@@ -62,34 +125,30 @@ std::string	Response::find_method(void)
 	if (posGET != std::string::npos || posPOST != std::string::npos || posDELETE != std::string::npos)
 	{
 		if(posGET != std::string::npos)
-			return (get_response());
-		if(posPOST != std::string::npos)
-			return (post_response());
-		if(posDELETE != std::string::npos)
-			std::cout << "DELETE find" << std::endl;
+			_method = "GET";
+		else if(posPOST != std::string::npos)
+			_method = "POST";
+		else
+		{
+			_code = 400;
+			body_error_page();
+			create_header();
+		}
 	}
-	else
-	{
-		//std::cout << "METHOD not found" << std::endl;
-		_code = 400;//error page
-	}
-	return (_response);
 }
 
 std::string	Response::post_response(void)
 {
-	_method = "POST";
 	//find_path();
-	get_file();
+	//get_file();
 	create_body();
 	create_header();
 	_response = _header + _body;
 	return (_response);
 }
 
-std::string	Response::get_response(void)
+void	Response::get_response(void)
 {
-	_method = "GET";
 	//find_path();
 	create_body();
 	if (_code >= 400)
@@ -101,28 +160,20 @@ std::string	Response::get_response(void)
 		create_header();
 	}
 	_response = _header + _body;
-	return (_response);
+	// return (_response);
 }
 
-void	Response::get_file(void)
+std::string	Response::get_file_size(void)
 {
-	std::string boundaryStart = "name=\"";
-	size_t startPos = _request.find(boundaryStart);
-	if (startPos == std::string::npos) 
-		std::cerr << "Séparateur de fichier introuvable dans les données POST." << std::endl;
-	startPos = _request.find("\r\n\r\n", startPos);
-	if (startPos == std::string::npos) 
-		std::cerr << "En-tete de fichier introuvable" << std::endl;
-	startPos += 4;
-	std::string	 fileContent = _request.substr(startPos);
-	std::ofstream outfile("html/tmp/bguillau.jpg", std::ios::binary);
-	if (outfile)
-	{
-		outfile.write(fileContent.c_str(), fileContent.size());
-		outfile.close();
-	}
-	else
-		std::cerr << "ERREUR creation file" << std::endl;
+	size_t contentStart = _request.find("Content-Length: ");
+	if (contentStart == std::string::npos)
+		return (0);
+	contentStart += 15;
+	size_t endPos = _request.find("\r\n", contentStart);
+	if (contentStart == std::string::npos)
+		return (0);
+	std::string	contentLength = _request.substr(contentStart + 1, endPos - contentStart);
+	return (contentLength);
 }
 
 void	Response::create_body()
@@ -206,10 +257,11 @@ void	Response::body_error_page(void)
 
 void	Response::create_header(void)
 {
+	_header.clear();
 	_header += find_status_line();
 	_header += find_server();
 	_header += find_date();
-	_header += find_content_type();
+	_header += find_content_type() + "\n";
 	_header += find_content_lenght();
 	_header += find_content_lang();
 	_header += find_LastModified();
@@ -252,23 +304,23 @@ std::string	Response::find_date(void)
 std::string	Response::find_content_type(void)
 {
 	if (find_langage() == "")
-		_content_type = "Content-Type: text/html; charset=UTF-8\n";
+		_content_type = "Content-Type: text/html; charset=UTF-8";
 	else if (find_langage() == "html" || find_langage() == "css" || find_langage() == "javascript" || find_langage() == "xml" || find_langage() == "plain")
-		_content_type = "Content-Type: text/" + find_langage() +"; charset=UTF-8\n";
+		_content_type = "Content-Type: text/" + find_langage() +"; charset=UTF-8";
 	else if (find_langage() == "jpeg" || find_langage() == "png" || find_langage() == "gif" || find_langage() == "bmp" || find_langage() == "ico")
-		_content_type = "Content-Type: image/" + find_langage() +"; charset=UTF-8\n";
+		_content_type = "Content-Type: image/" + find_langage() +"; charset=UTF-8";
 	else if (find_langage() == "mpeg" || find_langage() == "wav" || find_langage() == "ogg")
-		_content_type = "Content-Type: audio/" + find_langage() +"; charset=UTF-8\n";
+		_content_type = "Content-Type: audio/" + find_langage() +"; charset=UTF-8";
 	else if (find_langage() == "mp4" || find_langage() == "webm" || find_langage() == "mpeg" || find_langage() == "avi")
-		_content_type = "Content-Type: video/" + find_langage() +"; charset=UTF-8\n";
+		_content_type = "Content-Type: video/" + find_langage() +"; charset=UTF-8";
 	else if (find_langage() == "json" || find_langage() == "pdf" || find_langage() == "octet-stream" || find_langage() == "x-www-form-urlencoded")
-		_content_type = "Content-Type: application/" + find_langage() +"; charset=UTF-8\n";
+		_content_type = "Content-Type: application/" + find_langage() +"; charset=UTF-8";
 	else if (find_langage() == "form-data" || find_langage() == "byteranges")
-		_content_type = "Content-Type: multipart/" + find_langage() +"; charset=UTF-8\n";
+		_content_type = "Content-Type: multipart/" + find_langage() +"; charset=UTF-8";
 	else
 	{
 		//_code = 400;
-		_content_type = "Content-Type: text/html; charset=UTF-8\n";
+		_content_type = "Content-Type: text/html; charset=UTF-8";
 	}
 	return (_content_type);
 }
@@ -333,21 +385,48 @@ std::string	Response::find_WwwAuthenticate(void)
 }
 
 
-void	Response::find_path(void)
+void Response::find_path(void)
 {
 	_path = "html/";
 	std::string firstLine;
 	std::istringstream iss(_request);
 	std::getline(iss, firstLine);
-	size_t	firstslahpos = firstLine.find('/');
-	if (firstslahpos != std::string::npos)
+	size_t firstSlashPos = firstLine.find('/');
+	if (firstSlashPos != std::string::npos)
 	{
-		size_t	nextspacepos = firstLine.find(' ', firstslahpos + 1);
-		if (nextspacepos != std::string::npos)
-			_path += firstLine.substr(firstslahpos + 1, nextspacepos - firstslahpos - 1);
+		size_t nextSpacePos = firstLine.find(' ', firstSlashPos + 1);
+		if (nextSpacePos != std::string::npos)
+		{
+			size_t nextQuestionMark = firstLine.find('?', firstSlashPos);
+			if (nextQuestionMark != std::string::npos && nextQuestionMark < nextSpacePos)
+			{
+				// Si la chaîne de requête existe avant le prochain espace, stockez le chemin jusqu'au '?'
+				_path += firstLine.substr(firstSlashPos + 1, nextQuestionMark - firstSlashPos - 1);
+			}
+			else
+			{
+				// Si la chaîne de requête n'existe pas ou après le prochain espace, stockez le chemin jusqu'à l'espace
+				_path += firstLine.substr(firstSlashPos + 1, nextSpacePos - firstSlashPos - 1);
+			}
+		}
 	}
 	else
 		_code = 400;
+}
+
+std::string Response::extractQueryString(void)
+{
+	std::string firstLine;
+	std::istringstream iss(_request);
+	std::getline(iss, firstLine);
+	size_t firstQuestionMark = firstLine.find('?');
+	if (firstQuestionMark != std::string::npos)
+	{
+		size_t nextSpacePos = firstLine.find(' ', firstQuestionMark + 1);
+		if (nextSpacePos != std::string::npos)
+			return (firstLine.substr(firstQuestionMark + 1, nextSpacePos - firstQuestionMark - 1));
+	}
+	return ("");
 }
 
 std::string	Response::find_langage(void)
@@ -366,6 +445,60 @@ std::string	Response::find_langage(void)
 	else
 		_code = 400;
 	return (language);
+}
+
+std::string Response::extractContentType(void)
+{
+	size_t contentTypePos = _request.find("Content-Type:");
+	if (contentTypePos != std::string::npos)
+	{
+		size_t lineEndPos = _request.find("\r\n", contentTypePos);
+		if (lineEndPos != std::string::npos)
+		{
+			std::string contentTypeLine = _request.substr(contentTypePos, lineEndPos - contentTypePos);
+			size_t colonPos = contentTypeLine.find(':');
+			if (colonPos != std::string::npos)
+			{
+				std::string contentType = contentTypeLine.substr(colonPos + 1);
+				size_t firstNonSpace = contentType.find_first_not_of(" \t");
+				size_t lastNonSpace = contentType.find_last_not_of(" \t");
+				if (firstNonSpace != std::string::npos && lastNonSpace != std::string::npos)
+				{
+					contentType = contentType.substr(firstNonSpace, lastNonSpace - firstNonSpace + 1);
+					return (contentType);
+				}
+			}
+		}
+	}
+	return ("");
+}
+
+std::string Response::extractContentLength(void)
+{
+	std::string contentLength;
+	size_t contentLengthPos = _request.find("Content-Length: ");
+
+	if (contentLengthPos != std::string::npos)
+	{
+		size_t lineEnd = _request.find("\r\n", contentLengthPos);
+		if (lineEnd != std::string::npos)
+		{
+			contentLength = _request.substr(contentLengthPos + 16, lineEnd - contentLengthPos - 16);
+		}
+	}
+	return (contentLength);
+}
+
+std::string Response::extractPostData(void)
+{
+	size_t headerEnd = _request.find("\r\n\r\n");
+
+	if (headerEnd != std::string::npos)
+	{
+		std::string postData = _request.substr(headerEnd + 4);  // 4 caractères pour sauter "\r\n\r\n"
+	return postData;
+	}
+	return "";
 }
 
 std::string	Response::get_response(void) const

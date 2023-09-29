@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Erreur HTTP - [CODE]</title>
+    <title>Réponse</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,15 +20,26 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
         h1 {
-            color: #e74c3c;
+            color: #007bff; /* Bleu Bootstrap */
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Erreur HTTP - [CODE]</h1>
-        <p>[MESSAGE]</p>
-        <p><a href="monsite.html">Retour à la page d'accueil</a></p>
+        <h1>Réponse du Formulaire</h1>
+        <div class="alert alert-info">
+            <?php
+	    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+		echo "<h2>Données du formulaire POST :</h2>";
+		echo "<pre>";
+		var_dump($_POST);
+		echo "</pre>";
+	    } else {
+		echo "Aucune donnée soumise via POST.";
+	    }
+	    ?>
+        </div>
+        <a href="index.html" class="btn btn-primary">Retour au Formulaire</a>
     </div>
 </body>
 </html>

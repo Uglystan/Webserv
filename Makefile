@@ -15,10 +15,11 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/manageSockClient.cpp\
 	srcs/server/sizeMessageRecv.cpp\
 	srcs/server/readMessage.cpp\
-	srcs/server/execCgi.cpp\
 	srcs/server/readChunkMessage.cpp\
 	srcs/utils/gnl.cpp\
 	srcs/response/response.cpp\
+	srcs/cgi_handler/cgi_handler.cpp\
+	srcs/httpparsing/httpparsing.cpp\
 
 OBJ = $(SRC:.cpp=.o)
 

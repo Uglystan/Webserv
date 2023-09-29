@@ -22,7 +22,6 @@
 #include <fcntl.h>
 #include <cstdio>
 #include <sstream>
-#include "../srcs/utils/gnl.hpp"
 #include <cstdlib>
 #include "../srcs/response/response.hpp"
 
@@ -45,7 +44,7 @@ int	sizeHeader(std::string buffer);
 int	sizeMessage(char *buffer);
 void	recvMessage(int &bytes_read, int &clientSocket, char *buffer);
 int	is_chunked(char *buffer);
-void	execCgi(std::string &msg, int &clientSocket);
+//void	execCgi(std::string &msg, int &clientSocket);
 int	is_hexa(char * buffer);
 int	sizeMessageChunk(char *buffer);
 void	chunckedMessage(char *buffer, int &bytes_read, int &clientSocket, std::string &msg);
