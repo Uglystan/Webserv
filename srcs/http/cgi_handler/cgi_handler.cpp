@@ -1,17 +1,17 @@
 #include "cgi_handler.hpp"
 extern char **environ;
 
-void writeReqBody(std::string request)
+void writeReqBody(std::string requestbody)
 {
 	int script_input[2];
 	pipe(script_input);
 	dup2(script_input[0], 0);
 	close(script_input[0]);
-	write(script_input[1], request.c_str(), request.size());// Écrire le contenu de la chaîne de caractères "request" dans le tube.
+	write(script_input[1], requestbody.c_str(), requestbody.size());// Écrire le contenu de la chaîne de caractères "request" dans le tube.
 	close(script_input[1]);
 }
 
-std::string	execCgi(std::string path, std::string	_request)
+std::string	execCgi(std::string path, std::string	_requestbody)
 {
 	std::string	reponse;
 	std::string	line;
@@ -20,7 +20,7 @@ std::string	execCgi(std::string path, std::string	_request)
 	int	pid;
 	std::string requestMethod = std::getenv("REQUEST_METHOD");
 	if (requestMethod == "POST")
-		writeReqBody(_request);
+		writeReqBody(_requestbody);
 	if (pipe(fd) == -1)
 		std::cout << "Error pipe" << std::endl;
 	pid = fork();

@@ -6,7 +6,7 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/10/02 13:36:39 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/10/02 14:53:27 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,14 +64,15 @@ class Response
 		std::string	get_response(void) const;
 
 	private:
+		int		_code;
+		int		_bool;
+		std::map<int, std::string>	_errors;
 		std::string	_response;
 		std::string	_request;
 		std::string	_path;
 		std::string	_body;
 		std::string	_header;
 		std::string	_method;
-		int		_code;
-		int		_bool;
 		std::string	_status_line;
 		std::string	_name;
 		std::string	_date;
@@ -99,6 +100,5 @@ class Response
 			public :
 				virtual const char*	what() const throw();
 		};
-		std::map<int, std::string>	_errors;
 };
 #endif

@@ -1,6 +1,6 @@
 #include "response.hpp"
 
-Response::Response(std::string request): _request(request), _code(200)
+Response::Response(std::string request): _code(200), _request(request)
 {
 	cleanHeader();
 }
@@ -44,6 +44,7 @@ void	Response::cleanHeader(void)
 
 std::string	Response::statik_or_dynamik(void)
 {
+	init_Error_code();
 	try
 	{
 		find_method();
@@ -63,7 +64,9 @@ std::string	Response::statik_or_dynamik(void)
 	}
 	catch (const std::exception& e)
 	{
+		_response.clear();
 		body_error_page();
+		std::cout << "CODEEEEEEEEEEE : \n" << _code << std::endl;
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
@@ -76,10 +79,13 @@ void	Response::cgi_handler(void)
 {
 	put_in_env();
 	std::string	postData = extractPostData(_request);
-	if (postData == "")
+	if (_method == "POST")
 	{
-		_code = 400;
-		throw Response::Errorexcept();
+		if (postData == "")
+		{
+			_code = 400;
+			throw Response::Errorexcept();
+		}
 	}
 	_body = execCgi(_path, postData);
 	if (_body == "")
@@ -114,7 +120,6 @@ void	Response::put_in_env(void)
 	// for (char** env = environ; *env; ++env) {
 	// 	std::cout << *env << std::endl;
 	// }
-
 }
 
 void	Response::fill_strings(void)
@@ -125,16 +130,21 @@ void	Response::fill_strings(void)
 	if (_method == "GET")
 	{
 		_query_string = extractQueryString(_request);
+		// if (_query_string == "-1")
+		// {
+		// 	_code = 400;
+		// 	throw Response::Errorexcept();
+		// }
 	}
 	if (_method == "POST")
 	{
 		_envcontent_type = extractContentType(_request);
 		_envcontent_lenght = extractContentLength(_request);
-	}
-	if (_query_string == "" || _envcontent_type == "" || _envcontent_lenght == "")
-	{
-		_code = 400;
-		throw Response::Errorexcept();
+		// if (_envcontent_type == "" || _envcontent_lenght == "")
+		// {
+		// 	_code = 400;
+		// 	throw Response::Errorexcept();
+		// }
 	}
 	_remote_addr = "127.0.0.1";//changer en fonction de config fill
 	_server_name = "Webserver42";//changer en fonction de config fill
@@ -179,8 +189,8 @@ void	Response::create_body()
 		else
 			html_file.open(_path.c_str(), std::ios::in);
 	}
-	else if(_method == "POST")
-		html_file.open("html/dowmload.html", std::ios::in);
+	// else if(_method == "POST")
+	// 	html_file.open("html/dowmload.html", std::ios::in);
 	if (html_file.is_open())
 	{
 		if (html_file.peek() ==  std::ifstream::traits_type::eof())
@@ -248,7 +258,6 @@ void	Response::body_error_page(void)
 void	Response::create_header(void)
 {
 	_header.clear();
-	init_Error_code();
 	_status_line = find_status_line();
 	_name = find_server();
 	_date = find_date();
@@ -259,16 +268,16 @@ void	Response::create_header(void)
 	_transfertencoding = find_tranfertencoding();
 	_wwwauthenticate = find_WwwAuthenticate(_code);
 	_connection = find_connection();
-	if (_status_line == "" || _server_name == "" || _content_type == "" || _content_lenght == "" || _content_lang == "" || _last_modified == "")
+	if (_status_line == "" || _name == "" || _content_type == "" || _content_lenght == "" || _content_lang == "")
 	{
 		_code = 400;
 		throw Response::Errorexcept();
 	}
-	if (_last_modified == "")
-	{
-		_code = 500;
-		throw Response::Errorexcept();
-	}
+	// if (_last_modified == "")
+	// {
+	// 	_code = 500;
+	// 	throw Response::Errorexcept();
+	// }
 	_header += _status_line + _server_name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + "\r\n";
 }
 

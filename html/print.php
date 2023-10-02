@@ -37,8 +37,6 @@
     <p><strong>SCRIPT_FILENAME:</strong> <?php echo $_SERVER['SCRIPT_FILENAME']; ?></p>
     <p><strong>QUERY_STRING:</strong> <?php echo $_SERVER['QUERY_STRING']; ?></p>
     <p><strong>REQUEST_METHOD:</strong> <?php echo $_SERVER['REQUEST_METHOD']; ?></p>
-    <p><strong>CONTENT_TYPE:</strong> <?php echo $_SERVER['CONTENT_TYPE']; ?></p>
-    <p><strong>CONTENT_LENGTH:</strong> <?php echo $_SERVER['CONTENT_LENGTH']; ?></p>
     <p><strong>REMOTE_ADDR:</strong> <?php echo $_SERVER['REMOTE_ADDR']; ?></p>
     <p><strong>SERVER_NAME:</strong> <?php echo $_SERVER['SERVER_NAME']; ?></p>
     <p><strong>SERVER_PORT:</strong> <?php echo $_SERVER['SERVER_PORT']; ?></p>
@@ -59,5 +57,9 @@
         }
         ?>
     </div>
+        <!-- Inclure Bootstrap JS (assurez-vous de spécifier le chemin correct vers le fichier JS) -->
+	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

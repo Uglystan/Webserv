@@ -66,5 +66,5 @@ std::string extractQueryString(std::string &request)
 		if (nextSpacePos != std::string::npos)
 			return (firstLine.substr(firstQuestionMark + 1, nextSpacePos - firstQuestionMark - 1));
 	}
-	return ("");
+	return ("-1");
 }
