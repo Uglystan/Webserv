@@ -61,7 +61,6 @@ typedef struct s_configServ
 typedef struct s_server
 {
 	int epollFd;
-	int serverSocket;
 	struct sockaddr_in	adresse;
 	std::map <int, struct timeval>	timer;
 	std::map <int, t_requestData> req;
@@ -75,7 +74,7 @@ void	delEpollEvent(int &epollFd, int &socket);
 void	addEpollEvent(int &epollFd, int &socket);
 void	initAdresse(t_server &data);
 int	initSocket(t_server &data);
-void	acceptNewClient(t_server &data);
+void	acceptNewClient(t_server &data, int &serverSocket);
 void	disconnectClient(t_server &data, int &socket);
 void	errorClient(t_server &data, int &socket);
 void	addPlaceEventLog(int nfds, std::vector<struct epoll_event> &events);
@@ -93,3 +92,4 @@ int	fillServ(std::vector<t_configServ> &eachServ, std::vector<std::string> &each
 void	getLocation(std::vector<t_location> &locationVec, std::string servString);
 std::string	getStrInfo(std::string servString, std::string finding);
 int	checkData(std::vector<t_configServ> &eachServ);
+int	initAllServ(t_server &data);
