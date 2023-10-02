@@ -43,7 +43,6 @@
     <p><strong>SERVER_NAME:</strong> <?php echo $_SERVER['SERVER_NAME']; ?></p>
     <p><strong>SERVER_PORT:</strong> <?php echo $_SERVER['SERVER_PORT']; ?></p>
     <p><strong>SERVER_PROTOCOL:</strong> <?php echo $_SERVER['SERVER_PROTOCOL']; ?></p>
-    <p><strong>PATH_INFO:</strong> <?php echo $_SERVER['PATH_INFO']; ?></p>
     <p><strong>REQUEST_URI:</strong> <?php echo $_SERVER['REQUEST_URI']; ?></p>
     <div class="container">
         <h1>GET METHOD CONTENT:</h1>

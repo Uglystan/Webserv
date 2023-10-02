@@ -3,12 +3,10 @@
 Response::Response(std::string request): _request(request), _code(200)
 {
 	cleanHeader();
-	return ;
 }
 
 Response::~Response(void)
 {
-	return ;
 }
 
 void	Response::init_Error_code(void)
@@ -28,42 +26,66 @@ void	Response::init_Error_code(void)
 void	Response::cleanHeader(void)
 {
 	_status_line = "";
-	_server = "";
-	_date = "";
-	_content_type = "";
-	_content_lenght = "";
-	_connection = "";
-	_ContentLanguage = "";
-	_LastModified = "";
-	_TransferEncoding = "";
-	_WwwAuthenticate = "";
 	_path = "";
 	_body = "";
 	_header = "";
 	_method = "";
+	_status_line = "";
+	_server_name = "";
+	_date = "";
+	_content_type = "";
+	_content_lang = "";
+	_content_lenght = "";
+	_last_modified = "";
+	_transfertencoding = "";
+	_wwwauthenticate = "";
+	_connection = "";
 }
 
 std::string	Response::statik_or_dynamik(void)
 {
-	find_method();
-	find_path();
-	size_t posPHP = _path.find(".php");
-	if (posPHP != std::string::npos)
-		cgi_handler();
-	else
-		statik_response();
-	std::cout << "Message envoyee : \n" << _response << std::endl;
-	return (_response);
+	try
+	{
+		find_method();
+		_path = find_path(_request);
+		if (_path == "")
+		{
+			_code = 400;
+			throw Response::Errorexcept();
+		}
+		size_t posPHP = _path.find(".php");
+		if (posPHP != std::string::npos)
+			cgi_handler();
+		else
+			statik_response();
+		std::cout << "Message envoyee : \n" << _response << std::endl;
+		return (_response);
+	}
+	catch (const std::exception& e)
+	{
+		body_error_page();
+		create_header();
+		std::cerr << e.what() << std::endl;
+		_response = _header + _body;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
+		return (_response);
+	}
 }
 
 void	Response::cgi_handler(void)
 {
 	put_in_env();
-	_body = execCgi(_path, extractPostData(_request));
+	std::string	postData = extractPostData(_request);
+	if (postData == "")
+	{
+		_code = 400;
+		throw Response::Errorexcept();
+	}
+	_body = execCgi(_path, postData);
 	if (_body == "")
 	{
-		std::cout << "OOOOOOOOOOOOOOOOOPS\n";
 		_code = 404;
+		throw Response::Errorexcept();
 	}
 	create_header();
 	_response = _header + _body;
@@ -73,9 +95,13 @@ void	Response::put_in_env(void)
 {
 	fill_strings();
 	setenv("REQUEST_METHOD", _method.c_str(), 1);
-	setenv("CONTENT_TYPE", _envcontent_type.c_str(), 1);
-	setenv("CONTENT_LENGTH", _envcontent_lenght.c_str(), 1);
-	setenv("QUERY_STRING", _query_string.c_str(), 1);
+	if (_method == "GET")
+		setenv("QUERY_STRING", _query_string.c_str(), 1);
+	if (_method == "POST")
+	{
+		setenv("CONTENT_TYPE", _envcontent_type.c_str(), 1);
+		setenv("CONTENT_LENGTH", _envcontent_lenght.c_str(), 1);
+	}
 	setenv("REMOTE_ADDR", _remote_addr.c_str(), 1);
 	setenv("SERVER_NAME", _server_name.c_str(), 1);
 	setenv("SERVER_PORT", _server_port.c_str(), 1);
@@ -84,10 +110,10 @@ void	Response::put_in_env(void)
 	setenv("REDIRECT_STATUS", "200", 1);
 	setenv("DOCUMENT_ROOT", _document_root.c_str(), 1);
 	setenv("SCRIPT_FILENAME", _script_filename.c_str(), 1);
-	extern char** environ;
-	for (char** env = environ; *env; ++env) {
-		std::cout << *env << std::endl;
-	}
+	// extern char** environ;
+	// for (char** env = environ; *env; ++env) {
+	// 	std::cout << *env << std::endl;
+	// }
 
 }
 
@@ -103,7 +129,12 @@ void	Response::fill_strings(void)
 	if (_method == "POST")
 	{
 		_envcontent_type = extractContentType(_request);
-		_envcontent_lenght = extractContentLength(_request);//0 pour GET
+		_envcontent_lenght = extractContentLength(_request);
+	}
+	if (_query_string == "" || _envcontent_type == "" || _envcontent_lenght == "")
+	{
+		_code = 400;
+		throw Response::Errorexcept();
 	}
 	_remote_addr = "127.0.0.1";//changer en fonction de config fill
 	_server_name = "Webserver42";//changer en fonction de config fill
@@ -112,7 +143,7 @@ void	Response::fill_strings(void)
 	_request_uri = _path;
 }
 
-void	Response::find_method(void)
+void	Response::find_method(void)//rajouter si code erreur lucas serveur
 {
 	size_t posGET = _request.find("GET");
 	size_t posPOST = _request.find("POST");
@@ -125,9 +156,8 @@ void	Response::find_method(void)
 			_method = "POST";
 		else
 		{
-			_code = 400;
-			body_error_page();
-			create_header();
+			_code = 405;
+			throw Response::Errorexcept();
 		}
 	}
 }
@@ -153,8 +183,11 @@ void	Response::create_body()
 		html_file.open("html/dowmload.html", std::ios::in);
 	if (html_file.is_open())
 	{
-		if (html_file.peek() ==  std::ifstream::traits_type::eof())	
-			_code = 204;
+		if (html_file.peek() ==  std::ifstream::traits_type::eof())
+		{
+			_code = 404;
+			throw Response::Errorexcept();
+		}
 		std::string buffer;
 		while (std::getline(html_file, buffer))
 		{
@@ -168,6 +201,7 @@ void	Response::create_body()
 	else
 	{
 		_code = 404;
+		throw Response::Errorexcept();
 	}
 }
 
@@ -178,7 +212,10 @@ void	Response::body_error_page(void)
 	if (html_file.is_open())
 	{
 		if (html_file.peek() ==  std::ifstream::traits_type::eof())
-			_code = 204;
+		{
+			_code = 404;
+			throw Response::Errorexcept();
+		}
 		std::string buffer;
 		while (std::getline(html_file, buffer))
 		{
@@ -190,40 +227,49 @@ void	Response::body_error_page(void)
 		html_file.close();
 	}
 	else
+	{
 		_code = 404;
+		throw Response::Errorexcept();
+	}
 	std::stringstream ss;
 	ss << _code;
 	size_t codePos = _body.find("[CODE]");
-	if (codePos != std::string::npos) {
+	if (codePos != std::string::npos)
 		_body.replace(codePos, 6, ss.str());
-	}
 	codePos = _body.find("[CODE]");
-	if (codePos != std::string::npos) {
+	if (codePos != std::string::npos)
 		_body.replace(codePos, 6, ss.str());
-	}
 	std::string errorMessage = _errors[_code];
 	size_t messagePos = _body.find("[MESSAGE]");
-	if (messagePos != std::string::npos) {
+	if (messagePos != std::string::npos)
 		_body.replace(messagePos, 9, errorMessage);
-	}
-	_code = 200;//??
 }
 
 void	Response::create_header(void)
 {
 	_header.clear();
 	init_Error_code();
-	_header += find_status_line();
-	_header += find_server();
-	_header += find_date();
-	_header += find_content_type() + "\n";
-	_header += find_content_lenght();
-	_header += find_content_lang();
-	_header += find_LastModified();
-	_header += find_tranfertencoding();
-	_header += find_WwwAuthenticate();
-	_header += find_connection();
-	_header += "\r\n";
+	_status_line = find_status_line();
+	_name = find_server();
+	_date = find_date();
+	_content_type = find_content_type(_request) + "\n";
+	_content_lenght = find_content_lenght(_body);
+	_content_lang = find_content_lang(_request);
+	_last_modified = find_LastModified(_path);
+	_transfertencoding = find_tranfertencoding();
+	_wwwauthenticate = find_WwwAuthenticate(_code);
+	_connection = find_connection();
+	if (_status_line == "" || _server_name == "" || _content_type == "" || _content_lenght == "" || _content_lang == "" || _last_modified == "")
+	{
+		_code = 400;
+		throw Response::Errorexcept();
+	}
+	if (_last_modified == "")
+	{
+		_code = 500;
+		throw Response::Errorexcept();
+	}
+	_header += _status_line + _server_name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + "\r\n";
 }
 
 std::string	Response::find_status_line(void)
@@ -234,155 +280,9 @@ std::string	Response::find_status_line(void)
 	return (_status_line);
 }
 
-
-std::string	Response::find_server(void)
+const char*	Response::Errorexcept::what(void) const throw()
 {
-	_server = "Server: webserver-42\n";
-	return (_server);
-}
-
-std::string	Response::find_date(void)
-{
-	time_t		t_ptr;
-	struct tm	*y2k;
-	char buffer[80];
-
-	std::time(&t_ptr);
-	y2k = localtime(&t_ptr);
-	std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", y2k);
-	_date = "Date: " + std::string(buffer) + "\n";
-	return (_date);
-}
-
-std::string	Response::find_content_type(void)
-{
-	if (find_langage() == "")
-		_content_type = "Content-Type: text/html; charset=UTF-8";
-	else if (find_langage() == "html" || find_langage() == "css" || find_langage() == "javascript" || find_langage() == "xml" || find_langage() == "plain")
-		_content_type = "Content-Type: text/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "jpeg" || find_langage() == "png" || find_langage() == "gif" || find_langage() == "bmp" || find_langage() == "ico")
-		_content_type = "Content-Type: image/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "mpeg" || find_langage() == "wav" || find_langage() == "ogg")
-		_content_type = "Content-Type: audio/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "mp4" || find_langage() == "webm" || find_langage() == "mpeg" || find_langage() == "avi")
-		_content_type = "Content-Type: video/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "json" || find_langage() == "pdf" || find_langage() == "octet-stream" || find_langage() == "x-www-form-urlencoded")
-		_content_type = "Content-Type: application/" + find_langage() +"; charset=UTF-8";
-	else if (find_langage() == "form-data" || find_langage() == "byteranges")
-		_content_type = "Content-Type: multipart/" + find_langage() +"; charset=UTF-8";
-	else
-	{
-		//_code = 400;
-		_content_type = "Content-Type: text/html; charset=UTF-8";
-	}
-	return (_content_type);
-}
-
-std::string	Response::find_content_lenght(void)
-{
-	std::ostringstream oss;
-	oss << "Content-Length: " << _body.size() << "\n";
-	_content_lenght = oss.str();
-	return (_content_lenght);
-}
-
-std::string	Response::find_connection(void)
-{
-	_connection = "Connection: keep-alive\n";
-	return (_connection);
-}
-
-std::string	Response::find_content_lang(void)
-{
-	size_t startPos = _request.find("Accept-Language: ");
-	_ContentLanguage = "Content-Language: ";
-	if (startPos != std::string::npos)
-	{
-		startPos += sizeof("Accept-Language: ") - 1;
-		size_t endPos = _request.find("\n", startPos);
-		if (endPos != std::string::npos)
-		{
-			_ContentLanguage += _request.substr(startPos, endPos - startPos) + "\n";
-		}
-	}
-	else
-		_code = 400;
-	return (_ContentLanguage);
-}
-
-std::string	Response::find_LastModified(void)
-{
-	struct tm	*y2k;//struct date heure
-	char buffer[80];//stocker date
-	struct	stat	stats;//stock info fichier
-	if (stat(_path.c_str(), &stats) == 0)//obtient l'heure modification
-	{
-		y2k = gmtime(&stats.st_mtime);//permet d'avoir heure du fichier
-		std::strftime(buffer, sizeof(buffer), "%a, %d %b %Y %H:%M:%S GMT", y2k);
-		_LastModified = "Last-Modified: " + std::string(buffer) + "\n";
-	}
-	return (_LastModified);
-}
-
-std::string	Response::find_tranfertencoding(void)
-{
-	_TransferEncoding = "Transfert-Encoding: identity\n";
-	return (_TransferEncoding);
-}
-
-std::string	Response::find_WwwAuthenticate(void)
-{
-	if (_code == 401)
-		_WwwAuthenticate = "WWW-Authenticate: Basic realm=\"Authentification access requires\"\n";
-	return (_WwwAuthenticate);
-}
-
-
-void Response::find_path(void)
-{
-	_path = "html/";
-	std::string firstLine;
-	std::istringstream iss(_request);
-	std::getline(iss, firstLine);
-	size_t firstSlashPos = firstLine.find('/');
-	if (firstSlashPos != std::string::npos)
-	{
-		size_t nextSpacePos = firstLine.find(' ', firstSlashPos + 1);
-		if (nextSpacePos != std::string::npos)
-		{
-			size_t nextQuestionMark = firstLine.find('?', firstSlashPos);
-			if (nextQuestionMark != std::string::npos && nextQuestionMark < nextSpacePos)
-			{
-				// Si la chaîne de requête existe avant le prochain espace, stockez le chemin jusqu'au '?'
-				_path += firstLine.substr(firstSlashPos + 1, nextQuestionMark - firstSlashPos - 1);
-			}
-			else
-			{
-				// Si la chaîne de requête n'existe pas ou après le prochain espace, stockez le chemin jusqu'à l'espace
-				_path += firstLine.substr(firstSlashPos + 1, nextSpacePos - firstSlashPos - 1);
-			}
-		}
-	}
-	else
-		_code = 400;
-}
-
-std::string	Response::find_langage(void)
-{
-	std::string	language;
-	std::string firstLine;
-	std::istringstream iss(_request);
-	std::getline(iss, firstLine);
-	size_t	firstpointpos = firstLine.find('.');
-	if (firstpointpos != std::string::npos)
-	{
-		size_t	nextspacepos = firstLine.find(' ', firstpointpos + 1);
-		if (nextspacepos != std::string::npos)
-			language += firstLine.substr(firstpointpos + 1, nextspacepos - firstpointpos - 1);
-	}
-	else
-		_code = 400;
-	return (language);
+	return ("ERROR PAGE\n");
 }
 
 std::string	Response::get_response(void) const

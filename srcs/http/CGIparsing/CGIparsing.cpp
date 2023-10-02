@@ -35,9 +35,9 @@ std::string extractContentLength(std::string &request)
 	{
 		size_t lineEnd = request.find("\r\n", contentLengthPos);
 		if (lineEnd != std::string::npos)
-		{
 			contentLength = request.substr(contentLengthPos + 16, lineEnd - contentLengthPos - 16);
-		}
+		else
+			return ("");
 	}
 	return (contentLength);
 }
