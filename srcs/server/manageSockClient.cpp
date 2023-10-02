@@ -1,13 +1,13 @@
 #include "../../include/serveur.hpp"
 
-void	acceptNewClient(t_server &data)
+void	acceptNewClient(t_server &data, int &serverSocket)
 {
 	int clientSocket;
 	struct sockaddr_in clientAdresse;
 	int addresseLen = sizeof(clientAdresse);
 	struct timeval time;
 
-	clientSocket = accept(data.serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
+	clientSocket = accept(serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
 	if (clientSocket != -1)
 	{
 		//On met la socket en non bloquant c'est important sinon ca marche pas
@@ -26,6 +26,7 @@ void	manageClient(t_server &data, int &clientSocket)
 
 	memset(buffer, 0, sizeof(buffer));
 	data.req[clientSocket].bytes += recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
+	perror("ERR");
 	data.req[clientSocket].message += std::string(buffer);
 	sizeHeader = data.req[clientSocket].message.find("\r\n\r\n");
 	if (data.req[clientSocket].bytes == -1 || data.req[clientSocket].bytes == 0)
