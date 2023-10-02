@@ -20,23 +20,15 @@ int main (int argc, char **argv)
 		data.epollFd = epoll_create1(0);
 		std::vector<struct epoll_event> events(NB_EVENT_BASE);
 
-		/*Config serveur*/
 		if (parsingConf(data, argv) == -1)
 		{
 			std::cerr << strerror(errno) << std::endl;
 			return (1);
 		}
 		memset(events.data(), 0, sizeof(events));
-		/*Fin config serveur*/
-		/*Init socket server*/
 		initAllServ(data);
-		//Parcour le tab de serv si socket = -1 regarde si il existe d'autre config comme le serv si oui meme socket jusqu'a la fin du vector
-		/*Fin init socket server*/
-		// initAdresse(data);
-		// data.serverSocket = initSocket(data);
 		while(1)
 		{
-			//Pour serveur vituelle map avec num socketserveur et structure avec toute les autres info
 			int nfds = checkTimeAndWaitPoll(data, events);
 			addPlaceEventLog(data.epollFd, events);
 			for (int i = 0; i < nfds; i++)
@@ -54,7 +46,6 @@ int main (int argc, char **argv)
 			delPlaceEventLog(data.epollFd, events);
 		}
 		//close tout les serveurs
-		//close(data.serverSocket);
 	}
 	else
 		std::cout << "Incorrect argument number" << std::endl;
