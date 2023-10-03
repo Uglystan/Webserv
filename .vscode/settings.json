@@ -1,11 +1,9 @@
 {
 	"files.associations": {
-		"random": "cpp",
 		"array": "cpp",
 		"atomic": "cpp",
 		"bit": "cpp",
 		"*.tcc": "cpp",
-		"bitset": "cpp",
 		"cctype": "cpp",
 		"clocale": "cpp",
 		"cmath": "cpp",
@@ -32,7 +30,7 @@
 		"memory_resource": "cpp",
 		"numeric": "cpp",
 		"optional": "cpp",
-		"regex": "cpp",
+		"random": "cpp",
 		"string": "cpp",
 		"string_view": "cpp",
 		"system_error": "cpp",
