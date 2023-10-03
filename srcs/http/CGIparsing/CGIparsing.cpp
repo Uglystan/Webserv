@@ -42,14 +42,62 @@ std::string extractContentLength(std::string &request)
 	return (contentLength);
 }
 
-std::string extractPostData(std::string &request)
+static std::string	extract_text(std::string &request)
 {
 	size_t headerEnd = request.find("\r\n\r\n");
-
 	if (headerEnd != std::string::npos)
 	{
 		std::string postData = request.substr(headerEnd + 4);  // 4 caractères pour sauter "\r\n\r\n"
 		return (postData);
+	}
+	return ("");
+}
+
+static std::string	extract_file(std::string &request, std::string &boundary)
+{
+	if (boundary == "")
+		return ("");
+	std::string	delimiter = "--" + boundary;
+	size_t delimiterPos = request.find(delimiter);
+	if (delimiterPos != std::string::npos)
+	{
+		std::string withoutheader = request.substr(delimiterPos , request.size() - delimiterPos); 
+		size_t	newdelimiterPos = withoutheader.find(delimiter + "--");
+		if (newdelimiterPos != std::string::npos)
+		{
+			size_t	newwdelimiterPos = withoutheader.find("\r\n", newdelimiterPos);
+			return (withoutheader.substr(0, newwdelimiterPos));
+		}
+		else
+		{
+			withoutheader += "\r\n" + delimiter + "--";
+			return (withoutheader);
+		}
+	}
+	return ("");
+}
+
+static std::string	extract_boundary(std::string &type)
+{
+	size_t boundaryPos = type.find("boundary=");
+	if (boundaryPos != std::string::npos)
+	{
+		boundaryPos += 9;
+		return (type.substr(boundaryPos, type.size() - boundaryPos));
+	}
+	return ("");
+}
+
+std::string extractPostData(std::string &request, std::string &type)
+{
+	if (type == "application/x-www-form-urlencoded")
+	{
+		return (extract_text(request));
+	}
+	else if (type.find("multipart/form-data") != std::string::npos)
+	{
+		std::string	boundary = extract_boundary(type);
+		return (extract_file(request, boundary));
 	}
 	return "";
 }

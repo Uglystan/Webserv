@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Résultat du Formulaire</title>
+    <title>Réponse</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         body {
@@ -26,22 +26,20 @@
 </head>
 <body>
     <div class="container">
-        <h1>Résultat du Formulaire</h1>
-
-        <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $nom = isset($_POST['nom']) ? $_POST['nom'] : '';
-            $prenom = isset($_POST['prenom']) ? $_POST['prenom'] : '';
-            $telephone = isset($_POST['telephone']) ? $_POST['telephone'] : '';
-
-            echo "<p>Nom : $nom</p>";
-            echo "<p>Prénom : $prenom</p>";
-            echo "<p>Téléphone : $telephone</p>";
-        } else {
-            echo "Aucune donnée de formulaire reçue.";
-        }
-        ?>
-        <p><a href="post.php">Retour au formulaire</a></p>
+        <h1>Réponse du Formulaire</h1>
+        <div class="alert alert-info">
+            <?php
+	    if ($_SERVER["REQUEST_METHOD"] === "POST") {
+		echo "<h2>Données du formulaire POST :</h2>";
+		echo "<pre>";
+		var_dump($_POST);
+		echo "</pre>";
+	    } else {
+		echo "Aucune donnée soumise via POST.";
+	    }
+	    ?>
+        </div>
+        <a href="form.html" class="btn btn-primary">Retour au Formulaire</a>
     </div>
 </body>
 </html>
