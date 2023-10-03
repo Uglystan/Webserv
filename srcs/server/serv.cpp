@@ -1,6 +1,6 @@
 #include "../../include/serveur.hpp"
 
-int	checkServ(t_server data, std::vector<struct epoll_event> events, int i)
+int	checkEventServ(t_server data, std::vector<struct epoll_event> events, int i)
 {
 	for (unsigned int j = 0; j < data.config.size(); j++)
 	{
@@ -33,7 +33,7 @@ int main (int argc, char **argv)
 			addPlaceEventLog(data.epollFd, events);
 			for (int i = 0; i < nfds; i++)
 			{
-				int s = checkServ(data, events, i);
+				int s = checkEventServ(data, events, i);
 				if (s != -1)//C'est la socket serveur donc on recoit un nouveau client
 					acceptNewClient(data, s);
 				else if (events[i].events & EPOLLRDHUP)//Absolument devant EPOLLIN

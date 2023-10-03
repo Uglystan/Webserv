@@ -72,3 +72,8 @@ int	parsingConf(t_server &data, char **argv)
 	}
 	return (0);
 }
+
+/*Getfile : Si on ne peut pas ouvrir le fichier de conf error*/
+/*Cuteachserv : Si il manque des '{}' error. Si pas ecrit de server error*/
+/*checkEachServString : Si ailleur que dans les blocs location pas de listen, root, index, error_page, max_body_size, cgi, allow_methods error*/
+/*CheckData : Si IP format invalide ou IP invalide error, Si body_size_inavlide error, SI port invalide, */

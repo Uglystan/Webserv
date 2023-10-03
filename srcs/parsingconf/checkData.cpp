@@ -40,7 +40,7 @@ int	checkIp(t_configServ eachServ)
 
 int	checkPort(t_configServ	eachServ)
 {
-	if (eachServ.port < 0 || eachServ.port > 65534)
+	if (eachServ.port < 1024 || eachServ.port > 65534)
 		return (-1);
 	return (0);
 }
