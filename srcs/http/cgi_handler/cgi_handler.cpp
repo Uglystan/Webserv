@@ -7,8 +7,8 @@ void writeReqBody(std::string requestbody, std::string size)
 	pipe(script_input);
 	dup2(script_input[0], 0);
 	close(script_input[0]);
-	std::cout << "Size : " << atoi(size.c_str()) << std::endl;
-	std::cout << "RequestSize : " << requestbody.size() << std::endl;
+	//std::cout << "Size : " << atoi(size.c_str()) << std::endl;
+	//std::cout << "RequestSize : " << requestbody.size() << std::endl;
 	int ret = write(script_input[1], requestbody.c_str(), atoi(size.c_str()));// Écrire le contenu de la chaîne de caractères "request" dans le tube.
 	std::cout << ret << std::endl;
 	close(script_input[1]);

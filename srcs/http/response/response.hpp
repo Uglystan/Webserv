@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/10/02 14:53:27 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/10/03 17:20:25 by lgirault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,12 @@
 #include "../cgi_handler/cgi_handler.hpp"
 #include "../CGIparsing/CGIparsing.hpp"
 #include "../header_parsing/header_parsing.hpp"
+#include "../../../include/serveur.hpp"
 
 class Response
 {
 	public:
-		Response(std::string request);
+		Response(std::string request, t_configServ serv);
 		~Response(void);
 
 		std::string GetFileSizeAsString(void);
@@ -95,6 +96,7 @@ class Response
 		std::string	_server_protocol;//protocol(HTTP/1.1)
 		std::string	_path_info;//infos path supplementaires
 		std::string	_request_uri;//URI de la requete en cours
+		t_configServ	_serv;
 		class	Errorexcept : public std::exception
 		{
 			public :

@@ -1,6 +1,6 @@
 #include "response.hpp"
 
-Response::Response(std::string request): _code(200), _request(request)
+Response::Response(std::string request, t_configServ serv) : _code(200), _request(request), _serv(serv)
 {
 	cleanHeader();
 }
@@ -79,7 +79,7 @@ void	Response::cgi_handler(void)
 {
 	put_in_env();
 	std::string	postData = extractPostData(_request, _envcontent_type);
-	std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << std::endl;
+	//std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << std::endl;
 	if (_method == "POST")
 	{
 		if (postData == "")
