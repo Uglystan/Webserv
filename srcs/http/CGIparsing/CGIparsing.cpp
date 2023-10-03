@@ -65,14 +65,14 @@ static std::string	extract_file(std::string &request, std::string &boundary)
 		size_t	newdelimiterPos = withoutheader.find(delimiter + "--");
 		if (newdelimiterPos != std::string::npos)
 		{
-			size_t	newwdelimiterPos = withoutheader.find("\r\n", newdelimiterPos);
+			size_t	newwdelimiterPos = withoutheader.find("\r\n\r\n", newdelimiterPos);
 			return (withoutheader.substr(0, newwdelimiterPos));
 		}
-		else
-		{
-			withoutheader += "\r\n" + delimiter + "--";
-			return (withoutheader);
-		}
+		// else
+		// {
+		// 	withoutheader += "\r\n" + delimiter + "--";
+		// 	return (withoutheader);
+		// }
 	}
 	return ("");
 }
