@@ -44,7 +44,7 @@ std::string	find_content_type(std::string &request)
 		content_type = "Content-Type: text/html; charset=UTF-8";
 	else if (find_langage(request) == "html" || find_langage(request) == "css" || find_langage(request) == "javascript" || find_langage(request) == "xml" || find_langage(request) == "plain")
 		content_type = "Content-Type: text/" + find_langage(request) +"; charset=UTF-8";
-	else if (find_langage(request) == "jpeg" || find_langage(request) == "png" || find_langage(request) == "gif" || find_langage(request) == "bmp" || find_langage(request) == "ico")
+	else if (find_langage(request) == "jpg" || find_langage(request) == "png" || find_langage(request) == "gif" || find_langage(request) == "bmp" || find_langage(request) == "ico")
 		content_type = "Content-Type: image/" + find_langage(request) +"; charset=UTF-8";
 	else if (find_langage(request) == "mpeg" || find_langage(request) == "wav" || find_langage(request) == "ogg")
 		content_type = "Content-Type: audio/" + find_langage(request) +"; charset=UTF-8";
