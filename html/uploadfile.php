@@ -62,7 +62,7 @@
         }
         ?>
 
-        <p><a href="index.html">Retour au formulaire</a></p>
+        <p><a href="post.html">Retour au formulaire</a></p>
     </div>
     
     <!-- Inclure Bootstrap JS (assurez-vous de spécifier le chemin correct vers le fichier JS) -->
