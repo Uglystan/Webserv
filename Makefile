@@ -14,7 +14,7 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/initSockServ.cpp\
 	srcs/server/manageSockClient.cpp\
 	srcs/server/recvMultipart.cpp\
-	srcs/server/SelectGoodServ.cpp\
+	srcs/server/selectGoodServ.cpp\
 	srcs/parsingconf/parsingConf.cpp\
 	srcs/parsingconf/cutStringConf.cpp\
 	srcs/parsingconf/fillServConf.cpp\

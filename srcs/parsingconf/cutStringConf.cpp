@@ -11,7 +11,10 @@ int	checkBracket(std::string stringFile)
 		i++;
 	}
 	if (j == 0 || j % 2 != 0)
+	{
+		std::cout << "Error bracket number" << std::endl;
 		return (-1);
+	}
 	return (0);
 }
 
@@ -22,7 +25,10 @@ int	lenServ(std::string stringFile)
 	unsigned long i = stringFile.find("{") + 1;
 
 	if (i == std::string::npos || checkBracket(stringFile) == -1)
+	{
+		std::cout << "Error bracket number" << std::endl;
 		return (-1);
+	}
 	while (nbopen != nbclose && i <= stringFile.size())
 	{
 		if (stringFile[i] == '{')
@@ -40,7 +46,10 @@ int	startServer(std::string stringFile)
 {
 	unsigned long i = stringFile.find("server");
 	if (i == std::string::npos)
+	{
+		std::cout << "Missing block server" << std::endl;
 		return (-1);
+	}
 	return (i);
 }
 
