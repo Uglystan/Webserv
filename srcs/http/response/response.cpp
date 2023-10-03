@@ -79,7 +79,7 @@ void	Response::cgi_handler(void)
 {
 	put_in_env();
 	std::string	postData = extractPostData(_request, _envcontent_type);
-	std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << std::endl;
+	//std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << std::endl;
 	if (_method == "POST")
 	{
 		if (postData == "")
