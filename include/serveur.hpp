@@ -96,3 +96,41 @@ std::string	getStrInfo(std::string servString, std::string finding);
 int	checkData(std::vector<t_configServ> &eachServ);
 int	initAllServ(t_server &data);
 t_configServ	findGoodServ(std::string &message, t_server &data);
+
+class errorStopServ
+{
+	public :
+		errorStopServ(std::string codeError)
+		{
+			_codeError = codeError;
+		}
+		~errorStopServ()
+		{
+			
+		}
+		std::string	getCodeError() const
+		{
+			return (_codeError);
+		}
+	private :
+		std::string	_codeError;
+};
+
+class errorContinueServ
+{
+	public :
+		errorContinueServ(std::string codeError)
+		{
+			_codeError = codeError;
+		}
+		~errorContinueServ()
+		{
+			
+		}
+		std::string	getCodeError() const
+		{
+			return (_codeError);
+		}
+	private :
+		std::string	_codeError;
+};

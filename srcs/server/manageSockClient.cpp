@@ -12,7 +12,8 @@ void	acceptNewClient(t_server &data, int &serverSocket)
 	{
 		//On met la socket en non bloquant c'est important sinon ca marche pas
 		int opt = 1;
-		setsockopt(clientSocket, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(1));
+		if (setsockopt(clientSocket, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(1)) == -1)
+			throw errorStopServ(strerror(errno));
 		gettimeofday(&time, NULL);//creation init
 		data.timer[clientSocket] = time;
 		addEpollEvent(data.epollFd, clientSocket);
