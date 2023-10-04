@@ -43,7 +43,7 @@
     <p><strong>SERVER_PROTOCOL:</strong> <?php echo $_SERVER['SERVER_PROTOCOL']; ?></p>
     <p><strong>REQUEST_URI:</strong> <?php echo $_SERVER['REQUEST_URI']; ?></p>
     <div class="container">
-        <h1>GET METHOD CONTENT:</h1>
+        <h1>Variables si query string remplie:</h1>
         <?php
         // Vérifier si les paramètres GET 'nom' et 'prenom' existent
         if (isset($_GET['nom']) && isset($_GET['prenom'])) {
@@ -53,7 +53,7 @@
             echo "<p>Nom : $nom</p>";
             echo "<p>Prénom : $prenom</p>";
         } else {
-            echo "Aucun nom et prénom spécifiés dans la superglobale GET.";
+            echo "Query string pas au bon format\nExemple: ... .php?nom=dupont&prenom=lol";
         }
         ?>
     </div>

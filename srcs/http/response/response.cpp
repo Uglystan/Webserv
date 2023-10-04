@@ -59,7 +59,7 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		std::cout << "FIIIIIND" << find_langage(_path) << std::endl;
+		std::cout << "FIIIIIND" << find_langage(_request) << std::endl;
 		size_t posPHP = _serv.cgiExt.find(find_langage(_request));
 		if (posPHP != std::string::npos)
 		{
