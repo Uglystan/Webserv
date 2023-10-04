@@ -59,10 +59,14 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		std::cout << "SAAAAAALUT" << _serv.cgiExt << std::endl;
-		size_t posPHP = _path.find(_serv.cgiExt);
+		size_t posPHP = _serv.cgiExt.find(find_langage(_path));
 		if (posPHP != std::string::npos)
-			cgi_handler();
+		{
+			if (_path == _serv.root)
+			statik_response();
+			else
+				cgi_handler();
+		}
 		else
 			statik_response();
 		std::cout << "Message envoyee : \n" << _response << std::endl;
@@ -71,8 +75,8 @@ std::string	Response::statik_or_dynamik(void)
 	catch (const std::exception& e)
 	{
 		_response.clear();
-		body_error_page();
 		std::cout << "CODEEEEEEEEEEE : \n" << _code << std::endl;
+		body_error_page();
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
@@ -94,10 +98,14 @@ void	Response::cgi_handler(void)
 			throw Response::Errorexcept();
 		}
 	}
-	_body = execCgi(_path, postData, _envcontent_lenght, _serv.cgi);
+	std::cout << _serv.cgi << std::endl;
+	std::cout << find_langage(_request) << std::endl;
+	std::cout << find_cgi_path(_serv.cgi, find_langage(_request)) << std::endl;
+	std::string	goodpath = find_cgi_path(_serv.cgi, find_langage(_request));
+	_body = execCgi(_path, postData, _envcontent_lenght, goodpath);
 	if (_body == "")
 	{
-		_code = 404;
+		_code = 500;
 		throw Response::Errorexcept();
 	}
 	create_header();
@@ -308,7 +316,7 @@ std::string	Response::find_status_line(void)
 
 const char*	Response::Errorexcept::what(void) const throw()
 {
-	return ("ERROR PAGE\n");
+	return ("");
 }
 
 std::string	Response::get_response(void) const
