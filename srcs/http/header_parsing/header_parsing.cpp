@@ -19,6 +19,15 @@ std::string	find_date(void)
 	return (date);
 }
 
+std::string	check_interomark(std::string language)
+{
+	size_t	interomark = language.find("?");
+	if (interomark != std::string::npos)
+		return (language.substr(0, interomark));
+	else
+		return (language);
+}
+
 std::string	find_langage(std::string &request)
 {
 	std::string	language;
@@ -34,7 +43,7 @@ std::string	find_langage(std::string &request)
 	}
 	else
 		return ("");
-	return (language);
+	return (check_interomark(language));
 }
 
 std::string	find_content_type(std::string &request)
