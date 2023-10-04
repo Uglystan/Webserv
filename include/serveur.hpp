@@ -53,6 +53,7 @@ typedef struct s_configServ
 	std::string	errorPage;
 	int	maxBodySize;
 	std::string	cgi;
+	std::string	cgiExt;
 	std::string	allowMethods;
 	std::vector<t_location>	locationVec;
 }t_configServ;

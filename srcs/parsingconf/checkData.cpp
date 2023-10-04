@@ -45,13 +45,6 @@ int	checkPort(t_configServ	eachServ)
 	return (0);
 }
 
-int	checkBodySize(t_configServ eachServ)
-{
-	if (eachServ.maxBodySize <= 0)
-		return (-1);
-	return (0);
-}
-
 int	checkData(std::vector<t_configServ> &eachServ)
 {
 	for (unsigned int i = 0; i < eachServ.size(); i++)
@@ -64,11 +57,6 @@ int	checkData(std::vector<t_configServ> &eachServ)
 		if (checkPort(eachServ[i]) == -1)
 		{
 			std::cout << "Port error" << std::endl;
-			return (-1);
-		}
-		if (checkBodySize(eachServ[i]) == -1)
-		{
-			std::cout << "Max_body_size error" << std::endl;
 			return (-1);
 		}
 	}
