@@ -159,3 +159,11 @@ std::string find_path(std::string &request, std::string &root)
 		return ("");
 	return (path);
 }
+
+int	check_req_code(std::string request)
+{
+	int code = atoi(request.c_str());
+	if (code != 0)
+		return (code);
+	return (0);
+}

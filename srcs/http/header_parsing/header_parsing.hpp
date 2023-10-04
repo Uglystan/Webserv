@@ -24,5 +24,6 @@ std::string	find_LastModified(std::string &path);
 std::string	find_tranfertencoding(void);
 std::string	find_WwwAuthenticate(int code);
 std::string find_path(std::string &request, std::string &root);
+int	check_req_code(std::string request);
 
 #endif

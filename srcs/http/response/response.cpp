@@ -47,6 +47,11 @@ std::string	Response::statik_or_dynamik(void)
 	init_Error_code();
 	try
 	{
+		if (check_req_code(_request) != 0)
+		{
+			_code = check_req_code(_request);
+			throw Response::Errorexcept();
+		}
 		find_method();
 		if (_serv.allowMethods.find(_method) == std::string::npos)
 		{
@@ -59,7 +64,7 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		std::cout << "FIIIIIND" << find_langage(_request) << std::endl;
+		std::cout << "FIIIIIND" << find_langage(_path) << std::endl;
 		size_t posPHP = _serv.cgiExt.find(find_langage(_request));
 		if (posPHP != std::string::npos)
 		{
