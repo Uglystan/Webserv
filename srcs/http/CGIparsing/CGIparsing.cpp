@@ -116,3 +116,24 @@ std::string extractQueryString(std::string &request)
 	}
 	return ("-1");
 }
+
+std::string	find_cgi_path(std::string path, std::string ext)
+{
+	size_t	copysize;
+	size_t	find_ext = path.find(ext);
+	if (find_ext != std::string::npos)
+	{
+		size_t	find_start = path.rfind(",", find_ext);
+		if (find_start != std::string::npos)
+			find_start += 1;
+		else
+			find_start = 0;
+		size_t	find_end = path.find(",", find_ext);
+		if (find_end != std::string::npos)
+			copysize = find_end - find_start;
+		else
+			copysize = path.size() - find_start;
+		return (path.substr(find_start, copysize));
+	}
+	return("");
+}

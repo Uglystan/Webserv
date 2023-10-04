@@ -18,6 +18,7 @@
 #include <fcntl.h>
 #include <cstdio>
 #include "../utils/gnl.hpp"
+#include "../header_parsing/header_parsing.hpp"
 
 std::string	execCgi(std::string path, std::string	_requestbody, std::string size, std::string &cgi_path);
 
