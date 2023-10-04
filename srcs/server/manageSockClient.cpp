@@ -40,7 +40,8 @@ void	manageClient(t_server &data, int &clientSocket)
 		data.req.erase(clientSocket);
 		data.timer.erase(clientSocket);
 		delEpollEvent(data.epollFd, clientSocket);
-		close(clientSocket);
+		if (close(clientSocket) == -1)
+			throw errorStopServ(strerror(errno));
 	}
 	else if (data.req[clientSocket].bytes > 0)
 	{
