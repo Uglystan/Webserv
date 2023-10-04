@@ -59,7 +59,8 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		size_t posPHP = _serv.cgiExt.find(find_langage(_path));
+		std::cout << "FIIIIIND" << find_langage(_path) << std::endl;
+		size_t posPHP = _serv.cgiExt.find(find_langage(_request));
 		if (posPHP != std::string::npos)
 		{
 			if (_path == _serv.root)
@@ -89,7 +90,7 @@ void	Response::cgi_handler(void)
 {
 	put_in_env();
 	std::string	postData = extractPostData(_request, _envcontent_type);
-	std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << "LOL" << std::endl;
+	//std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << "LOL" << std::endl;
 	if (_method == "POST")
 	{
 		if (postData == "")
@@ -131,10 +132,10 @@ void	Response::put_in_env(void)
 	setenv("REDIRECT_STATUS", "200", 1);
 	setenv("DOCUMENT_ROOT", _document_root.c_str(), 1);
 	setenv("SCRIPT_FILENAME", _script_filename.c_str(), 1);
-	extern char** environ;
-	for (char** env = environ; *env; ++env) {
-		std::cout << *env << std::endl;
-	}
+	// extern char** environ;
+	// for (char** env = environ; *env; ++env) {
+	// 	std::cout << *env << std::endl;
+	// }
 }
 
 void	Response::fill_strings(void)

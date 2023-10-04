@@ -62,7 +62,7 @@ void	disconnectClient(t_server &data, int &socket)
 	std::cout << "Deconnexion socket : " << socket << std::endl;
 	data.timer.erase(socket);
 	delEpollEvent(data.epollFd, socket);
-	close(socket) == -1;
+	close(socket);
 }
 
 void	errorClient(t_server &data, int &socket)

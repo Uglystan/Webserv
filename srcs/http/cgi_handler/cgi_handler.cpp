@@ -71,7 +71,6 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string size
 		bufferStr.append(buff);
 		bzero(buff, 1024);
 	}
-	std::cout << "ARGUIUUUUUUUUUUUUUUUUUUUUUUUUUUU\n" <<bufferStr<< std::endl;
 	if (close(fd[0]) == -1)
 		std::cout << "Error closing fd[0]" << std::endl;
 	reponse = bufferStr;
