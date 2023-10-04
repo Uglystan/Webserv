@@ -27,21 +27,22 @@ int main (int argc, char **argv)
 			return (1);
 		while(1)
 		{
-			int nfds = checkTimeAndWaitPoll(data, events);
-			addPlaceEventLog(data.epollFd, events);
-			for (int i = 0; i < nfds; i++)
-			{
-				int s = checkEventServ(data, events, i);
-				if (s != -1)//C'est la socket serveur donc on recoit un nouveau client
-					acceptNewClient(data, s);
-				else if (events[i].events & EPOLLRDHUP)//Absolument devant EPOLLIN
-					disconnectClient(data, events[i].data.fd);
-				else if (events[i].events & EPOLLIN)
-					manageClient(data, events[i].data.fd);
-				else if (events[i].events & EPOLLERR)
-					errorClient(data, events[i].data.fd);
+				int nfds = checkTimeAndWaitPoll(data, events);
+				addPlaceEventLog(data.epollFd, events);
+				for (int i = 0; i < nfds; i++)
+				{
+					int s = checkEventServ(data, events, i);
+					if (s != -1)
+						acceptNewClient(data, s);
+					else if (events[i].events & EPOLLRDHUP)//Absolument devant EPOLLIN
+						disconnectClient(data, events[i].data.fd);
+					else if (events[i].events & EPOLLIN)
+						manageClient(data, events[i].data.fd);
+					else if (events[i].events & EPOLLERR)
+						errorClient(data, events[i].data.fd);
+				}
+				delPlaceEventLog(data.epollFd, events);
 			}
-			delPlaceEventLog(data.epollFd, events);
 		}
 		//close tout les serveurs
 	}
