@@ -59,9 +59,14 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		size_t posPHP = _serv.cgiExt.find(find_langage(_request));
+		size_t posPHP = _serv.cgiExt.find(find_langage(_path));
 		if (posPHP != std::string::npos)
-			cgi_handler();
+		{
+			if (_path == _serv.root)
+			statik_response();
+			else
+				cgi_handler();
+		}
 		else
 			statik_response();
 		std::cout << "Message envoyee : \n" << _response << std::endl;
