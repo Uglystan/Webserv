@@ -43,14 +43,14 @@ int main (int argc, char **argv)
 				}
 				delPlaceEventLog(data.epollFd, events);
 			}
-			catch (errorStopServ const& e)
-			{
-				std::cout << e.getCodeError() << std::endl;
-				break;
-			}
 			catch (errorContinueServ const& e)
 			{
-				std::cout << e.getCodeError() << std::endl;
+				errorContinue(data, e);
+			}
+			catch (errorStopServ const& e)
+			{
+				errorStop(data, e);
+				break;
 			}
 		}
 		//close tout les serveurs

@@ -34,7 +34,7 @@ void	manageClient(t_server &data, int &clientSocket)
 	if (data.req[clientSocket].bytes == -1 || data.req[clientSocket].bytes == 0)
 	{
 		if (data.req[clientSocket].bytes == -1)
-			std::cout << "Error recv" << std::endl;
+			throw errorContinueServ("500", findGoodServ(data.req[clientSocket].message, data), clientSocket);
 		else
 			std::cout << "Client deco" << std::endl;
 		data.req.erase(clientSocket);
@@ -62,7 +62,8 @@ void	disconnectClient(t_server &data, int &socket)
 	std::cout << "Deconnexion socket : " << socket << std::endl;
 	data.timer.erase(socket);
 	delEpollEvent(data.epollFd, socket);
-	close(socket);
+	if (close(socket) == -1)
+		throw errorStopServ(strerror(errno));
 }
 
 void	errorClient(t_server &data, int &socket)
@@ -70,5 +71,6 @@ void	errorClient(t_server &data, int &socket)
 	std::cout << "Error sur socket : " << socket << std::endl;
 	data.timer.erase(socket);
 	delEpollEvent(data.epollFd, socket);
-	close(socket);
+	if (close(socket) == -1)
+		throw errorStopServ(strerror(errno));
 }

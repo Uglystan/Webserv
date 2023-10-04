@@ -69,6 +69,56 @@ typedef struct s_server
 
 }t_server;
 
+class errorStopServ
+{
+	public :
+		errorStopServ(std::string codeError)
+		{
+			_codeError = codeError;
+		}
+		~errorStopServ()
+		{
+			
+		}
+		std::string	getCodeError() const
+		{
+			return (_codeError);
+		}
+	private :
+		std::string	_codeError;
+};
+
+class errorContinueServ
+{
+	public :
+		errorContinueServ(std::string codeError, t_configServ serv, int clientSocket)
+		{
+			_codeError = codeError;
+			_serv = serv;
+			_clientSocket = clientSocket;
+		}
+		~errorContinueServ()
+		{
+			
+		}
+		std::string	getCodeError() const
+		{
+			return (_codeError);
+		}
+		t_configServ	getServ() const
+		{
+			return (_serv);
+		}
+		int	getClientSocket() const
+		{
+			return (_clientSocket);
+		}
+	private :
+		std::string	_codeError;
+		t_configServ	_serv;
+		int	_clientSocket;
+};
+
 #include "../srcs/http/response/response.hpp"
 
 int	checkTimeAndWaitPoll(t_server &data, std::vector<struct epoll_event> &events);
@@ -96,41 +146,5 @@ std::string	getStrInfo(std::string servString, std::string finding);
 int	checkData(std::vector<t_configServ> &eachServ);
 int	initAllServ(t_server &data);
 t_configServ	findGoodServ(std::string &message, t_server &data);
-
-class errorStopServ
-{
-	public :
-		errorStopServ(std::string codeError)
-		{
-			_codeError = codeError;
-		}
-		~errorStopServ()
-		{
-			
-		}
-		std::string	getCodeError() const
-		{
-			return (_codeError);
-		}
-	private :
-		std::string	_codeError;
-};
-
-class errorContinueServ
-{
-	public :
-		errorContinueServ(std::string codeError)
-		{
-			_codeError = codeError;
-		}
-		~errorContinueServ()
-		{
-			
-		}
-		std::string	getCodeError() const
-		{
-			return (_codeError);
-		}
-	private :
-		std::string	_codeError;
-};
+void	errorContinue(t_server &data, errorContinueServ const& e);
+void	errorStop(t_server &data, errorStopServ const& e);
