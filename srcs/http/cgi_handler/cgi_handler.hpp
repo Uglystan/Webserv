@@ -19,6 +19,6 @@
 #include <cstdio>
 #include "../utils/gnl.hpp"
 
-std::string	execCgi(std::string path, std::string	_requestbody, std::string size, std::string &cgi_path)
+std::string	execCgi(std::string path, std::string	_requestbody, std::string size, std::string &cgi_path);
 
 #endif

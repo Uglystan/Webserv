@@ -59,6 +59,7 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
+		std::cout << "SAAAAAALUT" << _serv.cgiExt << std::endl;
 		size_t posPHP = _path.find(_serv.cgiExt);
 		if (posPHP != std::string::npos)
 			cgi_handler();

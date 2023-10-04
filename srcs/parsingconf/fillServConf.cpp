@@ -84,7 +84,7 @@ t_configServ	fillEachServ(std::string servString)
 	//std::cout << "MaxBodySize : " << serv.maxBodySize << std::endl;
 	serv.cgi = getStrInfo(servString, "cgi ");
 	//std::cout << "cgi : " << serv.cgi << std::endl;
-	serv.cgi = getStrInfo(servString, "cgi_ext ");
+	serv.cgiExt = getStrInfo(servString, "cgi_ext ");
 	//std::cout << "cgi_ext : " << serv.cgiExt << std::endl;
 	serv.allowMethods = getStrInfo(servString, "allow_methods ");
 	//std::cout << "allow_methods : " << serv.allowMethods << std::endl;
