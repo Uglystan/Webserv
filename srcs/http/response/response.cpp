@@ -59,7 +59,7 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		size_t posPHP = _path.find(".php");
+		size_t posPHP = _path.find(_serv.cgiExt);
 		if (posPHP != std::string::npos)
 			cgi_handler();
 		else
@@ -93,7 +93,7 @@ void	Response::cgi_handler(void)
 			throw Response::Errorexcept();
 		}
 	}
-	_body = execCgi(_path, postData, _envcontent_lenght);
+	_body = execCgi(_path, postData, _envcontent_lenght, _serv.cgi);
 	if (_body == "")
 	{
 		_code = 404;

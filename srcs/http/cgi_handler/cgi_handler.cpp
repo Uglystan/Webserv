@@ -14,7 +14,7 @@ void writeReqBody(std::string requestbody, std::string size)
 	close(script_input[1]);
 }
 
-std::string	execCgi(std::string path, std::string	_requestbody, std::string size)
+std::string	execCgi(std::string path, std::string	_requestbody, std::string size, std::string &cgi_path)
 {
 	std::string	reponse;
 	std::string	line;
@@ -35,7 +35,7 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string size
 			writeReqBody(_requestbody, size);
 		if (dup2(fd[1], 1) == -1 || close(fd[0]) == -1 || close(fd[1]) == -1)
 			std::cerr << "Error dup2 fils ou close fd[0] fils ou close fd[1] fils" << std::endl;
-		const char *program = "/usr/bin/php-cgi";
+		const char *program = cgi_path;
 		char *const av[] = {(char *)program, (char *)path.c_str(), NULL};
 		execve(program, av, environ);
 		std::cerr << "Error execve" << std::endl;
