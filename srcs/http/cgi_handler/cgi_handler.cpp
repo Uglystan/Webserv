@@ -22,8 +22,8 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string size
 	int	fd[2];
 	int	pid;
 	std::string requestMethod = std::getenv("REQUEST_METHOD");
-	if (requestMethod == "POST")
-		writeReqBody(_requestbody, size);
+	// if (requestMethod == "POST")
+	// 	writeReqBody(_requestbody, size);
 	if (pipe(fd) == -1)
 		std::cout << "Error pipe" << std::endl;
 	pid = fork();
@@ -31,6 +31,8 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string size
 		std::cout << "Error fork" << std::endl;
 	if (!pid)
 	{
+		if (requestMethod == "POST")
+			writeReqBody(_requestbody, size);
 		if (dup2(fd[1], 1) == -1 || close(fd[0]) == -1 || close(fd[1]) == -1)
 			std::cerr << "Error dup2 fils ou close fd[0] fils ou close fd[1] fils" << std::endl;
 		const char *program = "/usr/bin/php-cgi";
@@ -41,20 +43,30 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string size
 	waitpid(pid, &status, 0);
 	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
 		std::cerr << "SCRIPT ERRRRRRRRRRRRRRRRRRRRROR\n";
-	int gnlfd = open("srcs/server/test", O_RDONLY, O_WRONLY,O_TRUNC);
-	if (gnlfd == -1 || dup2(fd[0], gnlfd) == -1 || close(fd[0]) == -1 || close(fd[1]) == -1)
-		std::cout << "Error opening file parent ou dup2 parent ou close fd[0] parent ou close fd[1] parent" << std::endl;
-	char *t = (char*)(malloc(sizeof(char) * 1));
-	t[0] = '\0';
-	while (1)
+	//int gnlfd = open("srcs/server/test", O_RDONLY, O_WRONLY,O_TRUNC);
+	if (close(fd[1]) == -1)
+	 	std::cout << "Error opening file parent ou dup2 parent ou close fd[0] parent ou close fd[1] parent" << std::endl;
+	// char *t = (char*)(malloc(sizeof(char) * 1));
+	// t[0] = '\0';
+	// while (1)
+	// {
+	// 	if ((t = get_next_line(fd[0])) == NULL)
+	// 		break ;
+	// 	reponse.append(t);
+	// 	free (t);
+	// }
+	std::string bufferStr;
+	char buff[1024];
+	bzero(buff, 1024);
+	while (read(fd[0], buff, 1023) > 0)
 	{
-		if ((t = get_next_line(gnlfd)) == NULL)
-			break ;
-		reponse.append(t);
-		free (t);
+		bufferStr.append(buff);
+		bzero(buff, 1024);
 	}
-	if (close(gnlfd) == -1)
-		std::cout << "Error closing gnlfd" << std::endl;
+	std::cout << "ARGUIUUUUUUUUUUUUUUUUUUUUUUUUUUU\n" <<bufferStr<< std::endl;
+	if (close(fd[0]) == -1)
+		std::cout << "Error closing fd[0]" << std::endl;
+	reponse = bufferStr;
 	size_t finddoctype = reponse.find("<!DOCTYPE");
 	if (finddoctype == std::string::npos)
 		return ("");

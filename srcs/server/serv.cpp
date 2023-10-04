@@ -42,7 +42,6 @@ int main (int argc, char **argv)
 						errorClient(data, events[i].data.fd);
 				}
 				delPlaceEventLog(data.epollFd, events);
-			}
 		}
 		//close tout les serveurs
 	}
