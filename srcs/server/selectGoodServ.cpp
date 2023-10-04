@@ -34,7 +34,7 @@ t_configServ	findGoodServ(std::string &message, t_server &data)
 	}
 	if (nbrServMatch == 1)
 	{
-		for(unsigned int i = 0; i < data.config.size(); i++)
+		for (unsigned int i = 0; i < data.config.size(); i++)
 		{
 			if (data.config[i].port == port)
 				return (data.config[i]);
@@ -42,7 +42,7 @@ t_configServ	findGoodServ(std::string &message, t_server &data)
 	}
 	else if (nbrServMatch > 1)
 	{
-		for(unsigned int i = 0; i < data.config.size(); i++)
+		for (unsigned int i = 0; i < data.config.size(); i++)
 		{
 			if (data.config[i].port == port && data.config[i].serverName == name)
 				return (data.config[i]);
@@ -50,7 +50,7 @@ t_configServ	findGoodServ(std::string &message, t_server &data)
 	}
 	else
 	{
-		for(unsigned int i = 0; i < data.config.size(); i++)
+		for (unsigned int i = 0; i < data.config.size(); i++)
 		{
 			if (data.config[i].port == port)
 				return (data.config[i]);

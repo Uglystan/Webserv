@@ -5,9 +5,7 @@ int	checkEventServ(t_server data, std::vector<struct epoll_event> events, int i)
 	for (unsigned int j = 0; j < data.config.size(); j++)
 	{
 		if (events[i].data.fd == data.config[j].serverSocket)//C'est la socket serveur donc on recoit un nouveau client
-		{
 			return (data.config[j].serverSocket);
-		}
 	}
 	return (-1);
 }
@@ -27,6 +25,8 @@ int main (int argc, char **argv)
 			return (1);
 		while(1)
 		{
+			try
+			{
 				int nfds = checkTimeAndWaitPoll(data, events);
 				addPlaceEventLog(data.epollFd, events);
 				for (int i = 0; i < nfds; i++)
@@ -42,6 +42,16 @@ int main (int argc, char **argv)
 						errorClient(data, events[i].data.fd);
 				}
 				delPlaceEventLog(data.epollFd, events);
+			}
+			catch (errorStopServ const& e)
+			{
+				std::cout << e.getCodeError() << std::endl;
+				break;
+			}
+			catch (errorContinueServ const& e)
+			{
+				std::cout << e.getCodeError() << std::endl;
+			}
 		}
 		//close tout les serveurs
 	}
