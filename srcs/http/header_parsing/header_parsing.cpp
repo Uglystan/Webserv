@@ -1,8 +1,8 @@
 #include "header_parsing.hpp"
 
-std::string	find_server(void)
+std::string	find_server(std::string servname)
 {
-	std::string server = "Server: webserver-42\n";
+	std::string server = "Server: " + servname + "\n";
 	return (server);
 }
 
@@ -121,9 +121,9 @@ std::string	find_WwwAuthenticate(int code)
 	return ("");
 }
 
-std::string find_path(std::string &request)
+std::string find_path(std::string &request, std::string &root)
 {
-	std::string	path = "html/";
+	std::string	path = root;
 	std::string firstLine;
 	std::istringstream iss(request);
 	std::getline(iss, firstLine);

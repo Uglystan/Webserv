@@ -48,7 +48,12 @@ std::string	Response::statik_or_dynamik(void)
 	try
 	{
 		find_method();
-		_path = find_path(_request);
+		if (_serv.allowMethods.find(_method) == std::string::npos)
+		{
+			_code = 405;
+			throw Response::Errorexcept();
+		}
+		_path = find_path(_request, _serv.root);
 		if (_path == "")
 		{
 			_code = 400;
@@ -117,10 +122,10 @@ void	Response::put_in_env(void)
 	setenv("REDIRECT_STATUS", "200", 1);
 	setenv("DOCUMENT_ROOT", _document_root.c_str(), 1);
 	setenv("SCRIPT_FILENAME", _script_filename.c_str(), 1);
-	// extern char** environ;
-	// for (char** env = environ; *env; ++env) {
-	// 	std::cout << *env << std::endl;
-	// }
+	extern char** environ;
+	for (char** env = environ; *env; ++env) {
+		std::cout << *env << std::endl;
+	}
 }
 
 void	Response::fill_strings(void)
@@ -141,15 +146,22 @@ void	Response::fill_strings(void)
 	{
 		_envcontent_type = extractContentType(_request);
 		_envcontent_lenght = extractContentLength(_request);
+		if (atoi(_envcontent_lenght.c_str()) > _serv.maxBodySize)
+		{
+			_code = 413;
+			throw Response::Errorexcept();
+		}
 		// if (_envcontent_type == "" || _envcontent_lenght == "")
 		// {
 		// 	_code = 400;
 		// 	throw Response::Errorexcept();
 		// }
 	}
-	_remote_addr = "127.0.0.1";//changer en fonction de config fill
-	_server_name = "Webserver42";//changer en fonction de config fill
-	_server_port = "8080";//changer en fonction de config fill
+	_remote_addr = _serv.ip;//changer en fonction de config fill
+	_server_name = _serv.serverName;//changer en fonction de config fill
+	std::stringstream ss;
+	ss << _serv.port;
+	_server_port = ss.str();//changer en fonction de config fill
 	_server_protocol = "HTTP/1.1";//changer en fonction de config fill
 	_request_uri = _path;
 }
@@ -185,8 +197,11 @@ void	Response::create_body()
 	std::ifstream html_file;
 	if (_method == "GET")
 	{
-		if (_path == "html/")
-			html_file.open("html/monsite.html", std::ios::in);
+		if (_path == _serv.root)
+		{
+			std::string index = _path + _serv.index;
+			html_file.open(index.c_str(), std::ios::in);
+		}
 		else
 			html_file.open(_path.c_str(), std::ios::in);
 	}
@@ -219,7 +234,7 @@ void	Response::create_body()
 void	Response::body_error_page(void)
 {
 	_body.clear();
-	std::ifstream html_file("html/error.html");
+	std::ifstream html_file(_serv.errorPage.c_str());
 	if (html_file.is_open())
 	{
 		if (html_file.peek() ==  std::ifstream::traits_type::eof())
@@ -260,7 +275,7 @@ void	Response::create_header(void)
 {
 	_header.clear();
 	_status_line = find_status_line();
-	_name = find_server();
+	_name = find_server(_serv.serverName);
 	_date = find_date();
 	_content_type = find_content_type(_request) + "\n";
 	_content_lenght = find_content_lenght(_body);
@@ -279,7 +294,7 @@ void	Response::create_header(void)
 	// 	_code = 500;
 	// 	throw Response::Errorexcept();
 	// }
-	_header += _status_line + _server_name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + "\r\n";
+	_header += _status_line + _name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + "\r\n";
 }
 
 std::string	Response::find_status_line(void)

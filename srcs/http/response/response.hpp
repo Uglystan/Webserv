@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   response.hpp                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lgirault <lgirault@student.42.fr>          +#+  +:+       +#+        */
+/*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/10/03 17:20:25 by lgirault         ###   ########.fr       */
+/*   Updated: 2023/10/04 10:15:32 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,38 +36,27 @@ class Response
 		Response(std::string request, t_configServ serv);
 		~Response(void);
 
-		std::string GetFileSizeAsString(void);
-		void	statik_response(void);
+		void		statik_response(void);
+		void		find_method(void);
+		void		create_body();
+		void		init_Error_code(void);
+		void		find_error_code(void);
+		void		body_error_page(void);
+		void		cleanHeader(void);
+		void		cgi_handler(void);
+		void		put_in_env(void);
+		void		fill_strings(void);
+		void		create_header(void);
+		std::string	GetFileSizeAsString(void);
 		std::string	post_response(void);
-		void	find_method(void);
 		std::string	statik_or_dynamik(void);
-		// void	find_path(void);
-		void	create_header(void);
-		void	create_body();
-		void	init_Error_code(void);
-		void	find_error_code(void);
-		void	body_error_page(void);
-		void	cleanHeader(void);
-		void	cgi_handler(void);
-		void	put_in_env(void);
-		void	fill_strings(void);
 		std::string	find_status_line(void);
-		// std::string	find_server(void);
-		// std::string	find_date(void);
-		// std::string	find_content_type(void);
-		// std::string	find_content_lenght(void);
-		// std::string	find_connection(void);
-		// std::string	find_langage(void);
-		// std::string	find_content_lang(void);
-		// std::string	find_LastModified(void);
-		// std::string	find_tranfertencoding(void);
-		// std::string	find_WwwAuthenticate(void);
 		std::string	get_response(void) const;
 
 	private:
+		std::map<int, std::string>	_errors;
 		int		_code;
 		int		_bool;
-		std::map<int, std::string>	_errors;
 		std::string	_response;
 		std::string	_request;
 		std::string	_path;
