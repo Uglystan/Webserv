@@ -28,7 +28,7 @@ void	manageClient(t_server &data, int &clientSocket)
 	memset(buffer, 0, sizeof(buffer));
 	b = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
 	data.req[clientSocket].bytes += b;
-	data.req[clientSocket].message.append(buffer, b); /*+= std::string(buffer, b)*/;
+	data.req[clientSocket].message.append(buffer, b);
 	sizeHeader = data.req[clientSocket].message.find("\r\n\r\n");
 	if (data.req[clientSocket].bytes == -1 || data.req[clientSocket].bytes == 0)
 	{

@@ -23,7 +23,6 @@
 #include <cstdio>
 #include <sstream>
 #include <cstdlib>
-#include "../srcs/http/response/response.hpp"
 #include <regex.h>
 
 #define NB_EVENT_BASE 100
@@ -68,6 +67,8 @@ typedef struct s_server
 	int	bytes_read;
 
 }t_server;
+
+#include "../srcs/http/response/response.hpp"
 
 int	checkTimeAndWaitPoll(t_server &data, std::vector<struct epoll_event> &events);
 void	delEpollEvent(int &epollFd, int &socket);

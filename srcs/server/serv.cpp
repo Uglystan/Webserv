@@ -21,12 +21,10 @@ int main (int argc, char **argv)
 		std::vector<struct epoll_event> events(NB_EVENT_BASE);
 
 		if (parsingConf(data, argv) == -1)
-		{
-			std::cerr << strerror(errno) << std::endl;
 			return (1);
-		}
 		memset(events.data(), 0, sizeof(events));
-		initAllServ(data);
+		if (initAllServ(data) == -1)
+			return (1);
 		while(1)
 		{
 			int nfds = checkTimeAndWaitPoll(data, events);

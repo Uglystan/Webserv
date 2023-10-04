@@ -8,11 +8,8 @@ void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader)
 	if (data.req[clientSocket].bytes >= (int)sizeAll)
 	{
 		std::cout << "Message recu en plusieur part : " << data.req[clientSocket].message << std::endl;
-		std::cout << "STOOOOOP" << std::endl;
-		//envoyer le bon serveur
-		Response reponse(data.req[clientSocket].message);
+		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data));//alex doit regarder maxdodysize
 		std::string response = reponse.statik_or_dynamik();
-		std::cout << "Teeeeest" << std::endl;
 		send(clientSocket, response.data(), response.size(), 0);
 		data.req.erase(clientSocket);//suppr les save de bytes car message envoyee
 		data.req[clientSocket].message.erase();//suppr le message car message envoyee
@@ -22,7 +19,7 @@ void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader)
 void	recvBase(t_server &data, int &clientSocket)
 {
 	std::cout << "Message recu en une partie : " << data.req[clientSocket].message << std::endl;
-	Response reponse(data.req[clientSocket].message);
+	Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data));
 	std::string response = reponse.statik_or_dynamik();
 	send(clientSocket, response.data(), response.size(), 0);
 	data.req.erase(clientSocket);
@@ -34,8 +31,7 @@ void	recvChunk(t_server &data, int &clientSocket)
 	if (data.req[clientSocket].message.find("0\r\n\r\n") != std::string::npos)
 	{
 		std::cout << "Message recu en chunk : " << data.req[clientSocket].message << std::endl;
-		//envoyer le bon serveur
-		Response reponse(data.req[clientSocket].message);
+		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data));
 		std::string response = reponse.statik_or_dynamik();
 		send(clientSocket, response.data(), response.size(), 0);
 		data.req.erase(clientSocket);
