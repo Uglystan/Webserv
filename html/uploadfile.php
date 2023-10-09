@@ -44,12 +44,16 @@
                 if (strpos($typeMIME, "text/") === 0) {
                     // Le fichier est du texte
                     $contenu = file_get_contents($dossierDeDestination . $nomFichier);
-                    echo '<p>Voici le contenu du fichier texte :</p>';
-                    echo '<pre>' . htmlspecialchars($contenu) . '</pre>';
+        ?>
+                    <p>Voici le contenu du fichier texte :</p>
+                    <pre><?php echo htmlspecialchars($contenu); ?></pre>
+        <?php
                 } elseif (strpos($typeMIME, "image/") === 0) {
                     // Le fichier est une image
-                    echo '<p>Voici l\'image :</p>';
-                    echo '<img src="' . $dossierDeDestination . $nomFichier . '" alt="Image téléchargée">';
+        ?>
+                    <p>Voici l'image :</p>
+                    <img src="<?php echo $dossierDeDestination . $nomFichier; ?>" alt="Image téléchargée">
+        <?php
                 } else {
                     // Le type n'est pas pris en charge, affiche un message générique
                     echo '<p>Le type de fichier n\'est pas pris en charge.</p>';

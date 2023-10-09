@@ -32,14 +32,25 @@ void	Response::cleanHeader(void)
 	_method = "";
 	_status_line = "";
 	_server_name = "";
-	_date = "";
-	_content_type = "";
-	_content_lang = "";
-	_content_lenght = "";
-	_last_modified = "";
 	_transfertencoding = "";
 	_wwwauthenticate = "";
 	_connection = "";
+}
+
+void	Response::check_location(void)//rajouter si autre chose potentiel dans location
+{
+	// std::cout << "-----------------------------\n";
+	// std::cout << _path << std::endl;
+	for (size_t i = 0; i < _serv.locationVec.size(); ++i)
+	{
+		const t_location& location = _serv.locationVec[i];
+		// std::cout << location.directory << std::endl;
+		// std::cout << location.root << std::endl;
+		// std::cout << location.allow_methods << std::endl;
+		if (_path.find(location.directory) != std::string::npos && _path.find(location.root) != std::string::npos)
+			_serv.allowMethods = location.allow_methods;
+	}
+	//std::cout << "-----------------------------\n";
 }
 
 std::string	Response::statik_or_dynamik(void)
@@ -53,18 +64,19 @@ std::string	Response::statik_or_dynamik(void)
 			throw Response::Errorexcept();
 		}
 		find_method();
-		if (_serv.allowMethods.find(_method) == std::string::npos)
-		{
-			_code = 405;
-			throw Response::Errorexcept();
-		}
 		_path = find_path(_request, _serv.root);
 		if (_path == "")
 		{
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		std::cout << "FIIIIIND" << find_langage(_path) << std::endl;
+		check_location();
+		if (_serv.allowMethods.find(_method) == std::string::npos)
+		{
+			_code = 405;
+			throw Response::Errorexcept();
+		}
+		//std::cout << "FIIIIIND" << find_langage(_path) << std::endl;
 		size_t posPHP = _serv.cgiExt.find(find_langage(_request));
 		if (posPHP != std::string::npos)
 		{
@@ -95,7 +107,7 @@ void	Response::cgi_handler(void)
 {
 	put_in_env();
 	std::string	postData = extractPostData(_request, _envcontent_type);
-	//std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << "LOL" << std::endl;
+	// std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << "LOL" << std::endl;
 	if (_method == "POST")
 	{
 		if (postData == "")
@@ -104,9 +116,9 @@ void	Response::cgi_handler(void)
 			throw Response::Errorexcept();
 		}
 	}
-	std::cout << _serv.cgi << std::endl;
-	std::cout << find_langage(_request) << std::endl;
-	std::cout << find_cgi_path(_serv.cgi, find_langage(_request)) << std::endl;
+	// std::cout << _serv.cgi << std::endl;
+	// std::cout << find_langage(_request) << std::endl;
+	// std::cout << find_cgi_path(_serv.cgi, find_langage(_request)) << std::endl;
 	std::string	goodpath = find_cgi_path(_serv.cgi, find_langage(_request));
 	_body = execCgi(_path, postData, _envcontent_lenght, goodpath);
 	if (_body == "")
