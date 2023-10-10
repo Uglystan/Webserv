@@ -9,6 +9,7 @@ void	errorContinue(t_server &data, errorContinueServ const& e)
 		throw errorStopServ(strerror(errno));
 	data.req.erase(e.getClientSocket());
 	data.req[e.getClientSocket()].message.erase();
+	close(e.getClientSocket());
 }
 
 void	errorStop(t_server &data, errorStopServ const& e)
