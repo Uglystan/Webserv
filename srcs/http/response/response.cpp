@@ -128,6 +128,11 @@ void	Response::cgi_handler(void)
 		_code = 500;
 		throw Response::Errorexcept();
 	}
+	else if (_body == "-1")
+	{
+		_code = 404;
+		throw Response::Errorexcept();
+	}
 	create_header();
 	_response = _header + _body;
 }
