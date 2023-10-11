@@ -3,6 +3,7 @@ extern char **environ;
 
 static void writeReqBody(std::string requestbody, std::string size)
 {
+	//(void)size;
 	int script_input[2];
 	pipe(script_input);
 	dup2(script_input[0], 0);
@@ -11,6 +12,15 @@ static void writeReqBody(std::string requestbody, std::string size)
 	std::cerr << "YPPPPPPPPPPPPPPPPPPP" << std::endl;
 	std::cout << ret << std::endl;
 	close(script_input[1]);
+	// std::ofstream fichier("/mnt/nfs/homes/abourdon/Desktop/Webserv/srcs/http/cgi_handler/temp");
+	// if (fichier.is_open())
+	// {
+	// 	fichier << requestbody;
+	// 	fichier.close();
+	// 	std::cout << "Contenu écrit dans le fichier avec succès." << std::endl;
+	// }
+	// else
+	// 	std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
 }
 
 static int	cgi_path_access(std::string &cgipath)
