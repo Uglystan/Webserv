@@ -42,7 +42,7 @@ int	next_line(t_server &data, int i, int clientSocket)
 	return (i + 1);
 }
 
-int	chunkTest(t_server &data, int &clientSocket)
+void	chunkTest(t_server &data, int &clientSocket)
 {
 	int	j;
 	int i = 0;
