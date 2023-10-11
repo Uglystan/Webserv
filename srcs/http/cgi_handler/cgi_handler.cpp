@@ -14,7 +14,8 @@ static void writeReqBody(std::string requestbody)
 		;//std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
 	int fd = ::open("srcs/http/cgi_handler/temp", O_RDONLY);
 	if (fd != -1)
-	{| _envcontent_lenght == ""
+	{
+		_envcontent_lenght == "";
 		dup2(fd, 0);
 		close(fd);
 	}
