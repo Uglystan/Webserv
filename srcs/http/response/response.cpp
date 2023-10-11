@@ -87,7 +87,7 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
-		std::cout << "Message envoyee : \n" << _response << std::endl;
+		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
@@ -98,7 +98,7 @@ std::string	Response::statik_or_dynamik(void)
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
-		std::cout << "Message envoyee : \n" << _response << std::endl;
+		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 }
