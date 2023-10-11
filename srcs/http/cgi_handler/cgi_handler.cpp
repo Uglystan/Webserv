@@ -14,7 +14,7 @@ static void writeReqBody(std::string requestbody)
 		;//std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
 	int fd = ::open("srcs/http/cgi_handler/temp", O_RDONLY);
 	if (fd != -1)
-	{| _envcontent_lenght == ""
+	{
 		dup2(fd, 0);
 		close(fd);
 	}
@@ -57,6 +57,7 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi
 	if (close(fd[1]) == -1)
 	 	std::cout << "Error opening file parent ou dup2 parent ou close fd[0] parent ou close fd[1] parent" << std::endl;
 	waitpid(pid, &status, 0);
+
 	char buff[4096];
 	bzero(buff, 4096);
 	while (1)
