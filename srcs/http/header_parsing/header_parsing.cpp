@@ -64,7 +64,7 @@ std::string	find_content_type(std::string &request)
 	else if (find_langage(request) == "form-data" || find_langage(request) == "byteranges")
 		content_type = "Content-Type: multipart/" + find_langage(request) +"; charset=UTF-8";
 	else
-		content_type = "Content-Type: text/html; charset=UTF-8";
+		content_type = "";
 	return (content_type);
 }
 
