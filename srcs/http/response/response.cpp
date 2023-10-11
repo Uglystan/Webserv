@@ -81,7 +81,9 @@ std::string	Response::statik_or_dynamik(void)
 		if (posPHP != std::string::npos)
 		{
 			if (_path == _serv.root)
-			statik_response();
+			{
+				statik_response();
+			}
 			else
 				cgi_handler();
 		}

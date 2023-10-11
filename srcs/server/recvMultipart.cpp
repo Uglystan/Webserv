@@ -13,6 +13,7 @@ void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader)
 		std::string response = reponse.statik_or_dynamik();
 		if (send(clientSocket, response.data(), response.size(), 0) == -1)
 			throw errorStopServ(strerror(errno));
+		std::cout << "END" << std::endl;
 		data.req.erase(clientSocket);//suppr les save de bytes car message envoyee
 		data.req[clientSocket].message.erase();//suppr le message car message envoyee
 	}
@@ -26,6 +27,7 @@ void	recvBase(t_server &data, int &clientSocket)
 	std::string response = reponse.statik_or_dynamik();
 	if (send(clientSocket, response.data(), response.size(), 0) == -1)
 		throw errorStopServ(strerror(errno));
+	std::cout << "END" << std::endl;
 	data.req.erase(clientSocket);
 	data.req[clientSocket].message.erase();
 }
