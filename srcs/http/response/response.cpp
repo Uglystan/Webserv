@@ -190,11 +190,11 @@ void	Response::fill_strings(std::string postData)
 			_code = 413;
 			throw Response::Errorexcept();
 		}
-		// if (_envcontent_type == "" || _envcontent_lenght == "")
-		// {
-		// 	_code = 400;
-		// 	throw Response::Errorexcept();
-		// }
+		if (_envcontent_type == "" || _envcontent_lenght == "")
+		{
+			_code = 400;
+			throw Response::Errorexcept();
+		}
 	}
 	_remote_addr = _serv.ip;//changer en fonction de config fill
 	_server_name = _serv.serverName;//changer en fonction de config fill
