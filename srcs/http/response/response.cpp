@@ -81,13 +81,13 @@ std::string	Response::statik_or_dynamik(void)
 		if (posPHP != std::string::npos)
 		{
 			if (_path == _serv.root)
-			statik_response();
+				statik_response();
 			else
 				cgi_handler();
 		}
 		else
 			statik_response();
-		//std::cout << "Message envoyee : \n" << _response << std::endl;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
@@ -98,7 +98,7 @@ std::string	Response::statik_or_dynamik(void)
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
-		//std::cout << "Message envoyee : \n" << _response << std::endl;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 }
@@ -142,9 +142,14 @@ void	Response::put_in_env(std::string postData)
 	fill_strings(postData);
 	setenv("REQUEST_METHOD", _method.c_str(), 1);
 	if (_method == "GET")
+	{
 		setenv("QUERY_STRING", _query_string.c_str(), 1);
+		unsetenv("CONTENT_TYPE");
+		unsetenv("CONTENT_LENGTH");
+	}
 	if (_method == "POST")
 	{
+		unsetenv("QUERY_STRING");
 		setenv("CONTENT_TYPE", _envcontent_type.c_str(), 1);
 		setenv("CONTENT_LENGTH", _envcontent_lenght.c_str(), 1);
 	}
