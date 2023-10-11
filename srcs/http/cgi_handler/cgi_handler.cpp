@@ -9,15 +9,17 @@ static void writeReqBody(std::string requestbody)
 		fichier << requestbody;
 		fichier.close();
 		//std::cerr << "Contenu écrit dans le fichier avec succès." << std::endl;
+		int fd = ::open("srcs/http/cgi_handler/temp", O_RDONLY);
+		if (fd != -1)
+		{
+			dup2(fd, 0);
+			close(fd);
+		}
+		if (remove("srcs/http/cgi_handler/temp") != 0)
+			std::cerr << "Impossible de supprimer le fichier." << std::endl;
 	}
 	else
 		;//std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
-	int fd = ::open("srcs/http/cgi_handler/temp", O_RDONLY);
-	if (fd != -1)
-	{
-		dup2(fd, 0);
-		close(fd);
-	}
 }
 
 static int	cgi_path_access(std::string &cgipath)
