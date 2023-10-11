@@ -157,7 +157,7 @@ std::string find_path(std::string &request, std::string &root)
 	}
 	else
 		return ("");
-	std::cout << path << std::endl;
+	//std::cout << path << std::endl;
 	return (path);
 }
 
