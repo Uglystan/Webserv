@@ -16,6 +16,7 @@ SRC =	srcs/server/serv.cpp\
 	srcs/server/recvMultipart.cpp\
 	srcs/server/selectGoodServ.cpp\
 	srcs/server/handleError.cpp\
+	srcs/server/chunkedReq.cpp\
 	srcs/parsingconf/parsingConf.cpp\
 	srcs/parsingconf/cutStringConf.cpp\
 	srcs/parsingconf/fillServConf.cpp\

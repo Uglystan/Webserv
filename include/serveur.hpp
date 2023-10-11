@@ -148,3 +148,4 @@ t_configServ	findGoodServ(std::string &message, t_server &data);
 void	errorContinue(t_server &data, errorContinueServ const& e);
 void	errorStop(t_server &data, errorStopServ const& e);
 void	*ft_memset(void *dest, int c, size_t size);
+void	chunkTest(t_server &data, int &clientSocket);

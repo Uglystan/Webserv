@@ -10,7 +10,6 @@ int	checkEventServ(t_server data, std::vector<struct epoll_event> events, int i)
 	return (-1);
 }
 
-
 void	*ft_memset(void *dest, int c, size_t size)
 {
 	size_t	i;
