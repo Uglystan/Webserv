@@ -71,7 +71,10 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi
 	if (close(fd[0]) == -1)
 		std::cout << "Error closing fd[0]" << std::endl;
 	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
+	{
 		std::cerr << "Script error \n";
+		return ("-1");
+	}
 	size_t finddoctype = reponse.find("<");
 	if (finddoctype == std::string::npos)
 		return ("");
