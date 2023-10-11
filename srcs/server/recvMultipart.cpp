@@ -36,7 +36,7 @@ void	recvChunk(t_server &data, int &clientSocket)
 {
 	if (data.req[clientSocket].message.find("0\r\n\r\n") != std::string::npos)//message contient encore les tailles
 	{
-		//std::cout << "Message recu en chunk : " << data.req[clientSocket].message << std::endl;
+		std::cout << "Message recu en chunk : " << data.req[clientSocket].message << std::endl;
 		chunkTest(data, clientSocket);
 		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data));
 		std::string response = reponse.statik_or_dynamik();
