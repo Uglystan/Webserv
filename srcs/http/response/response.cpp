@@ -190,7 +190,7 @@ void	Response::fill_strings(std::string postData)
 			_code = 413;
 			throw Response::Errorexcept();
 		}
-		if (_envcontent_type == "" || _envcontent_lenght == "")
+		if (_envcontent_type == "")
 		{
 			_code = 400;
 			throw Response::Errorexcept();
