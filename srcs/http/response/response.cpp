@@ -120,7 +120,7 @@ void	Response::cgi_handler(void)
 	// std::cout << find_langage(_request) << std::endl;
 	// std::cout << find_cgi_path(_serv.cgi, find_langage(_request)) << std::endl;
 	std::string	goodpath = find_cgi_path(_serv.cgi, find_langage(_request));
-	_body = execCgi(_path, postData, _envcontent_lenght, goodpath);
+	_body = execCgi(_path, postData, goodpath);
 	if (_body == "")
 	{
 		_code = 500;

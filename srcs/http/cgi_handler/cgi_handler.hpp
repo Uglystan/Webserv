@@ -21,6 +21,6 @@
 #include "../header_parsing/header_parsing.hpp"
 #include <fcntl.h>
 
-std::string	execCgi(std::string path, std::string	_requestbody, std::string size, std::string &cgi_path);
+std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi_path);
 
 #endif

@@ -1,26 +1,23 @@
 #include "cgi_handler.hpp"
 extern char **environ;
 
-static void writeReqBody(std::string requestbody, std::string size)
+static void writeReqBody(std::string requestbody)
 {
-	//(void)size;
-	int script_input[2];
-	pipe(script_input);
-	dup2(script_input[0], 0);
-	close(script_input[0]);
-	int ret = write(script_input[1], requestbody.c_str(), atoi(size.c_str()));// Écrire le contenu de la chaîne de caractères "request" dans le tube.
-	std::cerr << "YPPPPPPPPPPPPPPPPPPP" << std::endl;
-	std::cout << ret << std::endl;
-	close(script_input[1]);
-	// std::ofstream fichier("/mnt/nfs/homes/abourdon/Desktop/Webserv/srcs/http/cgi_handler/temp");
-	// if (fichier.is_open())
-	// {
-	// 	fichier << requestbody;
-	// 	fichier.close();
-	// 	std::cout << "Contenu écrit dans le fichier avec succès." << std::endl;
-	// }
-	// else
-	// 	std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
+	std::ofstream fichier("srcs/http/cgi_handler/temp");
+	if (fichier.is_open())
+	{
+		fichier << requestbody;
+		fichier.close();
+		std::cerr << "Contenu écrit dans le fichier avec succès." << std::endl;
+	}
+	else
+		std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
+	int fd = ::open("srcs/http/cgi_handler/temp", O_RDONLY);
+	if (fd != -1)
+	{
+		dup2(fd, 0);
+		close(fd);
+	}
 }
 
 static int	cgi_path_access(std::string &cgipath)
@@ -31,7 +28,7 @@ static int	cgi_path_access(std::string &cgipath)
 		return (1);
 }
 
-std::string	execCgi(std::string path, std::string	_requestbody, std::string size, std::string &cgi_path)
+std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi_path)
 {
 	std::string	reponse;
 	std::string	line;
@@ -51,7 +48,7 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string size
 		if (dup2(fd[1], 1) == -1 || close(fd[0]) == -1 || close(fd[1]) == -1)
 			std::cerr << "Error dup2 fils ou close fd[0] fils ou close fd[1] fils" << std::endl;
 		if (requestMethod == "POST")
-			writeReqBody(_requestbody, size);
+			writeReqBody(_requestbody);
 		const char *program = cgi_path.c_str();
 		char *const av[] = {(char *)program, (char *)path.c_str(), NULL};
 		execve(program, av, environ);
@@ -59,7 +56,9 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string size
 	}
 	if (close(fd[1]) == -1)
 	 	std::cout << "Error opening file parent ou dup2 parent ou close fd[0] parent ou close fd[1] parent" << std::endl;
+	std::cerr << "ALAID" << std::endl;
 	waitpid(pid, &status, 0);
+	std::cerr << "ca marche" << std::endl;
 	char buff[4096];
 	bzero(buff, 4096);
 	while (1)
