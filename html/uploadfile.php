@@ -27,50 +27,32 @@
 <body>
     <div class="container">
         <h1>Téléchargement Réussi</h1>
-
-        <?php
-        if(isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0) {
-            $nomFichier = $_FILES["fichier"]["name"];
-            $dossierDeDestination = "tmp/"; // Le dossier où vous souhaitez stocker les fichiers téléchargés
-
-            // Déplacer le fichier téléchargé vers le dossier de destination
-            if(move_uploaded_file($_FILES["fichier"]["tmp_name"], $dossierDeDestination . $nomFichier)) {
-                echo "<p>Le fichier $nomFichier a été téléchargé avec succès.</p>";
-
-                // Obtenez le type MIME du fichier
-                $typeMIME = mime_content_type($dossierDeDestination . $nomFichier);
-
-                echo '<p>Type MIME du fichier : ' . $typeMIME . '</p>';
-
-                // Afficher le contenu en fonction du type MIME
-                if (strpos($typeMIME, "text/") === 0) {
-                    // Le fichier est du texte
-                    $contenu = file_get_contents($dossierDeDestination . $nomFichier);
-                    echo '<p>Voici le contenu du fichier texte :</p>';
-                    echo '<pre>' . htmlspecialchars($contenu) . '</pre>';
-                } elseif (strpos($typeMIME, "image/") === 0) {
-                    // Le fichier est une image
-                    echo '<p>Voici l\'image :</p>';
-                    echo '<img src="' . $dossierDeDestination . $nomFichier . '" alt="Image téléchargée">';
-                } elseif (strpos($typeMIME, "audio/") === 0) {
-                    // Le fichier est un audio
-                    echo '<p>Voici le fichier audio :</p>';
-                    echo '<audio controls>';
-                    echo '<source src="' . $dossierDeDestination . $nomFichier . '" type="' . $typeMIME . '">';
-                    echo 'Votre navigateur ne prend pas en charge l\'élément audio.';
-                    echo '</audio>';
-                } else {
-                    // Le type n'est pas pris en charge, affiche un message générique
-                    echo '<p>Le type de fichier n\'est pas pris en charge.</p>';
-                }
-            } else {
-                echo "<p>Une erreur s'est produite lors du téléchargement du fichier.</p>";
-            }
-        } else {
-            echo "<p>Aucun fichier n'a été téléchargé ou une erreur s'est produite.</p>";
-        }
-        ?>
-
+	<?php
+		if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
+		{
+			$nomFichier = $_FILES["fichier"]["name"];
+			$dossierDeDestination = "tmp/"; // Le dossier où vous souhaitez stocker les fichiers téléchargés
+			// Déplacer le fichier téléchargé vers le dossier de destination
+			if (move_uploaded_file($_FILES["fichier"]["tmp_name"], $dossierDeDestination . $nomFichier))
+			{
+				echo "<p>Le fichier $nomFichier a été téléchargé avec succès.</p>";
+				// Obtenez le type MIME du fichier
+				$typeMIME = mime_content_type($dossierDeDestination . $nomFichier);
+				// Afficher le contenu en fonction du type MIME
+				if (strpos($typeMIME, "image/") === 0)
+				{
+					// Le fichier est une image
+					echo '<img src="' . $dossierDeDestination . $nomFichier . '" alt="Image téléchargée" style="max-width: 100%; height: auto;">';
+				}
+				else
+					echo '<p>Le fichier n\'est pas une image.</p>';
+			}
+			else
+				echo "<p>Une erreur s'est produite lors du téléchargement du fichier.</p>";
+		}
+		else
+			echo "<p>Aucun fichier n'a été téléchargé ou une erreur s'est produite.</p>";
+	?>
         <p><a href="post.html">Retour au formulaire</a></p>
     </div>
     

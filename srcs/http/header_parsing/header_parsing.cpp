@@ -139,7 +139,7 @@ std::string find_path(std::string &request, std::string &root)
 	size_t firstSlashPos = firstLine.find('/');
 	if (firstSlashPos != std::string::npos)
 	{
-		size_t nextSpacePos = firstLine.find(' ', firstSlashPos + 1);
+		size_t nextSpacePos = firstLine.find(" HTTP", firstSlashPos + 1);
 		if (nextSpacePos != std::string::npos)
 		{
 			size_t nextQuestionMark = firstLine.find('?', firstSlashPos);
@@ -157,6 +157,7 @@ std::string find_path(std::string &request, std::string &root)
 	}
 	else
 		return ("");
+	std::cout << path << std::endl;
 	return (path);
 }
 
