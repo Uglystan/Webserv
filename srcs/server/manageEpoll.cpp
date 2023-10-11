@@ -31,7 +31,7 @@ void	delEpollEvent(int &epollFd, int &socket)
 {
 	struct epoll_event event;
 
-	memset(&event, 0, sizeof(struct epoll_event));
+	ft_memset(&event, 0, sizeof(struct epoll_event));
 	event.data.fd = socket;
 	// On surveille les message entrant, la fermeture de la socket
 	event.events = EPOLLIN | EPOLLRDHUP;
@@ -44,7 +44,7 @@ void	addEpollEvent(int &epollFd, int &socket)
 {
 	//Ici la structure sert juste setup les evenements pour la socket et a l'ajouter a la liste d'evenement
 	struct epoll_event event;
-	memset(&event, 0, sizeof(struct epoll_event));
+	ft_memset(&event, 0, sizeof(struct epoll_event));
 	event.data.fd = socket;
 	//On gere Le in et si la socket se ferme
 	event.events = EPOLLIN | EPOLLRDHUP | EPOLLERR;

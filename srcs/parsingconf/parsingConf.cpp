@@ -1,14 +1,24 @@
 #include "../../include/serveur.hpp"
 
-int	getFile(char **argv, std::string &stringFile)
+int	getFile(char **argv, std::string &stringFile, int argc)
 {
-	std::ifstream	file(argv[1], std::ios::in);
 	std::string	line;
-
-	if (file.is_open() == false)
-		return (-1);
-	while (std::getline(file, line))
-		stringFile.append(line);
+	if (argc == 2)
+	{
+		std::ifstream	file(argv[1], std::ios::in);
+		if (file.is_open() == false)
+			return (-1);
+		while (std::getline(file, line))
+			stringFile.append(line);
+	}
+	else
+	{
+		std::ifstream	file("config/test.config", std::ios::in);
+		if (file.is_open() == false)
+			return (-1);
+		while (std::getline(file, line))
+			stringFile.append(line);
+	}
 	return (0);
 }
 
@@ -39,13 +49,13 @@ int	checkEachServString(std::vector<std::string> eachServString)
 }
 
 /*Une socket par couple adresseIP/port different et si sur le meme adresseIP/port il y'a 2 serveur alors on regarde HOST*/
-int	parsingConf(t_server &data, char **argv)
+int	parsingConf(t_server &data, char **argv, int argc)
 {
 	std::string	stringFile;
 	std::vector<std::string>	eachServString;
 	(void)data;
 
-	if (getFile(argv, stringFile) == -1)
+	if (getFile(argv, stringFile, argc) == -1)
 	{
 		std::cout << "Cannot open conf file" << std::endl;
 		return (-1);

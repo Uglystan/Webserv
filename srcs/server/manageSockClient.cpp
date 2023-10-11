@@ -26,7 +26,7 @@ void	manageClient(t_server &data, int &clientSocket)
 	size_t	sizeHeader = 0;
 	int	b = 0;
 
-	memset(buffer, 0, sizeof(buffer));
+	ft_memset(buffer, 0, sizeof(buffer));
 	b = recv(clientSocket, buffer, 1024, MSG_DONTWAIT);
 	data.req[clientSocket].bytes += b;
 	data.req[clientSocket].message.append(buffer, b);
@@ -61,15 +61,6 @@ void	manageClient(t_server &data, int &clientSocket)
 void	disconnectClient(t_server &data, int &socket)
 {
 	std::cout << "Deconnexion socket : " << socket << std::endl;
-	data.timer.erase(socket);
-	delEpollEvent(data.epollFd, socket);
-	if (close(socket) == -1)
-		throw errorStopServ(strerror(errno));
-}
-
-void	errorClient(t_server &data, int &socket)
-{
-	std::cout << "Error sur socket : " << socket << std::endl;
 	data.timer.erase(socket);
 	delEpollEvent(data.epollFd, socket);
 	if (close(socket) == -1)
