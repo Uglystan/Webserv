@@ -40,20 +40,25 @@
                 // Obtenez le type MIME du fichier
                 $typeMIME = mime_content_type($dossierDeDestination . $nomFichier);
 
-                // Affiche le contenu en fonction du type MIME
+                echo '<p>Type MIME du fichier : ' . $typeMIME . '</p>';
+
+                // Afficher le contenu en fonction du type MIME
                 if (strpos($typeMIME, "text/") === 0) {
                     // Le fichier est du texte
                     $contenu = file_get_contents($dossierDeDestination . $nomFichier);
-        ?>
-                    <p>Voici le contenu du fichier texte :</p>
-                    <pre><?php echo htmlspecialchars($contenu); ?></pre>
-        <?php
+                    echo '<p>Voici le contenu du fichier texte :</p>';
+                    echo '<pre>' . htmlspecialchars($contenu) . '</pre>';
                 } elseif (strpos($typeMIME, "image/") === 0) {
                     // Le fichier est une image
-        ?>
-                    <p>Voici l'image :</p>
-                    <img src="<?php echo $dossierDeDestination . $nomFichier; ?>" alt="Image téléchargée">
-        <?php
+                    echo '<p>Voici l\'image :</p>';
+                    echo '<img src="' . $dossierDeDestination . $nomFichier . '" alt="Image téléchargée">';
+                } elseif (strpos($typeMIME, "audio/") === 0) {
+                    // Le fichier est un audio
+                    echo '<p>Voici le fichier audio :</p>';
+                    echo '<audio controls>';
+                    echo '<source src="' . $dossierDeDestination . $nomFichier . '" type="' . $typeMIME . '">';
+                    echo 'Votre navigateur ne prend pas en charge l\'élément audio.';
+                    echo '</audio>';
                 } else {
                     // Le type n'est pas pris en charge, affiche un message générique
                     echo '<p>Le type de fichier n\'est pas pris en charge.</p>';

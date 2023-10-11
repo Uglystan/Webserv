@@ -26,7 +26,7 @@ std::string extractContentType(std::string &request)
 	return ("");
 }
 
-std::string extractContentLength(std::string &request)
+std::string extractContentLength(std::string &request, std::string postData)
 {
 	std::string contentLength;
 	size_t contentLengthPos = request.find("Content-Length: ");
@@ -38,6 +38,12 @@ std::string extractContentLength(std::string &request)
 			contentLength = request.substr(contentLengthPos + 16, lineEnd - contentLengthPos - 16);
 		else
 			return ("");
+	}
+	else
+	{
+		std::stringstream ss;
+		ss << postData.size();
+		contentLength = ss.str();
 	}
 	return (contentLength);
 }

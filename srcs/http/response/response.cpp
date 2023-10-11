@@ -105,17 +105,19 @@ std::string	Response::statik_or_dynamik(void)
 
 void	Response::cgi_handler(void)
 {
-	put_in_env();
-	std::string	postData = extractPostData(_request, _envcontent_type);
-	// std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << "LOL" << std::endl;
+	std::string	postData = "";
 	if (_method == "POST")
 	{
+		std::string type = extractContentType(_request);
+		postData = extractPostData(_request, type);
+		// std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << "LOL" << std::endl;
 		if (postData == "")
 		{
 			_code = 400;
 			throw Response::Errorexcept();
 		}
 	}
+	put_in_env(postData);
 	// std::cout << _serv.cgi << std::endl;
 	// std::cout << find_langage(_request) << std::endl;
 	// std::cout << find_cgi_path(_serv.cgi, find_langage(_request)) << std::endl;
@@ -130,9 +132,9 @@ void	Response::cgi_handler(void)
 	_response = _header + _body;
 }
 
-void	Response::put_in_env(void)
+void	Response::put_in_env(std::string postData)
 {
-	fill_strings();
+	fill_strings(postData);
 	setenv("REQUEST_METHOD", _method.c_str(), 1);
 	if (_method == "GET")
 		setenv("QUERY_STRING", _query_string.c_str(), 1);
@@ -155,7 +157,7 @@ void	Response::put_in_env(void)
 	// }
 }
 
-void	Response::fill_strings(void)
+void	Response::fill_strings(std::string postData)
 {
 	_document_root = "/html";//changer en fonction de config fill
 	_script_filename = _path;
@@ -172,7 +174,7 @@ void	Response::fill_strings(void)
 	if (_method == "POST")
 	{
 		_envcontent_type = extractContentType(_request);
-		_envcontent_lenght = extractContentLength(_request);
+		_envcontent_lenght = extractContentLength(_request, postData);
 		if (atoi(_envcontent_lenght.c_str()) > _serv.maxBodySize)
 		{
 			_code = 413;

@@ -8,10 +8,10 @@ static void writeReqBody(std::string requestbody)
 	{
 		fichier << requestbody;
 		fichier.close();
-		std::cerr << "Contenu écrit dans le fichier avec succès." << std::endl;
+		//std::cerr << "Contenu écrit dans le fichier avec succès." << std::endl;
 	}
 	else
-		std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
+		;//std::cerr << "Impossible d'ouvrir le fichier : " << std::endl;
 	int fd = ::open("srcs/http/cgi_handler/temp", O_RDONLY);
 	if (fd != -1)
 	{
@@ -56,9 +56,7 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi
 	}
 	if (close(fd[1]) == -1)
 	 	std::cout << "Error opening file parent ou dup2 parent ou close fd[0] parent ou close fd[1] parent" << std::endl;
-	std::cerr << "ALAID" << std::endl;
 	waitpid(pid, &status, 0);
-	std::cerr << "ca marche" << std::endl;
 	char buff[4096];
 	bzero(buff, 4096);
 	while (1)

@@ -6,7 +6,7 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/10/09 11:27:06 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/10/11 15:25:43 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,8 +44,8 @@ class Response
 		void		body_error_page(void);
 		void		cleanHeader(void);
 		void		cgi_handler(void);
-		void		put_in_env(void);
-		void		fill_strings(void);
+		void		put_in_env(std::string postData);
+		void		fill_strings(std::string postData);
 		void		create_header(void);
 		void		check_location(void);
 		std::string	GetFileSizeAsString(void);
