@@ -6,7 +6,7 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/10/11 15:25:43 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/10/12 10:57:50 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,7 @@ class Response
 		void		fill_strings(std::string postData);
 		void		create_header(void);
 		void		check_location(void);
+		void		check_content_type(void);
 		std::string	GetFileSizeAsString(void);
 		std::string	post_response(void);
 		std::string	statik_or_dynamik(void);
