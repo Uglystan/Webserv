@@ -31,18 +31,20 @@ int	checkEachServString(std::vector<std::string> eachServString)
 	{
 		if (eachServString[i].find("listen ") == std::string::npos || eachServString[i].find("listen ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("listen ") + 7] <= 32)
 			return (std::cout << "Missing listen line" << std::endl, -1);
-		if (eachServString[i].find("root ") == std::string::npos || eachServString[i].find("root ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("root ") + 5] <= 32)
-			return (std::cout << "Missing listen root" << std::endl, -1);
-		if (eachServString[i].find("index ") == std::string::npos || eachServString[i].find("index ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("index ") + 6] <= 32)
-			return (std::cout << "Missing listen index" << std::endl, -1);
-		if (eachServString[i].find("error_page ") == std::string::npos || eachServString[i].find("error_page ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("error_page ") + 11] <= 32)
-			return (std::cout << "Missing listen error_page" << std::endl, -1);
-		if (eachServString[i].find("max_body_size ") == std::string::npos || eachServString[i].find("max_body_size ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("max_body_size ") + 14] <= 32)
-			return (std::cout << "Missing listen max_body_size" << std::endl, -1);
-		if (eachServString[i].find("cgi ") == std::string::npos || eachServString[i].find("cgi ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("cgi ") + 4] <= 32)
-			return (std::cout << "Missing listen cgi" << std::endl, -1);
-		if (eachServString[i].find("allow_methods ") == std::string::npos || eachServString[i].find("allow_methods ") > eachServString[i].find("location ") || eachServString[i][eachServString[i].find("allow_methods ") + 14] <= 32)
-			return (std::cout << "Missing listen allow_methods" << std::endl, -1);
+		if (eachServString[i].find("root ") == std::string::npos || eachServString[i].find("root ") > eachServString[i].find("location "))
+			return (std::cout << "Missing root" << std::endl, -1);
+		if (eachServString[i].find("index ") == std::string::npos || eachServString[i].find("index ") > eachServString[i].find("location "))
+			return (std::cout << "Missing index" << std::endl, -1);
+		if (eachServString[i].find("error_page ") == std::string::npos || eachServString[i].find("error_page ") > eachServString[i].find("location "))
+			return (std::cout << "Missing error_page" << std::endl, -1);
+		if (eachServString[i].find("max_body_size ") == std::string::npos || eachServString[i].find("max_body_size ") > eachServString[i].find("location "))
+			return (std::cout << "Missing max_body_size" << std::endl, -1);
+		if (eachServString[i].find("cgi ") == std::string::npos || eachServString[i].find("cgi ") > eachServString[i].find("location "))
+			return (std::cout << "Missing cgi" << std::endl, -1);
+		if (eachServString[i].find("cgi_ext ") == std::string::npos || eachServString[i].find("cgi_ext") > eachServString[i].find("location "))
+			return (std::cout << "Missing cgi_ext" << std::endl, -1);
+		if (eachServString[i].find("allow_methods ") == std::string::npos || eachServString[i].find("allow_methods ") > eachServString[i].find("location "))
+			return (std::cout << "Missing allow_methods" << std::endl, -1);
 		i++;
 	}
 	return (0);

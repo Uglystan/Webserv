@@ -75,8 +75,14 @@ std::string	Response::statik_or_dynamik(void)
 			return (_response);
 		}
 		_path = find_path(_request, _serv.root);
+		if (_serv.root == "")
+		{
+			_code = 404;
+			throw Response::Errorexcept();
+		}
 		if (_path == "")
 		{
+			std::cout << "salut2\n";
 			_code = 400;
 			throw Response::Errorexcept();
 		}
@@ -238,7 +244,6 @@ void	Response::check_content_type(void)
 		&& language != ".webm" && language != ".json" && language != ".pdf" && language != ".xml"
 		&& language != ".txt" && language != ".mp3")
 		{
-			std::cout << "salut\n";
 			_code = 400;
 			throw Response::Errorexcept();
 		}
