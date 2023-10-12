@@ -4,10 +4,14 @@ int	searchPortRequest(std::string &message)
 {
 	int i = message.find("Host: ") + 6;
 
-	while (message[i] != ':')
+	if (message.find("Host: ") != std::string::npos)
+	{
+		while (message[i] != ':')
+			i++;
 		i++;
-	i++;
-	return (atoi(message.substr(i, 6).c_str()));
+		return (atoi(message.substr(i, 6).c_str()));
+	}
+	return (8080);
 }
 
 std::string	searchNameRequest(std::string &message)
@@ -15,9 +19,13 @@ std::string	searchNameRequest(std::string &message)
 	int i = message.find("Host: ") + 6;
 	int j = i;
 
-	while (message[j] != ':')
-		j++;
-	return (message.substr(i, j - i).c_str());
+	if (message.find("Host: ") != std::string::npos)
+	{
+		while (message[j] != ':')
+			j++;
+		return (message.substr(i, j - i).c_str());
+	}
+	return ("127.0.0.1");
 }
 
 t_configServ	findGoodServ(std::string &message, t_server &data)
