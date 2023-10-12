@@ -37,7 +37,7 @@ void	manageClient(t_server &data, int &clientSocket)
 	if (data.req[clientSocket].bytes == -1 || data.req[clientSocket].bytes == 0)
 	{
 		if (data.req[clientSocket].bytes == -1)
-			throw errorContinueServ("500", findGoodServ(data.req[clientSocket].message, data), clientSocket);
+			throw errorContinueServ("500", findGoodServ(data.req[clientSocket].message, data, clientSocket), clientSocket);
 		else
 			std::cout << "Client deco" << std::endl;
 		data.req.erase(clientSocket);

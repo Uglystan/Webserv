@@ -144,7 +144,7 @@ void	getLocation(std::vector<t_location> &locationVec, std::string servString);
 std::string	getStrInfo(std::string servString, std::string finding);
 int	checkData(std::vector<t_configServ> &eachServ);
 int	initAllServ(t_server &data);
-t_configServ	findGoodServ(std::string &message, t_server &data);
+t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket);
 void	errorContinue(t_server &data, errorContinueServ const& e);
 void	errorStop(t_server &data, errorStopServ const& e);
 void	*ft_memset(void *dest, int c, size_t size);

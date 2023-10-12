@@ -8,7 +8,7 @@ void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader)
 	if (data.req[clientSocket].bytes >= (int)sizeAll)
 	{
 		std::cout << "Message recu en plusieur part : " << data.req[clientSocket].message << std::endl;
-		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data));//alex doit regarder maxdodysize
+		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data, clientSocket));//alex doit regarder maxdodysize
 		std::string response = reponse.statik_or_dynamik();
 		if (send(clientSocket, response.data(), response.size(), 0) == -1)
 			throw errorStopServ(strerror(errno));
@@ -20,7 +20,7 @@ void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader)
 void	recvBase(t_server &data, int &clientSocket)
 {
 	std::cout << "Message recu en une partie : " << data.req[clientSocket].message << std::endl;
-	Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data));
+	Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data, clientSocket));
 	std::string response = reponse.statik_or_dynamik();
 	if (send(clientSocket, response.data(), response.size(), 0) == -1)
 		throw errorStopServ(strerror(errno));
@@ -34,7 +34,7 @@ void	recvChunk(t_server &data, int &clientSocket)
 	{
 		std::cout << "Message recu en chunk : " << data.req[clientSocket].message << std::endl;
 		chunkTest(data, clientSocket);
-		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data));
+		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data, clientSocket));
 		std::string response = reponse.statik_or_dynamik();
 		if (send(clientSocket, response.data(), response.size(), 0) == -1)
 			throw errorStopServ(strerror(errno));

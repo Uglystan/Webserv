@@ -28,7 +28,7 @@ std::string	searchNameRequest(std::string &message)
 	return ("127.0.0.1");
 }
 
-t_configServ	findGoodServ(std::string &message, t_server &data)
+t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket)
 {
 	int	port = searchPortRequest(message);
 	std::string	name = searchNameRequest(message);
@@ -58,11 +58,7 @@ t_configServ	findGoodServ(std::string &message, t_server &data)
 	}
 	else
 	{
-		for (unsigned int i = 0; i < data.config.size(); i++)
-		{
-			if (data.config[i].port == port)
-				return (data.config[i]);
-		}
+		throw errorContinueServ("400", null, clientSocket);
 	}
-	return(null);
+	return (null);
 }
