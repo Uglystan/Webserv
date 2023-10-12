@@ -6,25 +6,51 @@
     <title>Formulaire d'Upload de Fichier</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background-color: #f4f4f4;
+	.navbar-nav .nav-item {
+            transition: transform 0.2s;
         }
-        .container {
-            margin: 100px auto;
-            padding: 20px;
-            max-width: 600px;
-            background-color: #fff;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-        }
-        h1 {
-            color: #007bff; /* Bleu Bootstrap */
+        .navbar-nav .nav-item:hover {
+            transform: scale(1.1);
         }
     </style>
 </head>
 <body>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-primary"> <!-- Utilisation de bg-primary pour la couleur bleue -->
+		<div class="container">
+		    <a class="navbar-brand" href="#">Page D'Accueil</a>
+		    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		    </button>
+		    <div class="collapse navbar-collapse" id="navbarNav">
+			<ul class="navbar-nav">
+			    <li class="nav-item">
+				<a class="nav-link" href="monsite.html">Accueil</a>
+			    </li>
+			    <li class="nav-item">
+				<a class="nav-link" href="print.php">Print Env</a>
+			    </li>
+			    <li class="nav-item">
+				<a class="nav-link" href="test.php">Test php</a>
+			    </li>
+			    <li class="nav-item">
+				<a class="nav-link" href="form.html">Form</a>
+			    </li>
+			    <li class="nav-item">
+				<a class="nav-link" href="post.html">Post</a>
+			    </li>
+			    <li class="nav-item">
+				<a class="nav-link" href="delete.php">Delete</a>
+			    </li>
+			    <li class="nav-item">
+				<a class="nav-link" href="test.py">Test .py</a>
+			    </li>
+			    <li class="nav-item">
+				<a class="nav-link" href="test.sh">Test .sh</a>
+			    </li>
+			</ul>
+		    </div>
+		</div>
+	    </nav>
     <div class="container">
         <h1>Formulaire d'Upload de Fichier</h1>
         

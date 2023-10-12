@@ -64,6 +64,10 @@ std::string	Response::statik_or_dynamik(void)
 			throw Response::Errorexcept();
 		}
 		find_method();
+		if (_method == "DELETE")
+		{
+			return (_response);
+		}
 		_path = find_path(_request, _serv.root);
 		if (_path == "")
 		{
@@ -87,7 +91,7 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
-		//std::cout << "Message envoyee : \n" << _response << std::endl;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
@@ -98,13 +102,14 @@ std::string	Response::statik_or_dynamik(void)
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
-		//std::cout << "Message envoyee : \n" << _response << std::endl;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 }
 
 void	Response::cgi_handler(void)
 {
+	std::cout << "STATTTTTTTTTTTTTTTTTTTTIK\n";
 	std::string	postData = "";
 	if (_method == "POST")
 	{
@@ -169,7 +174,7 @@ void	Response::put_in_env(std::string postData)
 
 void	Response::fill_strings(std::string postData)
 {
-	_document_root = "/html";//changer en fonction de config fill
+	_document_root = _serv.root;
 	_script_filename = _path;
 	_request_method = _method;
 	if (_method == "GET")
@@ -230,6 +235,30 @@ void	Response::check_content_type(void)
 	}
 }
 
+void	Response::delete_method(void)
+{
+	_path = find_path(_request, _serv.root);
+	if (_path.find("tmp/") == std::string::npos)
+	{
+		_code = 401;
+		throw Response::Errorexcept();
+	}
+	_method = "DELETE";
+	if (delete_file(_path) == 0)
+	{
+		_code = 204;
+		_path = _serv.root + _serv.index;
+		create_body();
+		create_header();
+		_response = _header + _body;
+	}
+	else
+	{
+		_code = 401;
+		throw Response::Errorexcept();
+	}
+}
+
 void	Response::find_method(void)//rajouter si code erreur lucas serveur
 {
 	size_t posGET = _request.find("GET");
@@ -244,6 +273,8 @@ void	Response::find_method(void)//rajouter si code erreur lucas serveur
 			_method = "POST";
 			check_content_type();
 		}
+		else if (posDELETE != std::string::npos)
+			delete_method();
 		else
 		{
 			_code = 405;
@@ -262,7 +293,7 @@ void	Response::statik_response(void)
 void	Response::create_body()
 {
 	std::ifstream html_file;
-	if (_method == "GET")
+	if (_method == "GET" || _method == "DELETE")
 	{
 		if (_path == _serv.root)
 		{
@@ -344,7 +375,7 @@ void	Response::create_header(void)
 	_status_line = find_status_line();
 	_name = find_server(_serv.serverName);
 	_date = find_date();
-	_content_type = find_content_type(_request) + "\n";
+	_content_type = find_content_type(_request, _method) + "\n";
 	_content_lenght = find_content_lenght(_body);
 	_content_lang = find_content_lang(_request);
 	_last_modified = find_LastModified(_path);
