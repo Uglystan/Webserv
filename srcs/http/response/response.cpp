@@ -205,6 +205,31 @@ void	Response::fill_strings(std::string postData)
 	_request_uri = _path;
 }
 
+void	Response::check_content_type(void)
+{
+	std::string language = "";
+	size_t	filename = _request.find("filename=");
+	if (filename != std::string::npos)
+	{
+		size_t extension = _request.find(".", filename);
+		if (extension != std::string::npos)
+		{
+			size_t	nextquote = _request.find('\"', extension + 1);
+			if (nextquote != std::string::npos)
+				language += _request.substr(extension, nextquote - extension);
+		}
+	}
+	std::cout << language << std::endl;
+	if (language != ".jpg" && language != ".png" && language != ".gif"
+	&& language != ".bmp" && language != ".ico" && language != ".gif" && language != ".mpeg" 
+	&& language != ".wav" && language != ".ogg" && language != ".mp4" && language != ".avi" 
+	&& language != ".webm" && language != ".json" && language != ".pdf" && language != ".xml")
+	{
+		_code = 400;
+		throw Response::Errorexcept();
+	}
+}
+
 void	Response::find_method(void)//rajouter si code erreur lucas serveur
 {
 	size_t posGET = _request.find("GET");
@@ -215,7 +240,10 @@ void	Response::find_method(void)//rajouter si code erreur lucas serveur
 		if(posGET != std::string::npos)
 			_method = "GET";
 		else if(posPOST != std::string::npos)
+		{
 			_method = "POST";
+			check_content_type();
+		}
 		else
 		{
 			_code = 405;

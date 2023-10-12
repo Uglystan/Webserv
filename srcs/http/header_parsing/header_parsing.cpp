@@ -30,7 +30,7 @@ std::string	check_interomark(std::string language)
 
 std::string	find_langage(std::string &request)
 {
-	std::string	language;
+	std::string	language = "";
 	std::string firstLine;
 	std::istringstream iss(request);
 	std::getline(iss, firstLine);
@@ -41,8 +41,6 @@ std::string	find_langage(std::string &request)
 		if (nextspacepos != std::string::npos)
 			language += firstLine.substr(firstpointpos + 1, nextspacepos - firstpointpos - 1);
 	}
-	else
-		return ("");
 	return (check_interomark(language));
 }
 
