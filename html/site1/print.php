@@ -17,7 +17,7 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary"> <!-- Utilisation de bg-primary pour la couleur bleue -->
         <div class="container">
-            <a class="navbar-brand" href="#">Page D'Accueil</a>
+            <a class="navbar-brand" href="#">Print</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

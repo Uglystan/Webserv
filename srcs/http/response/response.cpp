@@ -61,7 +61,13 @@ std::string	Response::statik_or_dynamik(void)
 		if (check_req_code(_request) != 0)
 		{
 			_code = check_req_code(_request);
-			throw Response::Errorexcept();
+			if (_code != 500)
+			{
+				create_header();
+				return (_header);
+			}
+			else
+				throw Response::Errorexcept();
 		}
 		find_method();
 		if (_method == "DELETE")
@@ -91,7 +97,7 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
-		std::cout << "Message envoyee : \n" << _response << std::endl;
+		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
@@ -109,7 +115,6 @@ std::string	Response::statik_or_dynamik(void)
 
 void	Response::cgi_handler(void)
 {
-	std::cout << "STATTTTTTTTTTTTTTTTTTTTIK\n";
 	std::string	postData = "";
 	if (_method == "POST")
 	{
@@ -224,14 +229,19 @@ void	Response::check_content_type(void)
 				language += _request.substr(extension, nextquote - extension);
 		}
 	}
-	std::cout << language << std::endl;
-	if (language != ".jpg" && language != ".png" && language != ".gif"
-	&& language != ".bmp" && language != ".ico" && language != ".gif" && language != ".mpeg" 
-	&& language != ".wav" && language != ".ogg" && language != ".mp4" && language != ".avi" 
-	&& language != ".webm" && language != ".json" && language != ".pdf" && language != ".xml")
+	std::cout << extractContentType(_request) << std::endl;
+	if (extractContentType(_request).find("application/x-www-form-urlencoded") == std::string::npos)
 	{
-		_code = 400;
-		throw Response::Errorexcept();
+		if (language != ".jpg" && language != ".png" && language != ".gif"
+		&& language != ".bmp" && language != ".ico" && language != ".gif" && language != ".mpeg" 
+		&& language != ".wav" && language != ".ogg" && language != ".mp4" && language != ".avi" 
+		&& language != ".webm" && language != ".json" && language != ".pdf" && language != ".xml"
+		&& language != ".txt" && language != ".mp3")
+		{
+			std::cout << "salut\n";
+			_code = 400;
+			throw Response::Errorexcept();
+		}
 	}
 }
 

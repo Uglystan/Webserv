@@ -41,7 +41,7 @@
             echo "Aucune donnée de formulaire reçue.";
         }
         ?>
-        <p><a href="form.php">Retour au formulaire</a></p>
+        <p><a href="form.html">Retour au formulaire</a></p>
     </div>
 </body>
 </html>

@@ -57,9 +57,18 @@ if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
             echo 'Votre navigateur ne prend pas en charge l\'élément audio.';
             echo '</audio>';
         }
+        elseif (strpos($typeMIME, "text/plain") === 0)
+        {
+            // Le fichier est un fichier texte (.txt)
+            echo '<p>Voici le contenu du fichier texte :</p>';
+            echo '<pre>';
+            $contenu = file_get_contents($dossierDeDestination . $nomFichier);
+            echo htmlentities($contenu);
+            echo '</pre>';
+        }
         else
         {
-            echo '<p>Le fichier n\'est pas une image ou un fichier audio.</p>';
+            echo '<p>Le fichier n\'est pas une image, un fichier audio ou un fichier texte (.txt).</p>';
         }
     }
     else
@@ -72,6 +81,7 @@ else
     echo "<p>Aucun fichier n'a été téléchargé ou une erreur s'est produite.</p>";
 }
 ?>
+
         <p><a href="post.html">Retour au formulaire</a></p>
     </div>
     

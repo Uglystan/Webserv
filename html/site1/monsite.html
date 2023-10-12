@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire</title>
+    <title>Monsite</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <style>
         .navbar-nav .nav-item {
@@ -15,10 +15,9 @@
     </style>
 </head>
 <body>
-    <!-- Menu de navigation de "Monsite" -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary"> <!-- Utilisation de bg-primary pour la couleur bleue -->
         <div class="container">
-            <a class="navbar-brand" href="#">Page D'Accueil</a>
+            <a class="navbar-brand" href="#">Accueil</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -52,25 +51,10 @@
             </div>
         </div>
     </nav>
-    
-    <div class="container">
-        <h1>Formulaire</h1>
-        
-        <form action="formcgi.php" method="post">
-            <div class="form-group">
-                <label for="nom">Nom :</label>
-                <input type="text" name="nom" id="nom" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="prenom">Prénom :</label>
-                <input type="text" name "prenom" id="prenom" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="telephone">Téléphone :</label>
-                <input type="tel" name="telephone" id="telephone" class="form-control" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Envoyer</button>
-        </form>
+
+    <!-- Texte en gros au milieu de la page -->
+    <div class="container mt-5 text-center">
+        <h1 class="display-4">WEEEEEEBSERVER 42</h1>
     </div>
 
     <!-- Inclure Bootstrap JS (assurez-vous de spécifier le chemin correct vers le fichier JS) -->
