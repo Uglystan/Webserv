@@ -11,7 +11,7 @@ strerror : Retourne une chaîne de caractères décrivant l'erreur associée à 
 
 gai_strerror : Convertit un code d'erreur retourné par getaddrinfo en une chaîne de caractères lisible.
 
-errno : Variable globale contenant le code d'erreur de la dernière opération qui a échoué.
+errno : Variable globale contenant le code d' la dernière opération qui a échoué.
 
 fork : Crée un nouveau processus (clone) à partir du processus parent.
 
