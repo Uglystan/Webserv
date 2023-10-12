@@ -7,8 +7,8 @@ void	acceptNewClient(t_server &data, int &serverSocket)
 	int addresseLen = sizeof(clientAdresse);
 	struct timeval time;
 
-	if (data.timer.size() <= 250)//Pas plus de 250 socket ouverte sinon limite de fs atteinte a 1024
-	{
+	// if (data.timer.size() <= 250)//Pas plus de 250 socket ouverte sinon limite de fs atteinte a 1024
+	// {
 		clientSocket = accept(serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
 		if (clientSocket != -1)
 		{
@@ -20,7 +20,7 @@ void	acceptNewClient(t_server &data, int &serverSocket)
 			data.timer[clientSocket] = time;
 			addEpollEvent(data.epollFd, clientSocket);
 		}
-	}
+	// }
 }
 
 void	manageClient(t_server &data, int &clientSocket)

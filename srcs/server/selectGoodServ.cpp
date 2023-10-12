@@ -30,6 +30,7 @@ std::string	searchNameRequest(std::string &message)
 
 t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket)
 {
+	(void)clientSocket;
 	int	port = searchPortRequest(message);
 	std::string	name = searchNameRequest(message);
 	int	nbrServMatch = 0;
