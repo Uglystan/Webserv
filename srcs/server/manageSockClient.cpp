@@ -7,16 +7,19 @@ void	acceptNewClient(t_server &data, int &serverSocket)
 	int addresseLen = sizeof(clientAdresse);
 	struct timeval time;
 
-	clientSocket = accept(serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
-	if (clientSocket != -1)
+	if (data.timer.size() <= 250)//Pas plus de 250 socket ouverte sinon limite de fs atteinte a 1024
 	{
-		//On met la socket en non bloquant c'est important sinon ca marche pas
-		int opt = 1;
-		if (setsockopt(clientSocket, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(1)) == -1)
-			throw errorStopServ(strerror(errno));
-		gettimeofday(&time, NULL);//creation init
-		data.timer[clientSocket] = time;
-		addEpollEvent(data.epollFd, clientSocket);
+		clientSocket = accept(serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
+		if (clientSocket != -1)
+		{
+			//On met la socket en non bloquant c'est important sinon ca marche pas
+			int opt = 1;
+			if (setsockopt(clientSocket, SOL_SOCKET, SO_KEEPALIVE, &opt, sizeof(1)) == -1)
+				throw errorStopServ(strerror(errno));
+			gettimeofday(&time, NULL);//creation init
+			data.timer[clientSocket] = time;
+			addEpollEvent(data.epollFd, clientSocket);
+		}
 	}
 }
 
