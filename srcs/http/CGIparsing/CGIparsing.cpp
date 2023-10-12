@@ -143,3 +143,11 @@ std::string	find_cgi_path(std::string path, std::string ext)
 	}
 	return("");
 }
+
+int	delete_file(std::string &path)
+{
+	if (remove(path.c_str()) == 0)
+		return (0);
+	else
+		return (1);
+}

@@ -44,10 +44,10 @@ std::string	find_langage(std::string &request)
 	return (check_interomark(language));
 }
 
-std::string	find_content_type(std::string &request)
+std::string	find_content_type(std::string &request, std::string &method)
 {
 	std::string content_type;
-	if (find_langage(request) == "" || find_langage(request) == "php")
+	if (find_langage(request) == "" || find_langage(request) == "php" || method == "DELETE" || find_langage(request) == "py" || find_langage(request) == "sh")
 		content_type = "Content-Type: text/html; charset=UTF-8";
 	else if (find_langage(request) == "html" || find_langage(request) == "css" || find_langage(request) == "javascript" || find_langage(request) == "xml" || find_langage(request) == "plain")
 		content_type = "Content-Type: text/" + find_langage(request) +"; charset=UTF-8";

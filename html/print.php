@@ -1,14 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print env</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .navbar-nav .nav-item {
+            transition: transform 0.2s;
+        }
+        .navbar-nav .nav-item:hover {
+            transform: scale(1.1);
+        }
+    </style>
 </head>
 <body>
-    <!-- Menu de navigation -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary"> <!-- Utilisation de bg-primary pour la couleur bleue -->
         <div class="container">
-            <a class="navbar-brand" href="#">Print Env</a>
+            <a class="navbar-brand" href="#">Page D'Accueil</a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -21,10 +30,22 @@
                         <a class="nav-link" href="print.php">Print Env</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="test.php">Test</a>
+                        <a class="nav-link" href="test.php">Test php</a>
                     </li>
-		    <li class="nav-item">
-                        <a class="nav-link" href="post.php">Post</a>
+                    <li class="nav-item">
+                        <a class="nav-link" href="form.html">Form</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="post.html">Post</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="delete.php">Delete</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="test.py">Test .py</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="test.sh">Test .sh</a>
                     </li>
                 </ul>
             </div>
@@ -57,8 +78,8 @@
         }
         ?>
     </div>
-        <!-- Inclure Bootstrap JS (assurez-vous de spécifier le chemin correct vers le fichier JS) -->
-	<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Inclure Bootstrap JS (assurez-vous de spécifier le chemin correct vers le fichier JS) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
