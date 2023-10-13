@@ -43,33 +43,17 @@ if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
         // Obtenez le type MIME du fichier
         $typeMIME = mime_content_type($dossierDeDestination . $nomFichier);
         
-        // Afficher le contenu en fonction du type MIME
-        if (strpos($typeMIME, "image/") === 0)
+        // Vérifiez si le fichier est un PDF
+        if ($typeMIME == "application/pdf")
         {
-            // Le fichier est une image
-            echo '<img src="' . $dossierDeDestination . $nomFichier . '" alt="Image téléchargée" style="max-width: 100%; height: auto;">';
-        }
-        elseif (strpos($typeMIME, "audio/") === 0)
-        {
-            // Le fichier est un audio
-            echo '<p>Voici le fichier audio :</p>';
-            echo '<audio controls>';
-            echo '<source src="' . $dossierDeDestination . $nomFichier . '" type="' . $typeMIME . '">';
-            echo 'Votre navigateur ne prend pas en charge l\'élément audio.';
-            echo '</audio>';
-        }
-        elseif (strpos($typeMIME, "text/plain") === 0)
-        {
-            // Le fichier est un fichier texte (.txt)
-            echo '<p>Voici le contenu du fichier texte :</p>';
-            echo '<pre>';
-            $contenu = file_get_contents($dossierDeDestination . $nomFichier);
-            echo htmlentities($contenu);
-            echo '</pre>';
+            // Le fichier est un PDF
+            echo '<p>Voici le fichier PDF :</p>';
+            echo '<embed src="' . $dossierDeDestination . $nomFichier . '" type="application/pdf" width="100%" height="600px" />';
+            // Utilisez l'élément <object> à la place de <embed> si vous le souhaitez
         }
         else
         {
-            echo '<p>Le fichier n\'est pas une image, un fichier audio ou un fichier texte (.txt).</p>';
+            echo '<p>Le fichier n\'est pas un PDF.</p>';
         }
     }
     else
@@ -82,6 +66,7 @@ else
     echo "<p>Aucun fichier n'a été téléchargé ou une erreur s'est produite.</p>";
 }
 ?>
+
 
         <p><a href="post.html">Retour au formulaire</a></p>
     </div>
