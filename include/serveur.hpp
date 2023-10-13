@@ -27,7 +27,7 @@
 
 #define NB_EVENT_BASE 100
 #define MAX_CLIENT_BODYSIZE 100000
-#define MAX_TIME_BEFORE_CLOSE 5
+#define MAX_TIME_BEFORE_CLOSE 300
 
 typedef struct s_requestData
 {
