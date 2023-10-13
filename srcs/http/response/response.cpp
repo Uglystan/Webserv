@@ -396,20 +396,24 @@ void	Response::body_error_page(void)
 	else
 	{
 		_code = 404;
-		throw Response::Errorexcept();
+		_body = "<!DOCTYPE html><html><h1>wrong error page path in config file</h1></html>";
+		return ;
 	}
-	std::stringstream ss;
-	ss << _code;
-	size_t codePos = _body.find("[CODE]");
-	if (codePos != std::string::npos)
-		_body.replace(codePos, 6, ss.str());
-	codePos = _body.find("[CODE]");
-	if (codePos != std::string::npos)
-		_body.replace(codePos, 6, ss.str());
-	std::string errorMessage = _errors[_code];
-	size_t messagePos = _body.find("[MESSAGE]");
-	if (messagePos != std::string::npos)
-		_body.replace(messagePos, 9, errorMessage);
+	if (_body.find("[CODE]") != std::string::npos && _body.find("[MESSAGE]") != std::string::npos)
+	{
+		std::stringstream ss;
+		ss << _code;
+		size_t codePos = _body.find("[CODE]");
+		if (codePos != std::string::npos)
+			_body.replace(codePos, 6, ss.str());
+		codePos = _body.find("[CODE]");
+		if (codePos != std::string::npos)
+			_body.replace(codePos, 6, ss.str());
+		std::string errorMessage = _errors[_code];
+		size_t messagePos = _body.find("[MESSAGE]");
+		if (messagePos != std::string::npos)
+			_body.replace(messagePos, 9, errorMessage);
+	}
 }
 
 void	Response::create_header(void)
@@ -425,9 +429,8 @@ void	Response::create_header(void)
 	_transfertencoding = find_tranfertencoding();
 	_wwwauthenticate = find_WwwAuthenticate(_code);
 	_connection = find_connection();
-	if (_status_line == "" || _name == "" || _content_type == "" || _content_lenght == "")
+	if (_status_line == "" || _name == "" || _content_type == "")
 	{
-		std::cout << "IJJJJJJJJJJJJJJ3\n";
 		_code = 400;
 		throw Response::Errorexcept();
 	}
