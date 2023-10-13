@@ -39,16 +39,24 @@ void	Response::cleanHeader(void)
 
 void	Response::check_location(void)//rajouter si autre chose potentiel dans location
 {
-	// std::cout << "-----------------------------\n";
-	// std::cout << _path << std::endl;
+	//std::cout << "-----------------------------\n";
+	std::string	pathwithoutroot = _path.substr(_serv.root.size(), _path.size() - _serv.root.size());
 	for (size_t i = 0; i < _serv.locationVec.size(); ++i)
 	{
 		const t_location& location = _serv.locationVec[i];
+		// std::cout << pathwithoutroot << std::endl;
 		// std::cout << location.directory << std::endl;
-		// std::cout << location.root << std::endl;
-		// std::cout << location.allow_methods << std::endl;
-		if (_path.find(location.directory) != std::string::npos && _path.find(location.root) != std::string::npos)
-			_serv.allowMethods = location.allow_methods;
+		if (location.directory.find(pathwithoutroot) != std::string::npos)
+		{
+			if (location.allow_methods != "")
+				_serv.allowMethods = location.allow_methods;
+			if (location.root != "")
+			{
+				std::string newroot = location.root;
+				_path = find_path(_request, newroot);
+			}
+			
+		}
 	}
 	//std::cout << "-----------------------------\n";
 }
@@ -82,7 +90,6 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		if (_path == "")
 		{
-			std::cout << "salut2\n";
 			_code = 400;
 			throw Response::Errorexcept();
 		}
@@ -92,9 +99,11 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 405;
 			throw Response::Errorexcept();
 		}
-		//std::cout << "FIIIIIND" << find_langage(_path) << std::endl;
-		size_t posPHP = _serv.cgiExt.find(find_langage(_request));
-		if (posPHP != std::string::npos)
+		size_t extensioncgi = _serv.cgiExt.find(find_langage(_request));
+		// std::cout << _serv.cgiExt << std::endl;
+		// std::cout << find_langage(_request) << std::endl;
+		// std::cout << extensioncgi << std::endl;
+		if (extensioncgi != std::string::npos)
 		{
 			if (_path == _serv.root)
 				statik_response();
@@ -103,6 +112,12 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
+		// else
+		// {
+		// 	_code = 500;
+		// 	std::cout << "glar;khjhiou\n";
+		// 	throw Response::Errorexcept();
+		// }
 		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
@@ -328,6 +343,13 @@ void	Response::create_body()
 			throw Response::Errorexcept();
 		}
 		std::string buffer;
+		std::getline(html_file, buffer);
+		if (buffer.find("#!/") != std::string::npos)
+		{
+			_code = 500;
+			throw Response::Errorexcept();
+		}
+		buffer.clear();
 		while (std::getline(html_file, buffer))
 		{
 			if (!html_file.eof())
