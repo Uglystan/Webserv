@@ -88,6 +88,8 @@ t_configServ	fillEachServ(std::string servString)
 	//std::cout << "cgi_ext : " << serv.cgiExt << std::endl;
 	serv.allowMethods = getStrInfo(servString, "allow_methods ");
 	//std::cout << "allow_methods : " << serv.allowMethods << std::endl;
+	serv.tmp = getStrInfo(servString, "tmp ");
+	//std::cout << "tmp : " << serv.tmp << std::endl;
 	getLocation(serv.locationVec, servString);
 	//std::cout << "location Directory : " << serv.locationVec[0].directory << std::endl;
 	//std::cout << "location allow_methods : " << serv.locationVec[0].allow_methods << std::endl;

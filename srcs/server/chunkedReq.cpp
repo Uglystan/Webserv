@@ -26,7 +26,7 @@ void	chunkTest(t_server &data, int &clientSocket)
 			j++;
 			if (data.req[clientSocket].message[j] == '\r')
 			{
-				data.req[clientSocket].message.erase(i, j + 1);
+				data.req[clientSocket].message.erase(i, j + 2 - 1);
 				break;
 			}
 		}

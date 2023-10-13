@@ -55,6 +55,7 @@ typedef struct s_configServ
 	std::string	cgi;
 	std::string	cgiExt;
 	std::string	allowMethods;
+	std::string	tmp;
 	std::vector<t_location>	locationVec;
 }t_configServ;
 
