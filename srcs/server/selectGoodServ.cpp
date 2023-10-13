@@ -30,7 +30,6 @@ std::string	searchNameRequest(std::string &message)
 
 t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket)
 {
-	(void)clientSocket;
 	int	port = searchPortRequest(message);
 	std::string	name = searchNameRequest(message);
 	int	nbrServMatch = 0;
@@ -46,7 +45,10 @@ t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket
 		for (unsigned int i = 0; i < data.config.size(); i++)
 		{
 			if (data.config[i].port == port)
+			{
+				std::cout << data.config[i].serverName << std::endl;
 				return (data.config[i]);
+			}
 		}
 	}
 	else if (nbrServMatch > 1)
@@ -54,7 +56,18 @@ t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket
 		for (unsigned int i = 0; i < data.config.size(); i++)
 		{
 			if (data.config[i].port == port && data.config[i].serverName == name)
+			{
+				std::cout << data.config[i].serverName << std::endl;
 				return (data.config[i]);
+			}
+		}
+		for (unsigned int i = 0; i < data.config.size(); i++)
+		{
+			if (data.config[i].port == port)
+			{
+				std::cout << data.config[i].serverName << std::endl;
+				return (data.config[i]);
+			}
 		}
 	}
 	else
