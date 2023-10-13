@@ -40,8 +40,11 @@ void	Response::cleanHeader(void)
 void	Response::check_location(void)//rajouter si autre chose potentiel dans location
 {
 	//std::cout << "-----------------------------\n";
+	// std::cout << _path << std::endl;
+	// std::cout << _serv.root << std::endl;
 	if (_path != _serv.root)
 	{
+		//std::cout << _path << std::endl;
 		std::string	pathwithoutroot = _path.substr(_serv.root.size(), _path.size() - _serv.root.size());
 		for (size_t i = 0; i < _serv.locationVec.size(); ++i)
 		{
@@ -347,12 +350,12 @@ void	Response::create_body()
 		}
 		std::string buffer;
 		std::getline(html_file, buffer);
-		if (buffer.find("#!/") != std::string::npos)
+		if (buffer.find("#!/") != std::string::npos && buffer.find("/bin/") != std::string::npos)
 		{
 			_code = 500;
 			throw Response::Errorexcept();
 		}
-		buffer.clear();
+		_body.append(buffer + '\n');
 		while (std::getline(html_file, buffer))
 		{
 			if (!html_file.eof())
@@ -424,6 +427,7 @@ void	Response::create_header(void)
 	_connection = find_connection();
 	if (_status_line == "" || _name == "" || _content_type == "" || _content_lenght == "")
 	{
+		std::cout << "IJJJJJJJJJJJJJJ3\n";
 		_code = 400;
 		throw Response::Errorexcept();
 	}
