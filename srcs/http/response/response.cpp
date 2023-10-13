@@ -40,22 +40,25 @@ void	Response::cleanHeader(void)
 void	Response::check_location(void)//rajouter si autre chose potentiel dans location
 {
 	//std::cout << "-----------------------------\n";
-	std::string	pathwithoutroot = _path.substr(_serv.root.size(), _path.size() - _serv.root.size());
-	for (size_t i = 0; i < _serv.locationVec.size(); ++i)
+	if (_path != _serv.root)
 	{
-		const t_location& location = _serv.locationVec[i];
-		// std::cout << pathwithoutroot << std::endl;
-		// std::cout << location.directory << std::endl;
-		if (location.directory.find(pathwithoutroot) != std::string::npos)
+		std::string	pathwithoutroot = _path.substr(_serv.root.size(), _path.size() - _serv.root.size());
+		for (size_t i = 0; i < _serv.locationVec.size(); ++i)
 		{
-			if (location.allow_methods != "")
-				_serv.allowMethods = location.allow_methods;
-			if (location.root != "")
+			const t_location& location = _serv.locationVec[i];
+			// std::cout << pathwithoutroot << std::endl;
+			// std::cout << location.directory << std::endl;
+			if (location.directory.find(pathwithoutroot) != std::string::npos)
 			{
-				std::string newroot = location.root;
-				_path = find_path(_request, newroot);
-			}
+				if (location.allow_methods != "")
+					_serv.allowMethods = location.allow_methods;
+				if (location.root != "")
+				{
+					std::string newroot = location.root;
+					_path = find_path(_request, newroot);
+				}
 			
+			}
 		}
 	}
 	//std::cout << "-----------------------------\n";
