@@ -33,8 +33,7 @@ if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
 {
     $nomFichier = $_FILES["fichier"]["name"];
     $nomFichier = str_replace(' ', '%20', $nomFichier);
-    $dossierDeDestination = "tmp/"; // Le dossier où vous souhaitez stocker les fichiers téléchargés
-    
+    $dossierDeDestination = getenv('STOCK_TMP'); // Le dossier où vous souhaitez stocker les fichiers téléchargés
     // Déplacer le fichier téléchargé vers le dossier de destination
     if (move_uploaded_file($_FILES["fichier"]["tmp_name"], $dossierDeDestination . $nomFichier))
     {

@@ -98,6 +98,8 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 405;
 			throw Response::Errorexcept();
 		}
+		if (list_dir()== 1)
+			return (_response);
 		size_t extensioncgi = _serv.cgiExt.find(find_langage(_request));
 		if (extensioncgi != std::string::npos)
 		{
@@ -161,6 +163,7 @@ void	Response::cgi_handler(void)
 
 void	Response::put_in_env(std::string postData)
 {
+	DIR *repertoire;
 	fill_strings(postData);
 	setenv("REQUEST_METHOD", _method.c_str(), 1);
 	if (_method == "GET")
@@ -174,6 +177,15 @@ void	Response::put_in_env(std::string postData)
 		unsetenv("QUERY_STRING");
 		setenv("CONTENT_TYPE", _envcontent_type.c_str(), 1);
 		setenv("CONTENT_LENGTH", _envcontent_lenght.c_str(), 1);
+		std::string	tmproot = _serv.root +  _serv.tmp;
+		repertoire = opendir(tmproot.c_str());
+		if (repertoire == NULL)
+		{
+			_code = 500;
+			throw Response::Errorexcept();
+		}
+		closedir(repertoire);
+		setenv("STOCK_TMP", _serv.tmp.c_str(), 1);
 	}
 	setenv("REMOTE_ADDR", _remote_addr.c_str(), 1);
 	setenv("SERVER_NAME", _server_name.c_str(), 1);
@@ -414,6 +426,26 @@ void	Response::create_header(void)
 		throw Response::Errorexcept();
 	}
 	_header += _status_line + _name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + "\r\n";
+}
+
+int	Response::list_dir(void)
+{
+	DIR *repertoire;
+	std::string vide = "";
+	repertoire = opendir(find_path(_request, vide).c_str());
+	if (repertoire != NULL)
+	{
+		struct dirent *entree;
+		if (_serv.listening_file == "on")
+		{
+			while ((entree = readdir(repertoire)) != NULL)
+				std::cout << entree->d_name << std::endl;
+			std::cout << "BON PATH ET ON" << std::endl;
+			//setenv("REPERTORY", )
+			return (0);
+		}
+	}
+	return (0);
 }
 
 std::string	Response::find_status_line(void)
