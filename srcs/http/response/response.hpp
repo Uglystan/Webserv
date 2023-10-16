@@ -6,7 +6,7 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/10/13 11:50:59 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/10/16 17:38:26 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,10 @@
 #include <sstream>
 #include <cstdlib>
 #include <exception>
+#include <dirent.h>
+#include <stdio.h>
+#include <stdio.h>
+#include <dirent.h>
 #include "../cgi_handler/cgi_handler.hpp"
 #include "../CGIparsing/CGIparsing.hpp"
 #include "../header_parsing/header_parsing.hpp"
@@ -50,6 +54,7 @@ class Response
 		void		check_location(void);
 		void		check_content_type(void);
 		void		delete_method(void);
+		int		list_dir(void);
 		std::string	GetFileSizeAsString(void);
 		std::string	post_response(void);
 		std::string	statik_or_dynamik(void);
