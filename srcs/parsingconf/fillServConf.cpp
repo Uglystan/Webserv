@@ -90,6 +90,8 @@ t_configServ	fillEachServ(std::string servString)
 	//std::cout << "allow_methods : " << serv.allowMethods << std::endl;
 	serv.tmp = getStrInfo(servString, "tmp ");
 	//std::cout << "tmp : " << serv.tmp << std::endl;
+	serv.listening_file = getStrInfo(servString, "listening_file ");
+	//std::cout << "tmp : " << serv.listening_file << std::endl;
 	getLocation(serv.locationVec, servString);
 	//std::cout << "location Directory : " << serv.locationVec[0].directory << std::endl;
 	//std::cout << "location allow_methods : " << serv.locationVec[0].allow_methods << std::endl;

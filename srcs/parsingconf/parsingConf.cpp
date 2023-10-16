@@ -45,6 +45,8 @@ int	checkEachServString(std::vector<std::string> eachServString)
 			return (std::cout << "Missing cgi_ext" << std::endl, -1);
 		if (eachServString[i].find("allow_methods ") == std::string::npos || eachServString[i].find("allow_methods ") > eachServString[i].find("location "))
 			return (std::cout << "Missing allow_methods" << std::endl, -1);
+		if (eachServString[i].find("listening_file ") == std::string::npos || eachServString[i].find("listening_file ") > eachServString[i].find("location "))
+			return (std::cout << "Missing listening_file" << std::endl, -1);
 		i++;
 	}
 	return (0);
