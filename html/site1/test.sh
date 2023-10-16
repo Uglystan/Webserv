@@ -1,12 +1,9 @@
 #!/bin/bash
 
-echo "Content-type: text/html"
-echo
-
-echo "<!DOCTYPE HTML>"
-echo "<html>"
-echo "<head><title>CGI en Bash</title></head>"
-echo "<body>"
-echo "<h1>Voici le CGI en Bash</h1>"
-echo "</body>"
-echo "</html>"
+while true
+do
+    echo "Cette boucle est infinie. Appuyez sur Ctrl+C pour la quitter."
+    # Vous pouvez ajouter des commandes ou du code ici
+    # La boucle continuera à s'exécuter indéfiniment
+    sleep 1  # Optionnel : ajoute une pause de 1 seconde entre chaque itération
+done

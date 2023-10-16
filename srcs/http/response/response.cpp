@@ -37,20 +37,14 @@ void	Response::cleanHeader(void)
 	_connection = "";
 }
 
-void	Response::check_location(void)//rajouter si autre chose potentiel dans location
+void	Response::check_location(void)
 {
-	//std::cout << "-----------------------------\n";
-	// std::cout << _path << std::endl;
-	// std::cout << _serv.root << std::endl;
 	if (_path != _serv.root)
 	{
-		//std::cout << _path << std::endl;
 		std::string	pathwithoutroot = _path.substr(_serv.root.size(), _path.size() - _serv.root.size());
 		for (size_t i = 0; i < _serv.locationVec.size(); ++i)
 		{
 			const t_location& location = _serv.locationVec[i];
-			// std::cout << pathwithoutroot << std::endl;
-			// std::cout << location.directory << std::endl;
 			if (location.directory.find(pathwithoutroot) != std::string::npos)
 			{
 				if (location.allow_methods != "")
@@ -64,7 +58,6 @@ void	Response::check_location(void)//rajouter si autre chose potentiel dans loca
 			}
 		}
 	}
-	//std::cout << "-----------------------------\n";
 }
 
 std::string	Response::statik_or_dynamik(void)
@@ -106,9 +99,6 @@ std::string	Response::statik_or_dynamik(void)
 			throw Response::Errorexcept();
 		}
 		size_t extensioncgi = _serv.cgiExt.find(find_langage(_request));
-		// std::cout << _serv.cgiExt << std::endl;
-		// std::cout << find_langage(_request) << std::endl;
-		// std::cout << extensioncgi << std::endl;
 		if (extensioncgi != std::string::npos)
 		{
 			if (_path == _serv.root)
@@ -118,19 +108,13 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
-		// else
-		// {
-		// 	_code = 500;
-		// 	std::cout << "glar;khjhiou\n";
-		// 	throw Response::Errorexcept();
-		// }
-		//std::cout << "Message envoyee : \n" << _response << std::endl;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
 	{
 		_response.clear();
-		std::cout << "CODEEEEEEEEEEE : \n" << _code << std::endl;
+		std::cout << "CODEEEEEEEEEEE : " << _code << std::endl;
 		body_error_page();
 		create_header();
 		std::cerr << e.what() << std::endl;
@@ -147,7 +131,6 @@ void	Response::cgi_handler(void)
 	{
 		std::string type = extractContentType(_request);
 		postData = extractPostData(_request, type);
-		// std::cout << "POSTTTTTTTTTTTTTTTTTTTTTTTT\n" << postData << "LOL" << std::endl;
 		if (postData == "")
 		{
 			_code = 400;
@@ -155,9 +138,6 @@ void	Response::cgi_handler(void)
 		}
 	}
 	put_in_env(postData);
-	// std::cout << _serv.cgi << std::endl;
-	// std::cout << find_langage(_request) << std::endl;
-	// std::cout << find_cgi_path(_serv.cgi, find_langage(_request)) << std::endl;
 	std::string	goodpath = find_cgi_path(_serv.cgi, find_langage(_request));
 	_body = execCgi(_path, postData, goodpath);
 	if (_body == "")
@@ -168,6 +148,11 @@ void	Response::cgi_handler(void)
 	else if (_body == "-1")
 	{
 		_code = 404;
+		throw Response::Errorexcept();
+	}
+	else if (_body == "-2")
+	{
+		_code = 401;
 		throw Response::Errorexcept();
 	}
 	create_header();
@@ -212,11 +197,6 @@ void	Response::fill_strings(std::string postData)
 	if (_method == "GET")
 	{
 		_query_string = extractQueryString(_request);
-		// if (_query_string == "-1")
-		// {
-		// 	_code = 400;
-		// 	throw Response::Errorexcept();
-		// }
 	}
 	if (_method == "POST")
 	{
@@ -233,12 +213,12 @@ void	Response::fill_strings(std::string postData)
 			throw Response::Errorexcept();
 		}
 	}
-	_remote_addr = _serv.ip;//changer en fonction de config fill
-	_server_name = _serv.serverName;//changer en fonction de config fill
+	_remote_addr = _serv.ip;
+	_server_name = _serv.serverName;
 	std::stringstream ss;
 	ss << _serv.port;
-	_server_port = ss.str();//changer en fonction de config fill
-	_server_protocol = "HTTP/1.1";//changer en fonction de config fill
+	_server_port = ss.str();
+	_server_protocol = "HTTP/1.1";
 	_request_uri = _path;
 }
 
@@ -295,7 +275,7 @@ void	Response::delete_method(void)
 	}
 }
 
-void	Response::find_method(void)//rajouter si code erreur lucas serveur
+void	Response::find_method(void)
 {
 	size_t posGET = _request.find("GET");
 	size_t posPOST = _request.find("POST");
@@ -306,6 +286,7 @@ void	Response::find_method(void)//rajouter si code erreur lucas serveur
 			_method = "GET";
 		else if(posPOST != std::string::npos)
 		{
+			_code = 201;
 			_method = "POST";
 			check_content_type();
 		}
@@ -339,8 +320,6 @@ void	Response::create_body()
 		else
 			html_file.open(_path.c_str(), std::ios::in);
 	}
-	// else if(_method == "POST")
-	// 	html_file.open("html/dowmload.html", std::ios::in);
 	if (html_file.is_open())
 	{
 		if (html_file.peek() ==  std::ifstream::traits_type::eof())
@@ -434,11 +413,6 @@ void	Response::create_header(void)
 		_code = 400;
 		throw Response::Errorexcept();
 	}
-	// if (_last_modified == "")
-	// {
-	// 	_code = 500;
-	// 	throw Response::Errorexcept();
-	// }
 	_header += _status_line + _name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + "\r\n";
 }
 

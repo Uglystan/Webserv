@@ -43,17 +43,40 @@ if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
         // Obtenez le type MIME du fichier
         $typeMIME = mime_content_type($dossierDeDestination . $nomFichier);
         
-        // Vérifiez si le fichier est un PDF
-        if ($typeMIME == "application/pdf")
+        $style = 'width:100%; height:auto;';
+
+        if (strpos($typeMIME, "image/") === 0)
         {
-            // Le fichier est un PDF
+            // Afficher une image si c'est une image
+            echo '<p>Voici l\'image :</p>';
+            echo '<img src="' . $dossierDeDestination . $nomFichier . '" alt="Image" style="' . $style . '" />';
+        }
+        elseif ($typeMIME == "application/pdf")
+        {
+            // Afficher un PDF si c'est un PDF
             echo '<p>Voici le fichier PDF :</p>';
-            echo '<embed src="' . $dossierDeDestination . $nomFichier . '" type="application/pdf" width="100%" height="600px" />';
-            // Utilisez l'élément <object> à la place de <embed> si vous le souhaitez
+            echo '<embed src="' . $dossierDeDestination . $nomFichier . '" type="application/pdf" style="' . $style . '" />';
+        }
+        elseif (strpos($typeMIME, "audio/") === 0)
+        {
+            // Afficher un audio si c'est un fichier audio
+            echo '<p>Voici le fichier audio :</p>';
+            echo '<audio controls style="' . $style . '">';
+            echo '<source src="' . $dossierDeDestination . $nomFichier . '" type="' . $typeMIME . '">';
+            echo 'Votre navigateur ne prend pas en charge l\'élément audio.';
+            echo '</audio>';
+        }
+        elseif (strpos($typeMIME, "text/") === 0)
+        {
+            // Afficher le texte si c'est un fichier texte
+            echo '<p>Contenu du fichier texte :</p>';
+            echo '<pre>';
+            echo file_get_contents($dossierDeDestination . $nomFichier);
+            echo '</pre>';
         }
         else
         {
-            echo '<p>Le fichier n\'est pas un PDF.</p>';
+            echo '<p>Le fichier n\'est pas pris en charge.</p>';
         }
     }
     else

@@ -20,6 +20,8 @@
 #include "../utils/gnl.hpp"
 #include "../header_parsing/header_parsing.hpp"
 #include <fcntl.h>
+#include <signal.h>
+#include <stdio.h>
 
 std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi_path);
 
