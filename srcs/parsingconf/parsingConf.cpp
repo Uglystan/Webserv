@@ -1,5 +1,9 @@
 #include "../../include/serveur.hpp"
 
+/*Fonction pour parser et recuperer le file conf donc on va dans un premier temps faire quelaue verification de conformite
+et ensuite on va decouper le file conf en autant de bloc serveur qu'il y'a puis ensuite parser chaque bloc server et stocker les info dans un vector de structure
+ou chaque structure du tableau represente un serveur il y'aura aussi dans chaque structure un autre tableau de vector qui lui represente chaque location*/
+
 int	getFile(char **argv, std::string &stringFile, int argc)
 {
 	std::string	line;
