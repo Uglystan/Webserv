@@ -12,7 +12,7 @@ int	is_hexa(char c)
 
 int	next_line(t_server &data, int i, int clientSocket)
 {
-	while(data.req[clientSocket].message[i] != '\n')
+	while(data.req[clientSocket].message[i] != '\n' && i <= data.req[clientSocket].bytes)
 		i++;
 	return (i + 1);
 }
@@ -29,7 +29,7 @@ void	chunkTest(t_server &data, int &clientSocket)
 			j++;
 			if (data.req[clientSocket].message[j] == '\r')
 			{
-				data.req[clientSocket].message.erase(i, j + 2 - 1);
+				data.req[clientSocket].message.erase(i, j + 2 - i);
 				break;
 			}
 		}
