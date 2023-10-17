@@ -39,6 +39,7 @@ if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
     {
         echo "<p>Le fichier $nomFichier a été téléchargé avec succès.</p>";
         
+	echo '<p>Télécharger le fichier : <a href="' . $dossierDeDestination . $nomFichier . '" download="' . $nomFichier . '">Télécharger</a></p>';
         // Obtenez le type MIME du fichier
         $typeMIME = mime_content_type($dossierDeDestination . $nomFichier);
         
