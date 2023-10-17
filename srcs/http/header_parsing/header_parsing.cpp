@@ -130,7 +130,9 @@ std::string	find_WwwAuthenticate(int code)
 
 std::string find_path(std::string &request, std::string &root)
 {
-	std::string	path = root;
+	std::string	path;
+	if (request.find(root) == std::string::npos)
+		path = root;
 	std::string firstLine;
 	std::istringstream iss(request);
 	std::getline(iss, firstLine);
@@ -156,6 +158,50 @@ std::string find_path(std::string &request, std::string &root)
 	else
 		return ("");
 	return (path);
+}
+
+std::string repo_listing(std::string &path, std::string &filename, std::string &root, std::string &request,  std::string &ip, int port)
+{
+	std::string body;
+	std::string vide = "";
+	std::string name = filename;
+	std::stringstream ss;
+	std::stringstream ss2;
+	ss << ip;
+	ss2 << port;
+	if (filename == ".")
+	{
+		filename = "http://" + ss.str() + ":" + ss2.str() + '/' + path;
+	}
+	else if (filename == "..")
+	{
+		filename = "http://" + ss.str() + ":" + ss2.str() + '/' + path;
+		if (path[path.size()- 1] != '/')
+		{
+			size_t POSslash = filename.rfind("/");
+			filename = filename.substr(0, POSslash);
+		}
+		else
+		{
+			size_t POSslash = filename.rfind("/");
+			size_t POS2slash = filename.rfind("/", POSslash - 1);
+			filename = filename.substr(0, POS2slash);;
+		}
+	}
+	else
+	{
+		if (find_path(request, vide).find(root) == std::string::npos)
+			filename = "http://" + ss.str() + ":" + ss2.str() + '/' + root + filename;
+		else
+		{
+			if (path[path.size()- 1] != '/')
+				filename = "http://" + ss.str() + ":" + ss2.str() + '/' + path + '/' + filename;
+			else
+				filename = "http://" + ss.str() + ":" + ss2.str() + '/' + path + filename;
+		}
+	}
+	body += "<li><a href='" + filename + "'>" + name + "</a></li>";
+	return (body);
 }
 
 int	check_req_code(std::string request)

@@ -25,5 +25,6 @@ std::string	find_tranfertencoding(void);
 std::string	find_WwwAuthenticate(int code);
 std::string find_path(std::string &request, std::string &root);
 int	check_req_code(std::string request);
+std::string repo_listing(std::string &path, std::string &filename, std::string &root, std::string &request,  std::string &ip, int port);
 
 #endif

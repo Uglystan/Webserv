@@ -92,14 +92,14 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
+		if (list_dir()== 1)
+			return (_response);
 		check_location();
 		if (_serv.allowMethods.find(_method) == std::string::npos)
 		{
 			_code = 405;
 			throw Response::Errorexcept();
 		}
-		if (list_dir()== 1)
-			return (_response);
 		size_t extensioncgi = _serv.cgiExt.find(find_langage(_request));
 		if (extensioncgi != std::string::npos)
 		{
@@ -110,18 +110,18 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
-		std::cout << "Message envoyee : \n" << _response << std::endl;
+		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
 	{
 		_response.clear();
-		std::cout << "CODEEEEEEEEEEE : " << _code << std::endl;
+		std::cout << "CODE : " << _code << std::endl;
 		body_error_page();
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
-		std::cout << "Message envoyee : \n" << _response << std::endl;
+		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 }
@@ -248,7 +248,6 @@ void	Response::check_content_type(void)
 				language += _request.substr(extension, nextquote - extension);
 		}
 	}
-	std::cout << extractContentType(_request) << std::endl;
 	if (extractContentType(_request).find("application/x-www-form-urlencoded") == std::string::npos)
 	{
 		if (language != ".jpg" && language != ".png" && language != ".gif"
@@ -334,11 +333,6 @@ void	Response::create_body()
 	}
 	if (html_file.is_open())
 	{
-		if (html_file.peek() ==  std::ifstream::traits_type::eof())
-		{
-			_code = 404;
-			throw Response::Errorexcept();
-		}
 		std::string buffer;
 		std::getline(html_file, buffer);
 		if (buffer.find("#!/") != std::string::npos && buffer.find("/bin/") != std::string::npos)
@@ -369,11 +363,6 @@ void	Response::body_error_page(void)
 	std::ifstream html_file(_serv.errorPage.c_str());
 	if (html_file.is_open())
 	{
-		if (html_file.peek() ==  std::ifstream::traits_type::eof())
-		{
-			_code = 404;
-			throw Response::Errorexcept();
-		}
 		std::string buffer;
 		while (std::getline(html_file, buffer))
 		{
@@ -438,12 +427,66 @@ int	Response::list_dir(void)
 		struct dirent *entree;
 		if (_serv.listening_file == "on")
 		{
+			std::string withoutroot = find_path(_request, vide);
+			if (withoutroot.find(_serv.root) == std::string::npos && withoutroot.find(_serv.root.substr(0, _serv.root.size() - 1)) == std::string::npos)
+			{
+				_code = 401;
+				throw Response::Errorexcept();
+			}
+			_body =  "<!DOCTYPE html><html><head><title>Repertory listing</title></head><body>";
+			_body += "<h1>Repertory listing</h1>";
+			_body += "<ul>";
 			while ((entree = readdir(repertoire)) != NULL)
-				std::cout << entree->d_name << std::endl;
-			std::cout << "BON PATH ET ON" << std::endl;
-			//setenv("REPERTORY", )
-			return (0);
+			{
+				std::string filename = entree->d_name;
+				_body += repo_listing(_path, filename, _serv.root, _request, _serv.ip, _serv.port);
+				// std::string name = entree->d_name;
+				// std::stringstream ss;
+				// std::stringstream ss2;
+				// ss << _serv.ip;
+				// ss2 << _serv.port;
+				// if (filename == ".")
+				// {
+				// 	filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path;
+				// }
+				// else if (filename == "..")
+				// {
+				// 	filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path;
+				// 	if (_path[_path.size()- 1] != '/')
+				// 	{
+				// 		size_t POSslash = filename.rfind("/");
+				// 		filename = filename.substr(0, POSslash);
+				// 	}
+				// 	else
+				// 	{
+				// 		size_t POSslash = filename.rfind("/");
+				// 		size_t POS2slash = filename.rfind("/", POSslash - 1);
+				// 		filename = filename.substr(0, POS2slash);;
+				// 	}
+				// }
+				// else
+				// {
+				// 	if (find_path(_request, vide).find(_serv.root) == std::string::npos)
+				// 		filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _serv.root + filename;
+				// 	else
+				// 	{
+				// 		if (_path[_path.size()- 1] != '/')
+				// 			filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path + '/' + filename;
+				// 		else
+				// 			filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path + filename;
+				// 	}
+				// }
+				// _body += "<li><a href='" + filename + "'>" + name + "</a></li>";
+			}
+			_body += "</ul>";
+			_body += "</body></html>";
+			create_header();
+			_response = _header + _body;
+			closedir(repertoire);
+			return (1);
 		}
+		else
+			_path = _serv.root + _serv.index;
 	}
 	return (0);
 }
