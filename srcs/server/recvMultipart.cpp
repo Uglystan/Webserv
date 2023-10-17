@@ -16,8 +16,15 @@ void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader)
 		std::cout << "Message recu en plusieur part : " << data.req[clientSocket].message << std::endl;
 		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data, clientSocket));
 		std::string response = reponse.statik_or_dynamik();
-		if (send(clientSocket, response.data(), response.size(), 0) == -1)
+		int ret = send(clientSocket, response.data(), response.size(), 0);
+		if (ret == -1)
 			throw errorStopServ(strerror(errno));
+		if (ret == 0)
+		{
+			delEpollEvent(data.epollFd, clientSocket);
+			if (close(clientSocket) == -1)
+				throw errorStopServ(strerror(errno));
+		}
 		data.req.erase(clientSocket);//suppr les save de bytes car message envoyee
 		data.req[clientSocket].message.erase();//suppr le message car message envoyee
 	}
@@ -28,8 +35,15 @@ void	recvBase(t_server &data, int &clientSocket)
 	std::cout << "Message recu en une partie : " << data.req[clientSocket].message << std::endl;
 	Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data, clientSocket));
 	std::string response = reponse.statik_or_dynamik();
-	if (send(clientSocket, response.data(), response.size(), 0) == -1)
+	int ret = send(clientSocket, response.data(), response.size(), 0);
+	if (ret == -1)
 		throw errorStopServ(strerror(errno));
+	if (ret == 0)
+	{
+		delEpollEvent(data.epollFd, clientSocket);
+		if (close(clientSocket) == -1)
+			throw errorStopServ(strerror(errno));
+	}
 	data.req.erase(clientSocket);
 	data.req[clientSocket].message.erase();
 }
@@ -42,8 +56,15 @@ void	recvChunk(t_server &data, int &clientSocket)
 		chunkTest(data, clientSocket);
 		Response reponse(data.req[clientSocket].message, findGoodServ(data.req[clientSocket].message, data, clientSocket));
 		std::string response = reponse.statik_or_dynamik();
-		if (send(clientSocket, response.data(), response.size(), 0) == -1)
+		int ret = send(clientSocket, response.data(), response.size(), 0);
+		if (ret == -1)
 			throw errorStopServ(strerror(errno));
+		if (ret == 0)
+		{
+			delEpollEvent(data.epollFd, clientSocket);
+			if (close(clientSocket) == -1)
+				throw errorStopServ(strerror(errno));
+		}
 		data.req.erase(clientSocket);
 		data.req[clientSocket].message.erase();
 	}

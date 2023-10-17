@@ -42,7 +42,7 @@ void	manageClient(t_server &data, int &clientSocket)
 	data.req[clientSocket].bytes += b;
 	data.req[clientSocket].message.append(buffer, b);
 	sizeHeader = data.req[clientSocket].message.find("\r\n\r\n");
-	if (data.req[clientSocket].bytes == -1 || data.req[clientSocket].bytes == 0)
+	if (b == -1 || b == 0)
 	{
 		if (data.req[clientSocket].bytes == -1)
 			throw errorContinueServ("500", findGoodServ(data.req[clientSocket].message, data, clientSocket), clientSocket);

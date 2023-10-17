@@ -8,7 +8,8 @@ void	errorContinue(t_server &data, errorContinueServ const& e)
 	std::cout << e.getCodeError() << std::endl;
 	Response reponse(e.getCodeError(), e.getServ());
 	std::string response = reponse.statik_or_dynamik();
-	if (send(e.getClientSocket(), response.data(), response.size(), 0) == -1)
+	int ret = send(e.getClientSocket(), response.data(), response.size(), 0);
+	if (ret == -1 || ret == 0)
 		throw errorStopServ(strerror(errno));
 	data.req.erase(e.getClientSocket());
 	data.req[e.getClientSocket()].message.erase();
