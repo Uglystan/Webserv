@@ -6,14 +6,18 @@ Le 2eme : Plusieur serveur sont sur le meme port donc on fait la distinction ave
 Le 3eme : Plusieur serveur sont sur le meme port mais le serveur name ne permet pas d'identifier a qui il appartient donc par default on prend le premier qui match
 par rapport au conf file*/
 
+/*Par default si on ne trouve pas de port on mettra 8080*/
+
 int	searchPortRequest(std::string &message)
 {
 	int i = message.find("Host: ") + 6;
 
 	if (message.find("Host: ") != std::string::npos)
 	{
-		while (message[i] != ':')
+		while (message[i] != ':' && message[i] != '\n')
 			i++;
+		if (message[i] == '\n')
+			return (8080);
 		i++;
 		return (atoi(message.substr(i, 6).c_str()));
 	}
@@ -27,8 +31,10 @@ std::string	searchNameRequest(std::string &message)
 
 	if (message.find("Host: ") != std::string::npos)
 	{
-		while (message[j] != ':')
+		while (message[j] != ':' && message[j] != '\n')
 			j++;
+		if (message[j] == '\n')
+			return ("127.0.0.1");
 		return (message.substr(i, j - i).c_str());
 	}
 	return ("127.0.0.1");
