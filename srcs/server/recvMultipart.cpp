@@ -1,5 +1,11 @@
 #include "../../include/serveur.hpp"
 
+/*On gere la reception des different format de message (Chunked, en une partie, en plusieur partie)
+En une partie si on a pas de content lenght et pas de transfert encoding : chunked on attend de recevoir le message et on le traite et le renvoie
+EN plusieur partie On va continuer a lire tant que le content lenght du body + du header et different a la taille du message ensuite on traite et on envoie
+En Chunked on continue de lire et quand on recoit le flag de fin on traite et on envoie la requete
+(Pour chaque message on a une map avec le num de socket ssocie a une structure avec les message et la taille actuel recu)*/
+
 void	recvMulti(t_server &data, int &clientSocket, size_t &sizeHeader)
 {
 	size_t sizeAll = 0;

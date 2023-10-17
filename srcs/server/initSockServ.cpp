@@ -1,5 +1,8 @@
 #include "../../include/serveur.hpp"
 
+/*Ici on va "Demarrer" les serveurs donc creer une socket pour chaque IP/Port du file conf et si 2 serveurs on le meme ip et port il n'y aura
+qu'une seule socket pour les 2 c'est apres qu'il faudra faire la distinction notamment avec le server name"*/
+
 void	checkSameIp(t_server &data, t_configServ serv)
 {
 	unsigned int	i = 0;

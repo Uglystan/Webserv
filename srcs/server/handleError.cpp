@@ -1,5 +1,8 @@
 #include "../../include/serveur.hpp"
 
+/*Ici on a la gestion d'erreur une partie pour une erreure sur une socket par exemple aui n'entraine pas un arret du serveur
+et une partie sur des fonction d'appels systeme qui entraine un arret complet du serveur*/
+
 void	errorContinue(t_server &data, errorContinueServ const& e)
 {
 	std::cout << e.getCodeError() << std::endl;

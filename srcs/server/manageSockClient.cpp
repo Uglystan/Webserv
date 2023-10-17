@@ -1,5 +1,13 @@
 #include "../../include/serveur.hpp"
 
+/*Premiere fonction on accepte une nouvelle connexion la nombre de connexion est limitee a 250 pour eviter les probleme de limite fd
+on initialise aussi le timer de timeout de la socket et on l'ajout a la gestion d'evenement*/
+
+/*Deuxieme fonction : a chaque fois au'un socket est activee en lecture on vient lire de maniere non bloquante les donne et on les stocke dans la map
+qui aussi le num de socket avec le message et le nombre de caractere lu ensuite on remet le temps de time out de la socket a 0 car on a eu une
+activite dessus et on verifie si le message est complet dans ce cas on va le traiter sinon on continue la surveillance des socket jusqu'a avoir une message complet
+et si on a une erreur au moment du recv on suppr le client*/
+
 void	acceptNewClient(t_server &data, int &serverSocket)
 {
 	int clientSocket;
@@ -7,8 +15,8 @@ void	acceptNewClient(t_server &data, int &serverSocket)
 	int addresseLen = sizeof(clientAdresse);
 	struct timeval time;
 
-	// if (data.timer.size() <= 250)//Pas plus de 250 socket ouverte sinon limite de fs atteinte a 1024
-	// {
+	if (data.timer.size() <= 250)//Pas plus de 250 socket ouverte sinon limite de fs atteinte a 1024
+	{
 		clientSocket = accept(serverSocket, (struct sockaddr*) &clientAdresse, (socklen_t *) &addresseLen);
 		if (clientSocket != -1)
 		{
@@ -20,7 +28,7 @@ void	acceptNewClient(t_server &data, int &serverSocket)
 			data.timer[clientSocket] = time;
 			addEpollEvent(data.epollFd, clientSocket);
 		}
-	// }
+	}
 }
 
 void	manageClient(t_server &data, int &clientSocket)

@@ -1,5 +1,11 @@
 #include "../../include/serveur.hpp"
 
+/*Ici une fois qu'on q recu le message avant d'appeler le CGI on va identifier sur/pour quel serveur est la requete
+on distingue 3 cas. Le 1er : Il n'y a qu'un seul serveur qui correspond avec le port donc on sait que c'est celui la.
+Le 2eme : Plusieur serveur sont sur le meme port donc on fait la distinction avec le server name.
+Le 3eme : Plusieur serveur sont sur le meme port mais le serveur name ne permet pas d'identifier a qui il appartient donc par default on prend le premier qui match
+par rapport au conf file*/
+
 int	searchPortRequest(std::string &message)
 {
 	int i = message.find("Host: ") + 6;

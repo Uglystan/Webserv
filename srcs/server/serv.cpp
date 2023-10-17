@@ -1,10 +1,11 @@
 #include "../../include/serveur.hpp"
 
+/*Quand on a une activite sur une socket on parcours tout les serveurs pour savoir lequel a ete "active" en fonction de la socket serveur*/
 int	checkEventServ(t_server data, std::vector<struct epoll_event> events, int i)
 {
 	for (unsigned int j = 0; j < data.config.size(); j++)
 	{
-		if (events[i].data.fd == data.config[j].serverSocket)//C'est la socket serveur donc on recoit un nouveau client
+		if (events[i].data.fd == data.config[j].serverSocket)
 			return (data.config[j].serverSocket);
 	}
 	return (-1);

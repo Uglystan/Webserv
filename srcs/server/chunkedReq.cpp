@@ -1,5 +1,8 @@
 #include "../../include/serveur.hpp"
 
+/*Groupe de fonction utilse pour supprimer dans les request chunked les taille en hexadecimal et pouvoir assembler le message
+correctement*/
+
 int	is_hexa(char c)
 {
 	if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'F') || (c >= 'a' && c <= 'f'))

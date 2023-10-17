@@ -1,5 +1,12 @@
 #include "../../include/serveur.hpp"
 
+/*Ici la premiere fonction sert a regarder si une socket a atteint sont timeout si oui on la supprime de toute les map etc..
+et ensuite on attend qu'une socket soit active*/
+
+/*La 2eme et 3eme fonctions servent ajouter ou supprimer une socket de la gestion de epoll*/
+
+/*Et les 2 dernieres vont augmenter ou baisser la taille du journal d'evenement de socket en fonction du trafic sur le site*/
+
 int	checkTimeAndWaitPoll(t_server &data, std::vector<struct epoll_event> &events)
 {
 	struct timeval timeNow;
