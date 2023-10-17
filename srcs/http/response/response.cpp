@@ -485,6 +485,8 @@ int	Response::list_dir(void)
 			closedir(repertoire);
 			return (1);
 		}
+		else
+			_path = _serv.root + _serv.index;
 	}
 	return (0);
 }
