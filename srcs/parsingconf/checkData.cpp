@@ -51,12 +51,12 @@ int	checkData(std::vector<t_configServ> &eachServ)
 	{
 		if (checkIp(eachServ[i]) == -1)
 		{
-			std::cout << "Ip error" << std::endl;
+			std::cerr << "Ip error" << std::endl;
 			return (-1);
 		}
 		if (checkPort(eachServ[i]) == -1)
 		{
-			std::cout << "Port error" << std::endl;
+			std::cerr << "Port error" << std::endl;
 			return (-1);
 		}
 	}

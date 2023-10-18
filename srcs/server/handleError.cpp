@@ -5,7 +5,7 @@ et une partie sur des fonction d'appels systeme qui entraine un arret complet du
 
 void	errorContinue(t_server &data, errorContinueServ const& e)
 {
-	std::cout << e.getCodeError() << std::endl;
+	std::cerr << e.getCodeError() << std::endl;
 	Response reponse(e.getCodeError(), e.getServ());
 	std::string response = reponse.statik_or_dynamik();
 	int ret = send(e.getClientSocket(), response.data(), response.size(), 0);
@@ -20,7 +20,7 @@ void	errorStop(t_server &data, errorStopServ const& e)
 {
 	std::map<int, struct timeval>::iterator i = data.timer.begin();
 
-	std::cout << e.getCodeError() << std::endl;
+	std::cerr << e.getCodeError() << std::endl;
 	for (; i != data.timer.end(); i++)
 		close(i->first);
 }

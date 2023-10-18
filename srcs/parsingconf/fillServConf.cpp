@@ -108,7 +108,7 @@ int	fillServ(std::vector<t_configServ> &eachServ, std::vector<std::string> &each
 	int	i = 0;
 	while (i < (int)eachServString.size())
 	{
-		std::cout << "Serveur : " << i << std::endl;
+		//std::cout << "Serveur : " << i << std::endl;
 		eachServ.push_back(fillEachServ(eachServString[i]));
 		i++;
 	}
