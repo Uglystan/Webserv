@@ -28,7 +28,7 @@
 <body>
     <div class="container">
         <h1>Téléchargement Réussi</h1>
-	<?php
+<?php
 if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
 {
     $nomFichier = $_FILES["fichier"]["name"];
@@ -65,7 +65,6 @@ if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
             echo '<p>Voici le fichier audio :</p>';
             echo '<audio controls style="' . $style . '">';
             echo '<source src="' . $dossierDeDestination . $nomFichier . '" type="' . $typeMIME . '">';
-            echo 'Votre navigateur ne prend pas en charge l\'élément audio.';
             echo '</audio>';
         }
         elseif (strpos($typeMIME, "text/") === 0)

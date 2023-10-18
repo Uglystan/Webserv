@@ -81,7 +81,7 @@ t_configServ	fillEachServ(std::string servString)
 	serv.errorPage = getStrInfo(servString, "error_page ");
 	//std::cout << "Error_page : " << serv.errorPage << std::endl;
 	serv.maxBodySize = getMaxBodySize(servString);
-	std::cout << "MaxBodySize : " << serv.maxBodySize << std::endl;
+	//std::cout << "MaxBodySize : " << serv.maxBodySize << std::endl;
 	serv.cgi = getStrInfo(servString, "cgi ");
 	//std::cout << "cgi : " << serv.cgi << std::endl;
 	serv.cgiExt = getStrInfo(servString, "cgi_ext ");
@@ -99,7 +99,7 @@ t_configServ	fillEachServ(std::string servString)
 	//std::cout << "location Directory : " << serv.locationVec[1].directory << std::endl;
 	//std::cout << "location allow_methods : " << serv.locationVec[1].allow_methods << std::endl;
 	//std::cout << "location root : " << serv.locationVec[1].root << std::endl;
-	std::cout << "location redirection : " << serv.locationVec[0].redirection << std::endl;
+	//std::cout << "location redirection : " << serv.locationVec[0].redirection << std::endl;
 	serv.serverSocket = -1;
 	return (serv);
 }

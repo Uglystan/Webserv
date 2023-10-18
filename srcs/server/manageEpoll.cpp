@@ -64,8 +64,6 @@ void	addPlaceEventLog(int nfds, std::vector<struct epoll_event> &events)
 {
 	if (nfds == static_cast<int>(events.size()))
 	{
-		std::cout << "Redim tab evenement add place. Taille now = "<< events.size() * 2 << std::endl;
-		std::cout << std::endl;
 		events.resize(nfds * 2);
 	}
 }
@@ -74,8 +72,6 @@ void	delPlaceEventLog(int nfds, std::vector<struct epoll_event> &events)
 {
 	if (nfds < static_cast<int>(events.size()) / 4 && events.size() > NB_EVENT_BASE)
 	{
-		std::cout << "Redim tab evenement delete place. Taille now = " << events.size() / 2 << std::endl;
-		std::cout << std::endl;
 		events.resize(nfds / 2);
 	}
 }
