@@ -110,7 +110,7 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
-		//std::cout << "Message envoyee : \n" << _response << std::endl;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
@@ -121,7 +121,7 @@ std::string	Response::statik_or_dynamik(void)
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
-		//std::cout << "Message envoyee : \n" << _response << std::endl;
+		std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 }
@@ -291,23 +291,20 @@ void	Response::find_method(void)
 	size_t posGET = _request.find("GET");
 	size_t posPOST = _request.find("POST");
 	size_t posDELETE = _request.find("DELETE");
-	if (posGET != std::string::npos || posPOST != std::string::npos || posDELETE != std::string::npos)
+	if(posGET != std::string::npos)
+		_method = "GET";
+	else if(posPOST != std::string::npos)
 	{
-		if(posGET != std::string::npos)
-			_method = "GET";
-		else if(posPOST != std::string::npos)
-		{
-			_code = 201;
-			_method = "POST";
-			check_content_type();
-		}
-		else if (posDELETE != std::string::npos)
-			delete_method();
-		else
-		{
-			_code = 405;
-			throw Response::Errorexcept();
-		}
+		_code = 201;
+		_method = "POST";
+		check_content_type();
+	}
+	else if (posDELETE != std::string::npos)
+		delete_method();
+	else
+	{
+		_code = 405;
+		throw Response::Errorexcept();
 	}
 }
 
