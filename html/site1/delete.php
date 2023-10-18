@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/php-cgi
 <!DOCTYPE html>
 <html lang="fr">
 <head>
