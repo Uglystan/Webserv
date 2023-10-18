@@ -20,7 +20,7 @@ int	checkTimeAndWaitPoll(t_server &data, std::vector<struct epoll_event> &events
 		i++;
 		if ((timeNow.tv_sec - temp->second.tv_sec) + (timeNow.tv_usec - temp->second.tv_usec) / 1000000 > MAX_TIME_BEFORE_CLOSE)
 		{
-			std::cout << "Delais trop long deco de la socket : " << temp->first << std::endl;
+			std::cout << "Delais timeout atteint deconnexion de la socket : " << temp->first << std::endl;
 			delEpollEvent(data.epollFd, const_cast<int &>(temp->first));//aaaaa
 			if (close(temp->first) == -1)
 				throw errorStopServ(strerror(errno));
@@ -40,10 +40,10 @@ void	delEpollEvent(int &epollFd, int &socket)
 
 	ft_memset(&event, 0, sizeof(struct epoll_event));
 	event.data.fd = socket;
-	// On surveille les message entrant, la fermeture de la socket
 	event.events = EPOLLIN | EPOLLRDHUP;
 	if (epoll_ctl(epollFd, EPOLL_CTL_DEL, socket, &event) == -1)
 		throw errorStopServ(strerror(errno));
+	std::cout << "Suppression du journal d'evenement de la socket : " << socket << std::endl;	
 }
 
 //Fonction pour ajouter des socket aux evenement de Epool
@@ -53,10 +53,11 @@ void	addEpollEvent(int &epollFd, int &socket)
 	struct epoll_event event;
 	ft_memset(&event, 0, sizeof(struct epoll_event));
 	event.data.fd = socket;
-	//On gere Le in et si la socket se ferme
 	event.events = EPOLLIN | EPOLLRDHUP | EPOLLERR;
 	if (epoll_ctl(epollFd, EPOLL_CTL_ADD, socket, &event) == -1)
 		throw errorStopServ(strerror(errno));
+	std::cout << "Ajout au journal d'evenement de la socket : " << socket << std::endl;
+	
 }
 
 void	addPlaceEventLog(int nfds, std::vector<struct epoll_event> &events)

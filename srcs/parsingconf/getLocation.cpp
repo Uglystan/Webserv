@@ -23,6 +23,7 @@ void	getLocation(std::vector<t_location> &locationVec, std::string servString)
 		location.directory = "";
 		location.allow_methods = ""; 
 		location.root = "";
+		location.redirection = "";
 	}
 	else
 	{
@@ -31,6 +32,7 @@ void	getLocation(std::vector<t_location> &locationVec, std::string servString)
 			location.directory = locationDirectory(servString.substr(servString.find("location "), sizeLocation(servString)));
 			location.allow_methods = getStrInfo(servString.substr(servString.find("location "), sizeLocation(servString)), "allow_methods ");
 			location.root = getStrInfo(servString.substr(servString.find("location "), sizeLocation(servString)), "root ");
+			location.redirection = getStrInfo(servString.substr(servString.find("location "), sizeLocation(servString)), "redirection ");
 			locationVec.push_back(location);
 			servString.erase(servString.find("location "), sizeLocation(servString));
 		}

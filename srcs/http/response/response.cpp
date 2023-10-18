@@ -14,6 +14,7 @@ void	Response::init_Error_code(void)
 	_errors[200] = "OK";
 	_errors[201] = "Created";
 	_errors[204] = "No Content";
+	_errors[301] = "Moved Permanantely";
 	_errors[400] = "Bad Request";
 	_errors[401] = "Unauthorized";
 	_errors[403] = "Forbidden";
@@ -54,7 +55,16 @@ void	Response::check_location(void)
 					std::string newroot = location.root;
 					_path = find_path(_request, newroot);
 				}
-			
+				if (location.redirection != "")
+				{
+					if (location.root != "")
+						_path = location.root + location.redirection;
+					else
+						_path = _serv.root + location.redirection;
+					size_t	doubleslash = _path.find("//");
+					_path.replace(doubleslash, 2, "/");
+					_code = 301;
+				}
 			}
 		}
 	}
@@ -110,18 +120,17 @@ std::string	Response::statik_or_dynamik(void)
 		}
 		else
 			statik_response();
-		std::cout << "Message envoyee : \n" << _response << std::endl;
+		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 	catch (const std::exception& e)
 	{
 		_response.clear();
-		std::cout << "CODE : " << _code << std::endl;
 		body_error_page();
 		create_header();
 		std::cerr << e.what() << std::endl;
 		_response = _header + _body;
-		std::cout << "Message envoyee : \n" << _response << std::endl;
+		//std::cout << "Message envoyee : \n" << _response << std::endl;
 		return (_response);
 	}
 }
@@ -271,6 +280,11 @@ void	Response::delete_method(void)
 		throw Response::Errorexcept();
 	}
 	_method = "DELETE";
+	if (_serv.allowMethods.find(_method) == std::string::npos)
+	{
+		_code = 405;
+		throw Response::Errorexcept();
+	}
 	if (delete_file(_path) == 0)
 	{
 		_code = 204;
