@@ -80,14 +80,12 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi
 			return ("");
 	if (WIFEXITED(status) && WEXITSTATUS(status) != 0)
 	{
-		std::cout << status << std::endl;
 		if (status == 512)
 			return ("-2");
 		std::cerr << "Script error \n";
 		return ("-1");
 	}
 	size_t finddoctype = reponse.find("<");
-	std::cout << reponse << std::endl;
 	if (finddoctype == std::string::npos)
 		return ("");
 	return (reponse.substr(finddoctype));

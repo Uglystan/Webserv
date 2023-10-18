@@ -131,7 +131,7 @@ std::string	find_WwwAuthenticate(int code)
 std::string find_path(std::string &request, std::string &root)
 {
 	std::string	path;
-	if (request.find(root) == std::string::npos)
+	if (request.find(root) == std::string::npos && request.find(root.substr(0, root.size() - 1))== std::string::npos)
 		path = root;
 	std::string firstLine;
 	std::istringstream iss(request);
@@ -170,9 +170,7 @@ std::string repo_listing(std::string &path, std::string &filename, std::string &
 	ss << ip;
 	ss2 << port;
 	if (filename == ".")
-	{
 		filename = "http://" + ss.str() + ":" + ss2.str() + '/' + path;
-	}
 	else if (filename == "..")
 	{
 		filename = "http://" + ss.str() + ":" + ss2.str() + '/' + path;
@@ -185,7 +183,7 @@ std::string repo_listing(std::string &path, std::string &filename, std::string &
 		{
 			size_t POSslash = filename.rfind("/");
 			size_t POS2slash = filename.rfind("/", POSslash - 1);
-			filename = filename.substr(0, POS2slash);;
+			filename = filename.substr(0, POS2slash);
 		}
 	}
 	else
