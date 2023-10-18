@@ -270,6 +270,11 @@ void	Response::delete_method(void)
 		throw Response::Errorexcept();
 	}
 	_method = "DELETE";
+	if (_serv.allowMethods.find(_method) == std::string::npos)
+	{
+		_code = 405;
+		throw Response::Errorexcept();
+	}
 	if (delete_file(_path) == 0)
 	{
 		_code = 204;
