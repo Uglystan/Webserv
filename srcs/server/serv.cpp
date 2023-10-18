@@ -6,7 +6,10 @@ int	checkEventServ(t_server data, std::vector<struct epoll_event> events, int i)
 	for (unsigned int j = 0; j < data.config.size(); j++)
 	{
 		if (events[i].data.fd == data.config[j].serverSocket)
+		{
+			std::cout << "Activite sur la socket serveur : " << events[i].data.fd << std::endl;
 			return (data.config[j].serverSocket);
+		}
 	}
 	return (-1);
 }

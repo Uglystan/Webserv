@@ -27,6 +27,7 @@ void	acceptNewClient(t_server &data, int &serverSocket)
 			gettimeofday(&time, NULL);//creation init
 			data.timer[clientSocket] = time;
 			addEpollEvent(data.epollFd, clientSocket);
+			std::cout << "Ajout d'une socket client numero : " << clientSocket << "\n" << std::endl;
 		}
 	}
 }
@@ -47,7 +48,7 @@ void	manageClient(t_server &data, int &clientSocket)
 		if (data.req[clientSocket].bytes == -1)
 			throw errorContinueServ("500", findGoodServ(data.req[clientSocket].message, data, clientSocket), clientSocket);
 		else
-			std::cout << "Client deco" << std::endl;
+			std::cout << "Deconnexion client via recv : " << clientSocket << std::endl;
 		data.req.erase(clientSocket);
 		data.timer.erase(clientSocket);
 		delEpollEvent(data.epollFd, clientSocket);
@@ -71,9 +72,9 @@ void	manageClient(t_server &data, int &clientSocket)
 
 void	disconnectClient(t_server &data, int &socket)
 {
-	//std::cout << "Deconnexion socket : " << socket << std::endl;
 	data.timer.erase(socket);
 	delEpollEvent(data.epollFd, socket);
 	if (close(socket) == -1)
 		throw errorStopServ(strerror(errno));
+	std::cout << "Deconnexion client socket : " << socket << std::endl;
 }

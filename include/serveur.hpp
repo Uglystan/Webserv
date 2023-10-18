@@ -26,7 +26,6 @@
 #include <regex.h>
 
 #define NB_EVENT_BASE 100
-#define MAX_CLIENT_BODYSIZE 100000
 #define MAX_TIME_BEFORE_CLOSE 300
 
 typedef struct s_requestData
@@ -40,6 +39,7 @@ typedef struct s_location
 	std::string	directory;
 	std::string	root;
 	std::string	allow_methods;
+	std::string	redirection;
 }t_location;
 
 typedef struct s_configServ

@@ -58,6 +58,7 @@ int	initAllServ(t_server &data)
 			}
 			addEpollEvent(data.epollFd, data.config[i].serverSocket);
 			checkSameIp(data, data.config[i]);
+			std::cout << "Socket " << data.config[i].serverSocket << " pour serveur " << data.config[i].serverName << " en marche\n" << std::endl;
 		}
 		i++;
 	}
