@@ -58,7 +58,7 @@ t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket
 		{
 			if (data.config[i].port == port)
 			{
-				std::cout << data.config[i].serverName << std::endl;
+				//std::cout << data.config[i].serverName << std::endl;
 				return (data.config[i]);
 			}
 		}
@@ -69,7 +69,7 @@ t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket
 		{
 			if (data.config[i].port == port && data.config[i].serverName == name)
 			{
-				std::cout << data.config[i].serverName << std::endl;
+				//std::cout << data.config[i].serverName << std::endl;
 				return (data.config[i]);
 			}
 		}
@@ -77,7 +77,7 @@ t_configServ	findGoodServ(std::string &message, t_server &data, int clientSocket
 		{
 			if (data.config[i].port == port)
 			{
-				std::cout << data.config[i].serverName << std::endl;
+				//std::cout << data.config[i].serverName << std::endl;
 				return (data.config[i]);
 			}
 		}
