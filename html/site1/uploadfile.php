@@ -1,4 +1,4 @@
-#!/usr/bin/php
+#!/usr/bin/php-cgi
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -34,12 +34,14 @@ if (isset($_FILES["fichier"]) && $_FILES["fichier"]["error"] == 0)
     $nomFichier = $_FILES["fichier"]["name"];
     $nomFichier = str_replace(' ', '%20', $nomFichier);
     $dossierDeDestination = getenv('STOCK_TMP'); // Le dossier où vous souhaitez stocker les fichiers téléchargés
+
     // Déplacer le fichier téléchargé vers le dossier de destination
     if (move_uploaded_file($_FILES["fichier"]["tmp_name"], $dossierDeDestination . $nomFichier))
     {
         echo "<p>Le fichier $nomFichier a été téléchargé avec succès.</p>";
         
-	echo '<p>Télécharger le fichier : <a href="' . $dossierDeDestination . $nomFichier . '" download="' . $nomFichier . '">Télécharger</a></p>';
+        echo '<p>Télécharger le fichier : <a href="' . $dossierDeDestination . $nomFichier . '" download="' . $nomFichier . '">Télécharger</a></p>';
+        
         // Obtenez le type MIME du fichier
         $typeMIME = mime_content_type($dossierDeDestination . $nomFichier);
         
@@ -89,8 +91,6 @@ else
     echo "<p>Aucun fichier n'a été téléchargé ou une erreur s'est produite.</p>";
 }
 ?>
-
-
         <p><a href="post.html">Retour au formulaire</a></p>
     </div>
     
