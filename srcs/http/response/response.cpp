@@ -14,6 +14,7 @@ void	Response::init_Error_code(void)
 	_errors[200] = "OK";
 	_errors[201] = "Created";
 	_errors[204] = "No Content";
+	_errors[301] = "Moved Permanantely";
 	_errors[400] = "Bad Request";
 	_errors[401] = "Unauthorized";
 	_errors[403] = "Forbidden";
@@ -54,7 +55,16 @@ void	Response::check_location(void)
 					std::string newroot = location.root;
 					_path = find_path(_request, newroot);
 				}
-			
+				if (location.redirection != "")
+				{
+					if (location.root != "")
+						_path = location.root + location.redirection;
+					else
+						_path = _serv.root + location.redirection;
+					size_t	doubleslash = _path.find("//");
+					_path.replace(doubleslash, 2, "/");
+					_code = 301;
+				}
 			}
 		}
 	}
