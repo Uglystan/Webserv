@@ -70,36 +70,17 @@ t_configServ	fillEachServ(std::string servString)
 	t_configServ	serv;
 
 	serv.serverName = getStrInfo(servString, "server_name ");
-	//std::cout << "Server name : " << serv.serverName << std::endl;
 	serv.ip = getIp(servString, serv.port);
-	//std::cout << "IP : " << serv.ip << std::endl;
-	//std::cout << "Port : " << serv.port << std::endl;
 	serv.root = getStrInfo(servString, "root ");
-	//std::cout << "Root : " << serv.root << std::endl;
 	serv.index = getStrInfo(servString, "index ");
-	//std::cout << "Index : " << serv.index << std::endl;
 	serv.errorPage = getStrInfo(servString, "error_page ");
-	//std::cout << "Error_page : " << serv.errorPage << std::endl;
 	serv.maxBodySize = getMaxBodySize(servString);
-	//std::cout << "MaxBodySize : " << serv.maxBodySize << std::endl;
 	serv.cgi = getStrInfo(servString, "cgi ");
-	//std::cout << "cgi : " << serv.cgi << std::endl;
 	serv.cgiExt = getStrInfo(servString, "cgi_ext ");
-	//std::cout << "cgi_ext : " << serv.cgiExt << std::endl;
 	serv.allowMethods = getStrInfo(servString, "allow_methods ");
-	//std::cout << "allow_methods : " << serv.allowMethods << std::endl;
 	serv.tmp = getStrInfo(servString, "tmp ");
-	//std::cout << "tmp : " << serv.tmp << std::endl;
 	serv.listening_file = getStrInfo(servString, "listening_file ");
-	//std::cout << "tmp : " << serv.listening_file << std::endl;
 	getLocation(serv.locationVec, servString);
-	//std::cout << "location Directory : " << serv.locationVec[0].directory << std::endl;
-	//std::cout << "location allow_methods : " << serv.locationVec[0].allow_methods << std::endl;
-	//std::cout << "location root : " << serv.locationVec[0].root << std::endl;
-	//std::cout << "location Directory : " << serv.locationVec[1].directory << std::endl;
-	//std::cout << "location allow_methods : " << serv.locationVec[1].allow_methods << std::endl;
-	//std::cout << "location root : " << serv.locationVec[1].root << std::endl;
-	//std::cout << "location redirection : " << serv.locationVec[0].redirection << std::endl;
 	serv.serverSocket = -1;
 	return (serv);
 }

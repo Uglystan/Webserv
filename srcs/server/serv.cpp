@@ -7,7 +7,7 @@ int	checkEventServ(t_server data, std::vector<struct epoll_event> events, int i)
 	{
 		if (events[i].data.fd == data.config[j].serverSocket)
 		{
-			std::cout << "Activite sur la socket serveur : " << events[i].data.fd << std::endl;
+			//std::cout << "Activite sur la socket serveur : " << events[i].data.fd << std::endl;
 			return (data.config[j].serverSocket);
 		}
 	}
@@ -27,6 +27,16 @@ void	*ft_memset(void *dest, int c, size_t size)
 		i++;
 	}
 	return (array);
+}
+
+void	clear_fd(t_server &data)
+{
+	std::map<int, struct timeval>::iterator g = data.timer.begin();
+	for (; g != data.timer.end(); g++)
+		close(g->first);
+	for(unsigned int w = 0; w < data.config.size(); w++)
+		close (data.config[w].serverSocket);
+	close (data.epollFd);
 }
 
 int main (int argc, char **argv)
@@ -68,4 +78,5 @@ int main (int argc, char **argv)
 			break;
 		}
 	}
+	clear_fd(data);
 }
