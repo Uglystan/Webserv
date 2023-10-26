@@ -22,7 +22,6 @@ SRC =	srcs/server/serv.cpp\
 	srcs/parsingconf/fillServConf.cpp\
 	srcs/parsingconf/getLocation.cpp\
 	srcs/parsingconf/checkData.cpp\
-	srcs/http/utils/gnl.cpp\
 	srcs/http/response/response.cpp\
 	srcs/http/CGIparsing/CGIparsing.cpp\
 	srcs/http/header_parsing/header_parsing.cpp\

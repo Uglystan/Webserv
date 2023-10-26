@@ -39,11 +39,19 @@ void	clear_fd(t_server &data)
 	close (data.epollFd);
 }
 
+void	sig_int(int sig)
+{
+	(void)sig;
+	throw errorStopServ("");
+}
+
 int main (int argc, char **argv)
 {
 	t_server data;
 	data.epollFd = epoll_create1(0);
 	std::vector<struct epoll_event> events(NB_EVENT_BASE);
+
+	signal(SIGINT, sig_int);
 
 	if (parsingConf(data, argv, argc) == -1)
 		return (1);
