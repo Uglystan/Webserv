@@ -1,6 +1,6 @@
 #include "response.hpp"
 
-Response::Response(std::string request, t_configServ serv) : _code(200), _request(request), _serv(serv)
+Response::Response(std::string request, t_configServ serv, t_server &data) : _code(200), _request(request), _serv(serv), _data(data)
 {
 	cleanHeader();
 }
@@ -36,6 +36,7 @@ void	Response::cleanHeader(void)
 	_transfertencoding = "";
 	_wwwauthenticate = "";
 	_connection = "";
+	_location ="";
 }
 
 void	Response::check_location(void)
@@ -48,8 +49,9 @@ void	Response::check_location(void)
 			const t_location& location = _serv.locationVec[i];
 			if (location.directory.find(pathwithoutroot) != std::string::npos)
 			{
-				if (location.allow_methods != "")
-					_serv.allowMethods = location.allow_methods;
+				_serv.allowMethods = location.allow_methods;
+				if (_serv.allowMethods.find(_method) == std::string::npos)
+					_code = 405;
 				if (location.root != "")
 				{
 					std::string newroot = location.root;
@@ -61,8 +63,10 @@ void	Response::check_location(void)
 						_path = location.root + location.redirection;
 					else
 						_path = _serv.root + location.redirection;
+					std::cout << _path << std::endl;
 					size_t	doubleslash = _path.find("//");
-					_path.replace(doubleslash, 2, "/");
+					if (doubleslash != std::string::npos)
+						_path.replace(doubleslash, 2, "/");
 					_code = 301;
 				}
 			}
@@ -102,7 +106,7 @@ std::string	Response::statik_or_dynamik(void)
 			_code = 400;
 			throw Response::Errorexcept();
 		}
-		if (list_dir()== 1)
+		if (list_dir() == 1)
 			return (_response);
 		check_location();
 		if (_serv.allowMethods.find(_method) == std::string::npos)
@@ -113,6 +117,7 @@ std::string	Response::statik_or_dynamik(void)
 		size_t extensioncgi = _serv.cgiExt.find(find_langage(_request));
 		if (extensioncgi != std::string::npos)
 		{
+			std::cout << _path << std::endl;
 			if (_path == _serv.root)
 				statik_response();
 			else
@@ -150,7 +155,7 @@ void	Response::cgi_handler(void)
 	}
 	put_in_env(postData);
 	std::string	goodpath = find_cgi_path(_serv.cgi, find_langage(_request));
-	_body = execCgi(_path, postData, goodpath);
+	_body = execCgi(_path, postData, goodpath, _data);
 	if (_body == "")
 	{
 		_code = 500;
@@ -425,7 +430,7 @@ void	Response::create_header(void)
 		_code = 400;
 		throw Response::Errorexcept();
 	}
-	_header += _status_line + _name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + "\r\n";
+	_header += _status_line + _name + _date + _content_type + _content_lenght + _content_lang + _last_modified + _transfertencoding + _wwwauthenticate + _connection + _location + "\r\n";
 }
 
 int	Response::list_dir(void)
@@ -460,7 +465,17 @@ int	Response::list_dir(void)
 			return (1);
 		}
 		else
+		{
 			_path = _serv.root + _serv.index;
+			_code = 301;
+			std::stringstream ss;
+			std::stringstream ss2;
+			ss << _serv.ip;
+			ss2 << _serv.port;
+			_location = "Location: http://" + ss.str() + ":" + ss2.str() + '/' + _serv.root + _serv.index + '\n';
+			statik_response();
+			return (1);
+		}
 	}
 	return (0);
 }

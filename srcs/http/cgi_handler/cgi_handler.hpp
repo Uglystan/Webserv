@@ -22,7 +22,8 @@
 #include <signal.h>
 #include <stdio.h>
 #include <csignal>
+#include "../../../include/serveur.hpp"
 
-std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi_path);
+std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi_path, t_server &data);
 
 #endif

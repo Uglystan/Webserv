@@ -123,6 +123,7 @@ class errorContinueServ
 };
 
 #include "../srcs/http/response/response.hpp"
+#include "../srcs/http/cgi_handler/cgi_handler.hpp"
 
 int	checkTimeAndWaitPoll(t_server &data, std::vector<struct epoll_event> &events);
 void	delEpollEvent(int &epollFd, int &socket);
@@ -152,3 +153,4 @@ void	errorContinue(t_server &data, errorContinueServ const& e);
 void	errorStop(t_server &data, errorStopServ const& e);
 void	*ft_memset(void *dest, int c, size_t size);
 void	chunkTest(t_server &data, int &clientSocket);
+void	clear_fd(t_server &data);

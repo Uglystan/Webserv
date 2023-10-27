@@ -6,7 +6,7 @@
 /*   By: abourdon <abourdon@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/20 10:26:10 by abourdon          #+#    #+#             */
-/*   Updated: 2023/10/16 17:38:26 by abourdon         ###   ########.fr       */
+/*   Updated: 2023/10/27 13:59:06 by abourdon         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@
 class Response
 {
 	public:
-		Response(std::string request, t_configServ serv);
+		Response(std::string request, t_configServ serv, t_server &data);
 		~Response(void);
 
 		void		statik_response(void);
@@ -81,6 +81,7 @@ class Response
 		std::string	_transfertencoding;
 		std::string	_wwwauthenticate;
 		std::string	_connection;
+		std::string	_location;
 		std::string	_document_root;//repertoire racine
 		std::string	_script_filename;//script part
 		std::string	_query_string;//parametres de GET
@@ -94,6 +95,7 @@ class Response
 		std::string	_path_info;//infos path supplementaires
 		std::string	_request_uri;//URI de la requete en cours
 		t_configServ	_serv;
+		t_server	_data;
 		class	Errorexcept : public std::exception
 		{
 			public :

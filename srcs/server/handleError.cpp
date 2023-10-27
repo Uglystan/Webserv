@@ -6,7 +6,7 @@ et une partie sur des fonction d'appels systeme qui entraine un arret complet du
 void	errorContinue(t_server &data, errorContinueServ const& e)
 {
 	std::cerr << e.getCodeError() << std::endl;
-	Response reponse(e.getCodeError(), e.getServ());
+	Response reponse(e.getCodeError(), e.getServ(), data);
 	std::string response = reponse.statik_or_dynamik();
 	int ret = send(e.getClientSocket(), response.data(), response.size(), 0);
 	if (ret == -1)

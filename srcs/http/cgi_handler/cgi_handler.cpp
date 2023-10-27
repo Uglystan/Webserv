@@ -26,7 +26,7 @@ static int	cgi_path_access(std::string &cgipath)
 		return (1);
 }
 
-std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi_path)
+std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi_path, t_server &data)
 {
 	std::string	reponse;
 	std::string	line;
@@ -45,6 +45,7 @@ std::string	execCgi(std::string path, std::string	_requestbody, std::string &cgi
 		return ("");
 	if (!pid)
 	{
+		clear_fd(data);
 		if (dup2(fd, 1) == -1)
 			return ("");
 		if (requestMethod == "POST")
