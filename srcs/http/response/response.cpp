@@ -451,43 +451,6 @@ int	Response::list_dir(void)
 			{
 				std::string filename = entree->d_name;
 				_body += repo_listing(_path, filename, _serv.root, _request, _serv.ip, _serv.port);
-				// std::string name = entree->d_name;
-				// std::stringstream ss;
-				// std::stringstream ss2;
-				// ss << _serv.ip;
-				// ss2 << _serv.port;
-				// if (filename == ".")
-				// {
-				// 	filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path;
-				// }
-				// else if (filename == "..")
-				// {
-				// 	filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path;
-				// 	if (_path[_path.size()- 1] != '/')
-				// 	{
-				// 		size_t POSslash = filename.rfind("/");
-				// 		filename = filename.substr(0, POSslash);
-				// 	}
-				// 	else
-				// 	{
-				// 		size_t POSslash = filename.rfind("/");
-				// 		size_t POS2slash = filename.rfind("/", POSslash - 1);
-				// 		filename = filename.substr(0, POS2slash);;
-				// 	}
-				// }
-				// else
-				// {
-				// 	if (find_path(_request, vide).find(_serv.root) == std::string::npos)
-				// 		filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _serv.root + filename;
-				// 	else
-				// 	{
-				// 		if (_path[_path.size()- 1] != '/')
-				// 			filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path + '/' + filename;
-				// 		else
-				// 			filename = "http://" + ss.str() + ":" + ss2.str() + '/' + _path + filename;
-				// 	}
-				// }
-				// _body += "<li><a href='" + filename + "'>" + name + "</a></li>";
 			}
 			_body += "</ul>";
 			_body += "</body></html>";
