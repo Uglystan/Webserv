@@ -54,10 +54,16 @@ int main (int argc, char **argv)
 	signal(SIGINT, sig_int);
 
 	if (parsingConf(data, argv, argc) == -1)
+	{
+		clear_fd(data);
 		return (1);
+	}
 	ft_memset(events.data(), 0, sizeof(events));
 	if (initAllServ(data) == -1)
+	{
+		clear_fd(data);
 		return (1);
+	}
 	while(1)
 	{
 		try

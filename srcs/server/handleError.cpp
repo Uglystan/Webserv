@@ -9,11 +9,16 @@ void	errorContinue(t_server &data, errorContinueServ const& e)
 	Response reponse(e.getCodeError(), e.getServ());
 	std::string response = reponse.statik_or_dynamik();
 	int ret = send(e.getClientSocket(), response.data(), response.size(), 0);
-	if (ret == -1 || ret == 0)
+	if (ret == -1)
 		throw errorStopServ(strerror(errno));
-	data.req.erase(e.getClientSocket());
-	data.req[e.getClientSocket()].message.erase();
-	close(e.getClientSocket());
+	else
+	{
+		int i = e.getClientSocket();
+		delEpollEvent(data.epollFd, i);
+		data.req.erase(e.getClientSocket());
+		data.req[e.getClientSocket()].message.erase();
+		close(e.getClientSocket());
+	}
 }
 
 void	errorStop(t_server &data, errorStopServ const& e)
